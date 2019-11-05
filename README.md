@@ -1,2 +1,3 @@
 Notes on Hadley Wickham's [R for Data Science](https://r4ds.had.co.nz/index.html).  
-Some content are borrowed and modified from  its [Chinese virsion](https://www.ituring.com.cn/book/2113). I may upload new chapters to keep it in line with newest features of the [tidyverse](https://www.tidyverse.org), and to introduce useful packages in reference to data science I've encountered.  
+Some content are borrowed and modified from  its [Chinese virsion](https://www.ituring.com.cn/book/2113), most images and diagrams are screenshots taken from [R for Data Science](https://r4ds.had.co.nz/index.html), [Advanced R](https://adv-r.hadley.nz/) and the [tidyverse](https://www.tidyverse.org/) website.   
+I would continue uploading new chapters to keep it in line with newest features of the [tidyverse](https://www.tidyverse.org), and to share packages which I found useful and would facilitate the whole process of data wranling, tidying, analysis etc.
