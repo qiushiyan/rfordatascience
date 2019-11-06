@@ -1,0 +1,203 @@
+
+
+# purrr
+
+## `map()` family  
+
+```{r,message=F}
+library(tidyverse)
+```
+
+
+```{r,echo=F}
+knitr::include_graphics("images/map.png")
+```
+
+
+
+
+```{r}
+mtcars %>%
+  map(mean) %>% 
+  str()
+```
+
+```{r}
+simple_map <- function(x, fun, ...) {
+  output <- vector("list", length = length(x))
+  for (i in seq_along(x)) {
+    output[[i]] <- fun(x[[i]], ...)
+  }
+  output
+}
+```
+
+## Producing atomic vectors 
+
+```{r}
+# map_chr() always returns a character vector
+mtcars %>%
+  map_chr(typeof)
+```
+
+```{r}
+# map_lgl() always returns a logical vector
+mtcars %>%
+  map_lgl(is.double)
+```
+
+
+```{r}
+# map_int() always returns a integer vector
+mtcars %>%
+  map_int(function(x) length(unique(x)))
+```
+
+
+
+```{r}
+# map_dbl() always returns a double vector
+mtcars %>%
+  map_dbl(mean)
+```
+
+
+
+```{r,echo=F}
+knitr::include_graphics("images/map_2.png")
+```
+
+
+```{r,error=T}
+pair <- function(x) c(x, x)
+map_dbl(1:2, pair)
+```
+
+
+```{r}
+1:2 %>%
+  map(pair)
+```
+
+
+```{r,error=T}
+1:2 %>% 
+  map_dbl(as.character)
+```
+```{r}
+1:2 %>% 
+  map_chr(as.character)
+```
+
+
+### purrr-style anonymous functions  
+
+```{r}
+mtcars %>% 
+  map_dbl(function(x) length(unique(x)))
+```
+
+
+```{r}
+mtcars %>%
+  map_dbl(~ length(unique(.x)))
+```
+
+```{r}
+mtcars %>%
+  map_dbl(~ length(unique(.)))
+```
+
+
+This shortcut is particularly useful for generating random data:  
+
+```{r}
+1:5 %>%
+  map(~ rnorm(mean = .x, n = 5)) %>%
+  str()
+```
+
+
+```{r}
+x <- list(
+  list(-1, x = 1, y = c(2), z = "a"),
+  list(-2, x = 4, y = c(5, 6), z = "b"),
+  list(-3, x = 8, y = c(9, 10, 11))
+)
+
+# select by position
+x %>% 
+  map(2)
+```
+
+```{r}
+# select by name
+x %>% 
+  map("x")
+```
+
+```{r}
+# select by both position and name
+x %>%
+  map(list("y", 2))
+```
+
+
+
+
+## Predicate functions 
+
+
+### Basics  
+
+```{r}
+df <- data.frame(x = 1:3, y = c("a", "b", "c"))
+```
+
+```{r}
+df %>% 
+  keep(is.numeric)
+```
+
+```{r}
+df %>% 
+  discard(is.numeric)
+```
+
+
+
+```{r}
+df %>% 
+  mutate(new_col = LETTERS[1:3]) %>%
+  detect(is.factor)
+```
+
+```{r}
+df %>% 
+  detect_index(is.factor)
+```
+
+
+### Map variants  
+
+
+```{r}
+df <- data.frame(
+  num1 = c(0, 10, 20),
+  num2 = c(5, 6, 7),
+  chr1 = c("a", "b", "c"),
+  stringsAsFactors = FALSE
+)
+
+
+df %>% 
+  map_if(is.numeric, mean, na.rm = T) %>% 
+  str()
+```
+
+```{r}
+df %>% 
+  modify_if(is.character, str_to_upper) %>% 
+  str()
+```
+

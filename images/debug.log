@@ -1,0 +1,44 @@
+[0806/130602:INFO:exception_record.cc(518)] [QB]Process ID: 5712 Type: 2
+[0806/140234:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0806/145640:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0806/145645:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0806/145646:INFO:exception_record.cc(518)] [QB]Process ID: 9008 Type: 4
+[0806/184536:INFO:http_cache_transaction.cc(72)] IgnoreZeroCacheError: 0
+[0806/194322:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0806/194327:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0806/194332:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0806/194334:INFO:exception_record.cc(518)] [QB]Process ID: 16836 Type: 4
+[0815/190839:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0815/192127:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0815/202857:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0815/202902:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0815/202907:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0815/210452:INFO:exception_record.cc(518)] [QB]Process ID: 18004 Type: 2
+[0815/231627:INFO:exception_record.cc(518)] [QB]Process ID: 15788 Type: 4
+[0816/190559:INFO:exception_record.cc(518)] [QB]Process ID: 10636 Type: 2
+[0816/190601:INFO:http_cache_transaction.cc(72)] IgnoreZeroCacheError: 0
+[0816/193505:INFO:exception_record.cc(518)] [QB]Process ID: 12924 Type: 2
+[0816/194103:INFO:exception_record.cc(518)] [QB]Process ID: 1136 Type: 2
+[0816/201805:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0816/211114:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0816/211117:INFO:exception_record.cc(518)] [QB]Process ID: 7300 Type: 4
+[0816/211119:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0816/211125:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0816/211131:INFO:exception_record.cc(518)] [QB]Process ID: 16624 Type: 4
+[0817/225957:INFO:exception_record.cc(518)] [QB]Process ID: 16904 Type: 4
+[0817/232234:INFO:exception_record.cc(518)] [QB]Process ID: 15700 Type: 2
+[0817/232520:INFO:exception_record.cc(518)] [QB]Process ID: 10948 Type: 2
+[0817/235628:INFO:exception_record.cc(518)] [QB]Process ID: 16744 Type: 2
+[0829/144740:INFO:exception_record.cc(518)] [QB]Process ID: 7888 Type: 2
+[0829/144741:INFO:http_cache_transaction.cc(72)] IgnoreZeroCacheError: 0
+[0829/233710:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0829/233715:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/001852:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/001857:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/001902:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/001907:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/001912:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/001917:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/001922:WARNING:dns_config_service_win.cc(674)] Failed to read DnsConfig.
+[0830/015238:ERROR:shell.cc(348)] Cannot client process matching existing identity:Name: exe:content_gpu User: 505C0EE9-3013-43C0-82B0-A84F50CF8D84 Instance: content_gpu
+[0830/015238:ERROR:browser_gpu_channel_host_factory.cc(119)] Failed to launch GPU process.

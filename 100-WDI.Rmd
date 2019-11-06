@@ -1,0 +1,97 @@
+
+
+
+# WDI   
+
+```{r,message=F}
+# install.packages("WDI")
+library(WDI)
+library(tidyverse)
+knitr::opts_chunk$set(message=F,cache=T)
+```
+
+[World Devevlopment Indicators](http://datatopics.worldbank.org/world-development-indicators/)(WDI)是世界银行提供的公开、高质量数据库。指标首先按照领域分类，除了一般常见的统计数据外，还包括农业、气候、贫穷、健康方面的数据。
+
+```{r,echo=F,fig.cap="Indicators divided by sectors"}
+knitr::include_graphics("images/19.png")
+```
+
+具体到某领域内，每个数据集都是各个国家在某个指标上的时间序列，时效性一般在两年之内。下面是气候变化分类中电力覆盖率指标(Access to electricity)的一个例子： 
+
+```{r,fig,ca="Climate Change / Access to electricity"}
+knitr::include_graphics("images/20.png")
+```
+
+
+数据库中包含了超过 1600 个这样的时间序列，很多有效跨度超过了 50 年。[WDI](https://cran.r-project.org/web/packages/WDI/index.html) 包提供了在 WDI 数据库中搜索、提取、格式化信息的接口。  
+
+
+## `WDIsearch()`  
+
+`WDIserach()` 用于在 WDI 数据库中搜索可用的指标，是之后用 `WDI()` 提取相关数据的基础。  
+
+```r
+WDIsearch(string = "gdp", field = "name", short = TRUE,
+  cache = NULL)
+```
+
+* `string = "gdp"`: 用于搜索的正则表达式  
+* `field`= "name": 搜索域，可选 “indicator”（编码）、“name”（名称）、“discription”（详细描述）、“sourceDatabase” 和 “sourceOrganization” （来源数据库或组织）  
+* `short = TRUE`：`WDIsearch()`默认只返回匹配指标的编码和名称，`short = FSLE` 同时返回详细描述和来源
+
+
+如在名称域内中搜索与二氧化碳相关的指标：  
+
+```{r}
+# the result of WDIsearch() is a 2D matrix
+WDIsearch("CO2", short = F) %>% 
+  as_tibble() 
+```
+
+
+改变搜索域： 
+
+```{r}
+WDIsearch(string = "mortality", field = "description", short = F) %>%
+  as_tibble()
+```
+
+`WDIsearch()` 中的正则表达式背后用 base R 中的 `grep()` 实现，所以**无视大小写**。  
+
+搜索人均不变价 GDP ：
+
+```{r}
+WDIsearch(string = 'gdp.*capita.*constant') %>% 
+  as_tibble()
+```
+
+
+## `WDI`  
+
+`WDIsearch()` 得到了指标的**编码**之后，就可以用 `WDI()` 下载相关数据：  
+
+```r
+WDI(country = "all", indicator = "NY.GNS.ICTR.GN.ZS", start = NULL,
+  end = NULL, extra = FALSE, cache = NULL)
+```  
+
+* `country`:  筛选国家或地区。使用 “ISO 3166-1” 两位字母编码，具体可见 `mapdata::iso3166`。（中国 CN, 美国 US，德国 DE，日本 JP，英国 GB）
+* `indicator`: 指标的编码。具名向量可以在重命名该指标  
+* `start` 和 `end`：时间序列的起始和结束。默认为 1950 年和今年  
+* `extra = FALSE`： 若 `extra = RTUE`，返回首都经纬度、地区、收入水平等更多信息  
+
+
+
+```{r}
+WDI(indicator = "5.51.01.03.mortal", country = c("US", "CN"),
+    start = 2005,
+    end = 2015) %>% 
+  as_tibble() 
+
+# renaming and extra = TRUE
+WDI(indicator = c(child_motality = "5.51.01.03.mortal"),  country = c("US", "CN"),
+    start = 2005,
+    end = 2015,
+    extra = TRUE) %>% 
+  as_tibble() 
+```

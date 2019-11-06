@@ -1,0 +1,662 @@
+
+
+
+# 数据导入 {#readr} 
+
+```{r,message=F,warning=F}
+library(tidyverse)
+knitr::opts_chunk$set(message=F,cache=T)
+```
+
+
+
+
+## 基础包中的数据导入 
+
+R的基础包中有 3 个最主要的数据导入函数：
+
+函数 | 用途
+-----| ----
+`read.csv()` | 读取以逗号分隔的文件(`sep = ",", header = T`)
+`read.delim()` | 读取以制表符分隔的文件(`sep = "\t", header = T`)
+`read.table()` | 读取其他一般性的文件，默认添加表头(`sep = "", header = F`)。`read.csv()`和`read.delim()`可以看做`read.table()`针对于特定情况的封装。
+
+用于导入数据的函数一般都有大量的参数，上述的三个函数中，比较重要的参数有：
+
+* `dec`: 指定文件中用于表示小数点的符号，很多文件中可能会用`;`或者`,`当做小数点，这时不仅需要设置`dec`，也要适当调整`sep`。`read.csv2()`和`read.delim2()`是对一些设置的封装。    
+* `col.names`用于在`header = F`时指定列名，默认情况下将被命名为"V1"、"V2"、···
+* `row.names`用于设置行名，既可以传入一个向量直接指定，也可以选择数据中的某一列作为列名（用一个数字表明该列是第几列）    
+* `colClasses`:指定列的数据类型。特别是当你希望有些列作为因子，有些列作为字符串，这个参数便很有用。常用的类别有"numeric","factor","logical","character"。如果某列被指定为`"NULL"`，则该列不会被读入。      
+* `skip`指定读取数据前跳过的行数    
+* `nrows`读入的最大行数    
+
+我们使用本地数据集`hotdogs.txt`简要说明这些函数的用法，它没有列名，且用空格分隔：
+```{r}
+## 分别使用三个函数
+hotdogs1 <- read.table("data\\hotdogs.txt",sep = "\t")
+head(hotdogs1)
+
+hotdogs2 <- read.csv("data\\hotdogs.txt",sep = "\t",header = F)
+head(hotdogs2)
+
+hotdogs2 <- read.delim("data\\hotdogs.txt",header = F)
+head(hotdogs2)
+```
+
+
+设定 `col.names` 和 `colClasses`：
+```{r}
+hotdogs <- read.delim("data\\hotdogs.txt", header = FALSE, 
+                       col.names = c("type", "calories", "sodium"),
+                       colClasses = c("factor", "NULL", "numeric"))
+head(hotdogs)
+```
+
+
+## `readr`
+
+![](images\6.png)
+
+`readr` 是 `tidyverse` 的核心 R 包之一，所以我们不必在手动加载它，其中的多数函数能够将平面文件(flat files)转换为数据框。相对于R基础包中有同样功能的函数，它有以下的优点：  
+
+* 一般来说，它们比基础模块中的函数速度更快（约快 10 倍）。如果只考虑速度的话，还可以尝试使用 `data.table::fread()`。这个函数与 `tidyverse` 的兼容性不是很好，但确实更快一些   
+* 它们可以生成`tibble`，而且不会将字符串向量转换为因子，不使用行名称，也不会随意改动列名称。这些都是使用 R 基础包时比较烦人的事情  
+* 它们更容易重复使用。R基础包中的函数会继承操作系统的功能，并依赖环境变量，因此，可以在你的计算机上正常运行的代码未必适用于他人的计算机  
+
+**主要函数**有：  
+
+* `read_csv()` 读取逗号分割文件、`read_csv2()` 读取分号分隔文件（这在用逗号表示小数点的国家非常普遍），`read_tsv()` 读取制表符分隔文件，`read_delim()`函数可以读取使用任意分隔符的文件(通过指定`delim`参数)  
+* `read_fwf()` 读取固定宽度的文件(fixed width file)。既可以使用`fwf_width()`函按照宽度来设定域，也可以使用 `fwf_positions()` 函数按照位置来设定域。`read_table()` 读取固定宽度文件的一种常用变体，其中使用空白字符来分隔各列  
+
+**重要参数**：  
+
+* `delim` 指定分隔符  
+* `col_names = T`：以上的函数默认将第一行用作列名，如果设定`col_names = F`则列名为`X1`、`X2`、···。也可以指定一个字符向量。  
+* `col_types`用一个字符串指定各列的数据类型  
+
+字符|含义
+----|---
+"i" | integer
+"d" | double
+"c" | character
+"l" | logical
+"_" | 舍弃该列
+
+* `n_max`最大读取行数  
+* `na`表明文件中缺失值的表示方法  
+
+
+下面用一些例子演示`read_delim()`函数的用法，因为它是最一般的形式，一旦掌握它，我们就可将从中学到的经验轻松应用于`readr`的其他函数。  
+```{r}
+## column names 
+properties <- c("area", "temp", "size", "storage", "method",
+                "texture", "flavor", "moistness")
+
+## 文件中用制表符为分隔符
+potatoes <- read_delim("data\\potatoes.txt",delim = "\t",
+                       col_names = properties)
+
+potatoes
+```
+
+当运行`readr`中的数据导入函数时，会打印出一份数据了说明，给出每个列的名称和类型。后面我们学习解析时，还会继续讨论这项功能。  
+
+通过`col_types`指定前五列为`integer`类型：
+```{r}
+properties <- c("area", "temp", "size", "storage", "method",
+                "texture", "flavor", "moistness")
+
+
+potatoes <- read_delim("data\\potatoes.txt",delim = "\t",
+                       col_names = properties,
+                       col_types = "iiiiiddd")
+
+potatoes
+```
+
+
+我们还可以创建一个行内 csv 文件。这种文件非常适合用`readr`进行实验，以及与他人分享可重现的例子：
+```{r}
+read_delim("a, b, c
+           1, 2 , 3
+           4, 5, 6", delim = ",")
+```
+
+有时文件开头会有几行元数据。可以使用 `skip = n` 来跳过前 n 行；或者使用 `comment = "#"` 丢弃所有以 # 开头的行：  
+```{r}
+read_delim("The first line metadata
+         The second line of metadata
+         x,y,z
+         1,2,3",
+         delim = ",", skip = 2)
+
+read_delim("# A comment I want to skip
+           x,y,z
+           1,2,3",
+           delim = ",", comment = "#")
+```
+
+
+设置`na`:
+
+```{r}
+read_delim("a,b,c
+           1,2,.",
+           delim = ",",
+           na = ".")
+```
+
+### 写入文件  
+
+`readr`还提供了两个非常有用的函数，用于将数据写回到磁盘：`write_csv()` 和 `write_tsv()`，这两个函数输出的文件能够顺利读取的概率更高，因为：  
+
+* 它们总使用 UTF-8 对字符串进行编码  
+* 它们都是用 ISO 8601 日期格式来保存日期和日期时间数据  
+
+如果想要将 CSV 文件导为 Excel 文件，可以使用 `write_excel_csv()` 函数，该函数会在文件开头写入一个特殊字符（字节顺序标记），告诉 Excel 这个文件采用的是 UTF-8 编码。  
+
+这几个函数中最重要的参数是 `x` (要保存的数据框)和`path`(保存文件的位置)。还可以使用 `na` 参数设定如何写入缺失值。默认情况下，写入函数会创建一个新文件或清空原有的文件再导入数据(Python中`open()`函数的`"mode = w"`模式)，如果想要追加到现有的文件，可以设置 `append = T` (Python中的`mode = "a"`模式)：  
+```{r}
+library(gapminder)
+write_csv(x = gapminder, path = "data\\gapminder.csv")
+```
+
+打开对应的文件：  
+![](images\4.png)
+
+
+
+### 练习  
+
+```{exercise}
+如果一个文件中的域是由"|"分隔的，那么应该使用哪个函数读取这个文件？  
+
+```
+
+
+应该使用`read_delim(path, delim = "|")`
+
+```{exercise}
+`read_fwf()`函数中最重要的参数是什么？   
+```
+
+`read_fwf()`用于固定宽度文件(fixed width files)。在固定宽度文件中，每一列的的宽度是固定的（不足的用某种填充符号填充），如第一列总是10个字符长度，第二列 5 个字符长度，第三列8个字符长度，每列内采取统一的对齐方式。`readr`安装时附带了一个固定宽度文件的示例,我们用一个变量存储它的路径：
+```{r}
+fwf_sample <- readr_example("fwf-sample.txt")
+fwf_sample
+```
+
+txt 文件内的内容：
+![](images\3.png)
+
+
+读取固定宽度文件时，最重要的是告诉 R 每列的位置，参数 `col_positions` 用于这项工作，有几种不同的表示方式：  
+```{r}
+# You can specify column positions in several ways:
+# 1. Guess based on position of empty columns
+read_fwf(fwf_sample, 
+         col_positions = fwf_empty(fwf_sample, col_names = c("first", "last", "state", "ssn")))
+# 2. A vector of field widths
+read_fwf(fwf_sample, 
+         col_positions = fwf_widths(c(20, 10, 12), col_names = c("name", "state", "ssn")))
+# 3. Paired vectors of start and end positions
+read_fwf(fwf_sample,  
+         col_positions = fwf_positions(c(1, 30), c(20, 42), col_names = c("name", "ssn")))
+# 4. Named arguments with start and end positions
+read_fwf(fwf_sample, 
+         col_positions = fwf_cols(name = c(1, 20), ssn = c(30, 42)))
+# 5. Named arguments with column widths
+read_fwf(fwf_sample, 
+         col_positions = fwf_cols(name = 20, state = 10, ssn = 12))
+```
+
+
+## 解析向量(Parsing a vector)  
+
+在详细介绍 `readr` 如何从磁盘读取文件之前，我们需要先讨论一下 `parse_*()`函数族。这些函数接受一个字符向量（因为文件中的数据全部是以字符串的形式进入 R 的），并返回一个特定向量，如逻辑、整数或日期向量：  
+```{r}
+## 用str()函数返回类别
+str(parse_logical(c("True", "False", "True")))
+str(parse_integer(c("1", "2", "3")))
+str(parse_date(c("2010-01-01", "2019-08-15")))
+```
+
+这些函数各司其职，且都是 `readr` 的重要组成部分。一旦掌握了本节中这些单个解析函数的用法，我们就可以继续讨论如何综合使用它们来解析整个文件了。  
+
+和 `tidyverse` 中出现的函数族一样，`parse_*()` 函数族有着相同的参数结构。第一个参数是需要解析的字符向量，`na`参数设定了哪些字符串应该当做缺失值处理：  
+
+```{r}
+parse_integer(c("1","2",".","456"),na = ".")
+```
+
+如果解析失败，你会收到一条警告：  
+```{r,error = T}
+x <- parse_integer(c("123", "345", "abc", "123.45"))
+```
+
+解析失败的值在输出中以缺失值的形式存在: 
+```{r}
+x
+```
+ 
+如果解析失败的值很多，那么就应该使用 `problems()` 函数来获取完整的失败信息集合。这个函数会返回一个 tibble，可以使用 `dplyr` 来处理它：  
+
+```{r}
+problems(x)
+```
+
+在解析函数的使用方面，最重要的是知道有哪些解析函数，以及每种解析函数用来处理哪种类型的输入。具体来说，重要的解析函数有8中：  
+
+* `parse_logical()`和`parse_integer()`函数分别解析逻辑值和整数，因为这两个解析函数基本不会出现问题，所以我们不再进行更多介绍  
+* `parse_double()`是严格的数值型解析函数，而`parse_number()`则是灵活的数值型解析函数，这两个函数背后很复杂，因为世界各地书写数值的方式不尽相同  
+* `parse_character()`函数似乎太过简单，甚至没必要存在，因为R读取的文件本身就是字符串形式。但一个棘手的问题使得这个函数非常重要：字符编码  
+* `parse_factor()`函数可以创建因子，R使用这种数据结构表示分类变量，该变量具有固定数目的已知值  
+* `parse_datetime()`、`parse_date()`和`parse_time()`函数可以解析不同类型的日期和时间，它们是最复杂的，因为有太多不同的日期书写形式  
+
+### 数值   
+
+解析数值似乎是直截了当的，但以下3个问题增加了数値解析的复杂性：  
+
+* 世界各地的人们书写数值的方式不尽相同。例如有些国家使用`.`当做小数点，而有些国家使用`,`  
+* 数值周围可能会有其他字符，例如`$1000`、`15℃`  和`10%`  
+* 数值经常包含某种形式的分组(grouping)，以便更易读，如`1 000 000`，而且世界各地用来分组的字符也不统一  
+
+为了解决第一个问题，`readr`使用了地区的概念(locale)，使得可以按照不同地区设置解析选项。在解析数值时，最重要的选项就是用来表示小数点的字符，通过设置一个新的地区对象并设定`decimal_mark`参数，可以覆盖`.`的默认值：  
+```{r}
+parse_double("1.23")
+parse_double("1,23", locale = locale(decimal_mark = ","))
+```
+
+`locale()`函数可以通过`decimal_mark,grouping_mark,date_format,time_format,tz,encoding`等参数创建一个地区对象，设定该地区内的一些表示习惯，这里我们告诉R哪个符号被用来当做小数点。  
+
+`readr`的默认地区是US-centric。获取默认地区的另一种方法是利用操作系统，但这可能让你的代码只能在你的电脑上运行，通过电子邮件共享给另一个国家的同事时，就可能失效。  
+
+`parse_number()`解决了第二个问题：**它可以忽略数值前后的非数值型字符**。这个函数特别适合处理货币和百分比，你可以提取嵌在文本中的数值：  
+```{r}
+parse_number("$100")
+parse_number("20%")
+parse_number("37℃")
+parse_number("It cost $123.45")
+```
+
+组合使用`parse_number()`和`locale()`可以解决最后一个问题，因为`parse_number()`可以忽略“分组符号” ： 
+```{r}
+## 适用于美国，忽略分组符号
+parse_number("123,456,789")
+## 适用于多数欧洲国家，需要用locale设置分组符号，因为.被默认为小数点
+parse_number("123.456.789", locale = locale(grouping_mark = "."))
+## 适用于瑞士
+parse_number("123'456'789", locale = locale(grouping_mark = "'"))
+```
+
+### 字符串  
+
+`parse_character()`似乎真的很简单，只要返回输入值就可以了。问题是同一个字符串有多种表示编码方式。在继续探讨之前，需要厘清一些概念：  
+
+1. 什么是字符？  
+
+> 字符是各种文字和符号的总称，包括各个国家文字、标点符号、图形符号、数字等，甚至还包括表情符号。  
+
+2. 什么是字符集？  
+
+> 字符集是多个字符的集合，字符集种类较多，每个字符集包含的字符个数不同，常见字符集有：ASCII字符集、ISO 8859字符集、GB2312字符集、BIG5字符集、GB18030字符集、Unicode字符集等。ASCII可以非常好地表示英文字符，因为它就是美国信息交换标准代码(American Standard Code for Information Interchange)的缩写。Unicode是国际组织制定的可以容纳世界上所有文字和符号的字符编码方案。   
+
+3. 什么是字符编码？ 
+
+>  计算机要准确的处理各种字符集文字，需要进行字符编码，以便计算机能够识别和存储各种文字。 字符编码(encoding)和字符集不同。字符集只是字符的集合，不一定适合作网络传送、处理，有时须经编码(encode)后才能应用。如Unicode可依不同需要以UTF-8、UTF-16、UTF-32等方式编码。 字符编码就是以二进制的数字来对应字符集的字符。因此，对字符进行编码，是信息交流的技术基础。
+
+4. 概括  
+
+> 使用哪些字符。也就是说哪些汉字，字母和符号会被收入标准中。所包含“字符”的集合就叫做“字符集”。 
+规定每个“字符”分别用一个字节还是多个字节存储，用哪些字节来存储，这个规定就叫做“编码”。 各个国家和地区在制定编码标准的时候，“字符的集合”和“编码”一般都是同时制定的。因此，平常我们所说的“字符集”，比如：GB2312, GBK, JIS等，除了有“字符的集合”这层含义外，同时也包含了“编码”的含义。 
+注意：Unicode字符集有多种编码方式，如UTF-8、UTF-16等；ASCII只有一种；大多数MBCS（包括GB2312，GBK）也只有一种。
+
+
+在R中，我们可以使用`charToRaw()`函数获得一个字符串的底层表示（underlying representation）：  
+```{r}
+char_raw <- charToRaw("Maxine")
+char_raw
+```
+
+`charToRaw()`返回的尚不是编码结果（二进制），而是十六进制的表示。每个十六进制数表示字符串的一个字节：`4d`是M，`61`是a等。`charToRaw()`返回的对象在R中被称为`raw type`，想要得到真正的二进制编码，要对`raw type`再使用`rawToBits()`函数：
+
+```{r}
+rawToBits(char_raw)
+```
+
+`readr`默认使用UTF-8编码。其中的含义在于，每当接受到一个字符串，R收到的不是字符串本身，而是它背后的二进制表示，于是R便尝试按照UTF-8的规则解读这些二进制码，把它们还原为人类所能理解的字符。问题是，如果你的文件不是用UTF-8编码，这就像用英文字典来解释汉语拼音，可能小张计算机存储字母”A”是1100001，而小王存储字母”A”是11000010，这样双方交换信息时就会误解。比如小张把1100001发送给小王，小王并不认为1100001是字母”A”，可能认为这是字母”X”，于是小王在用记事本访问存储在硬盘上的1100001时，在屏幕上显示的就是字母”X”。
+
+
+要解决这个问题，需要在`parse_character()`函数中通过`locale(encoding = )`参数设定编码方式：  
+
+如何才能找到正确的编码方式呢？有可能数据来源会注明，但如果没有到话，`readr`包提供了`guess_encoding()`函数来帮助你找出编码方式。这个函数并非万无一失，如果有大量文本效果就会更好，它的第一个参数可以是直接的文件路径，也可以是一个`raw type`:
+```{r}
+
+guess_encoding(charToRaw("中国"))
+parse_character("中国",locale = locale(encoding = "UTF-8"))
+parse_character("中国",locale = locale(encoding = "windows-1252"))
+
+guess_encoding("data\\hotdogs.txt")
+```
+
+编码问题博大精深，这里只是蜻蜓点水式地介绍一下。如果想要学习更多相关知识，可以阅读[http://kunststube.net/encoding/](http://kunststube.net/encoding/)
+
+
+### 因子  
+
+因子对应的解析函数是 `parse_factor()` ，其中 `levels` 参数被赋予一个包含所有因子可能水平的向量，如果要解析的列存在 `levels` 中没有的值，就会生成一条警告。
+```{r,error = T}
+fruit <- c("apple", "banana")
+f <- parse_factor(c("apple", "banana", "bananana"), levels = fruit)
+problems(f)
+```
+
+如果有很多问题条目的话，最简单的是它们当做字符串来解析，然后用`forcats`包进行后续处理。  
+
+### 日期时间、日期、时间
+
+根据需要的是日期型数据（从1970-01-01开始的天数）、日期时间型数据（从1970-01-01开始的秒数）还是时间型数据（从午夜开始的描述），我们可以在3中解析函数之间进行选择。在没有使用任何附加参数时调用，具体情况如下：  
+
+* `parse_datetime()`期待的是符合 ISO 8601 标准的日期时间。ISO 8601是一种国际标准，其中日期的各个部分按从大到小的顺序排列，即年、月、日、小时、分钟、秒：
+
+```{r}
+parse_datetime("2010-10-01 201002")
+
+## 如果时间被忽略了，就会被设置为午夜
+parse_datetime("20101001")
+```
+
+这是最重要的日期/时间标准，如果经常使用日期和时间，可以阅读以下维基百科上的[ISO 8601标准](https://en.wikipedia.org/wiki/ISO_8601)
+
+* `parse_date()`期待的是四位数的年份、一个`-`或者`/`作为分隔符，月，一个`-`或者`/`作为分隔符，然后是日：
+```{r}
+parse_date("2010-10-01")
+parse_date("2010/10/01")
+```
+
+* `parse_time()`期待的是小时，`:`作为分隔符，分钟，可选的`:`和后面的秒，以及一个可选的 am/pm 标识符：  
+
+```{r}
+parse_time("8:20 pm")
+parse_time("8:20:05")
+```
+
+如果默认数据不适合实际数据，那么可以为 `parse_date()` 的第二个参数 `format` 传入一个字符串指定自己的日期时间格式(这个参数是解析日期时间的函数在`parse_*()`函数族中特有的)，格式由以下各部分组成：  
+
+成分|符号
+----|---
+年| `%Y`(四位数)<br>`%y`(两位数；00-69被解释为2000-2069、70-99被解释为1970-1999)
+月| `%m`(两位数)<br> `%b`（简写名称，如“Jan”）<br> `%B`（完整名称，如January）  
+日| `%d`(一位数或两位数) <br> %e(两位数)
+时间| `%H`(0-23小时)<br>`%I`(0-12小时，必须和`%p`一起使用) <br> `%p`(表示am/pm) <br> `%M`(分钟) <br> `S`(整数秒) <br> `%OS`(实数秒) <br> `%Z`(时区) 
+非数值字符| `%.`(跳过一个非数值字符) <br> `%*`跳过所有非数值字符  
+
+找出正确格式的最好方法是创建几个解析字符向量的示例，并使用某种解析函数进行测试（如果数据中有分隔符，则）：  
+
+```{r}
+parse_date("100101",format = "%m%d%y")
+parse_date("01/02/15","%y/%m/%d")
+parse_date("Nov/12/1998","%b/%d/%Y")
+```
+
+### 练习   
+```{exercise}
+如果在`locale()`函数中把`decimal_mark`和`grouping_mark`设为同一个字符，会发生什么情况？如果将`decimal_mark`设为逗号，`grouping_mark`的默认值会发生什么变化？如果将`grouping_mark`设置为句点，`decimal_mark`的默认值会发生什么变化？  
+```
+
+
+不能将`decimal_mark` 和 `group_mark`设为同一个字符：
+```{r,error=T}
+locale(decimal_mark = ".",grouping_mark = ".")
+```
+
+将`decimal_mark`设为逗号时，`grouping_mark`的默认值将变为`.`(见第一行):
+
+```{r}
+locale(decimal_mark = ",")
+```
+
+将`grouping_mark`设为句点时，`decimal_mark`的默认值将变为`,`:
+
+```{r}
+locale(grouping_mark = ".")
+```
+
+
+```{exercise}
+`locale()`函数中的`date_format()`和`time_format()`参数有什么用？  
+```
+
+
+`date_format()` 和 `time_format()` 和 `format` 参数的功能一样，用以指定日期时间数据的格式，如果在 `locale()` 中设定了以上两个参数，就不需要再设定 `format`；反之亦然：  
+
+```{r}
+parse_date("170625", locale = locale(date_format = "%y%m%d"))
+```
+
+4. 生成正确行使的字符串来解析以下日期和时间。  
+
+```{r}
+d1 <- "January 1,2010"
+parse_date(d1,"%B %d,%Y")
+
+d2 <- "2015-Mar-07"
+parse_date(d2,"%Y-%b-%e")
+
+d3 <- c("August 19 (2015)","July 1 (2015)")
+parse_date(d3,"%B %d (%Y)")
+
+t1 <- "1705"
+parse_time("1705","%H%M")
+
+t2 <- "11:15:10.12 PM"
+parse_time(t2,"%I:%M:%OS %p")
+```
+
+## 解析文件  
+
+现在我们已经学会了如何用 `parse_*()` 函数族解析单个向量，接下来就能回到本章的最初目标，研究`readr`是如何解析文件的。我们将关注以下两点：  
+
+* `readr`如何自动猜出文件每列的数据类型  
+* 如何修改默认设置  
+
+### 解析策略(strategies)  
+
+`readr` 通过一种启发式过程(heuristic)来确定每列的类型：先读取文件的前1000行，然后使用（相对保守的）某种启发式算法确定每列的类型。`readr` 中的导入函数会先用 `guess_parser()` 函数返回对于所需解析函数最可信的猜测，然后尝试用可能性最大的解析函数解析该列：
+
+```{r}
+guess_parser("123.45")
+guess_parser("12,352,561")
+guess_parser("1998-11-12")
+guess_parser(c("True", "False"))
+```
+
+这个过程会依次尝试以下每种数据类型，直到找到匹配的类型。   
+
+**逻辑值(logical)**：  
+  只包括`F`、`T`、`FALSE`和`True`  
+**整数(integer)**  
+  只包括数值型字符（以及`-`）  
+**双精度浮点数(double)**   
+  只包括有效的双精度浮点数   
+**数值(number)**  
+  只包括带有分组符号的有效双精度浮点数  
+**时间**   
+  与默认的`time_format`匹配的值   
+**日期**   
+  与默认的`date_format`匹配的值   
+**日期时间**  
+  符合ISO 8601标准的任何日期  
+
+如果以上数据不符合上述要求中的任意一个，那么这一列就是一个字符串向量，`readr`将使用`parse_character()`解析它。  
+
+### 可能遇到的问题  
+
+这些默认设置对更大的文件并不总是有效。以下是两个可能遇到的主要问题：  
+
+* `readr`通过前 1000 行猜测数据类型，但是前 1000 行可能只是一种特殊情况，不足以代表整列。例如，一列双精度数值的前1000行有可能都是整数  
+* 列中可能包含大量缺失值。如果前 1000 行都是`NA`，那么`readr`会认为这是一个字符向量，但你其实想将这一类解析为更具体的值。  
+
+`readr`的安装包里包含了一份文件`challenge.csv`，用来说明解析过程中可能遇到的问题。这个csv文件包含两列x，y和2001行观测。x 列的前 1001 行均为整数，但之后的值均为双精度整数。y 列的前 1001 行均为`NA`，后面是日期型数据：
+```{r}
+## readr_example()找到包含在R包中的文件的路径
+challenge <- read_csv(readr_example("challenge.csv"))
+```
+
+可以看到，`read_csv()`成功解析了 `x`，但对于 `y` 则无从下手，因为使用了错误的解析函数`col_logical()`。使用 `problems()` 函数明确列出这些失败记录，以便深入探究其中的问题：  
+```{r}
+problems(challenge)
+```
+
+可以使用`spec_csv()` 函数来直接查看 `readr` 在默认情况下用那种类型的解析函数解析数据：
+```{r}
+spec_csv(readr_example("challenge.csv"))
+```
+
+
+为了解决这个问题，我们用`read_csv()`函数中的`col_types`指定每列的解析方法(column specification)，之前我们向`col_types`传入一个字符串说明各列的类别，但这里是要直接指明解析函数了。这样做的指定必须通过`cols()`函数来创建(具体格式和`spec_csv()`或者`read_csv`自动打印的说明是一样的)：  
+```{r}
+challenge <- read_csv(readr_example("challenge.csv"),
+                      col_types =cols(
+                         x = col_double(),
+                         y = col_date()
+))
+
+tail(challenge)
+```
+
+每个`parse_*()`函数都有一个对应的`col_*()`函数。如果数据已经保存在R的字符向量中，那么可以使用`parse_*()`，如果要告诉`readr`如何加载数据，则应该使用`col_*()`。  
+
+**The available specifications are: (with string abbreviations in brackets)**
+
+* `col_logical()` [l], containing only T, F, TRUE or FALSE.    
+* `col_integer()` [i], integers.    
+* `col_double()` [d], doubles.  
+* `col_character()` [c], everything else.  
+* `col_factor(levels, ordered)` [f], a fixed set of values.    
+* `col_date(format = "")` [D]: with the locale's date_format.     
+* `col_time(format = "")` [t]: with the locale's time_format.    
+* `col_datetime(format = "")` [T]: ISO8601 date times   
+* `col_number()` [n], numbers containing the grouping_mark    
+* `col_skip()` [_, -], don't import this column.    
+* `col_guess()` [?], parse using the "best" type based on the input.  
+
+`cols_only()`代替`cols()`可以仅指定部分列的解析方式；`.default`表示未提及的所有列(`read_csv()`的默认设置可以表示为`read_csv( col_type = cols(.default = col_guess()))`
+
+一旦我们指定了正确的解析函数，问题便迎刃而解。  
+
+
+### 其他技巧  
+
+我们再介绍其他几种有注意解析文件的通用技巧：  
+
+* 在前面的示例中，如果比默认方式再多检查一行，我们就能一蹴而就，解析成功：  
+```{r}
+challenge <- read_csv(readr_example("challenge.csv"),
+                      guess_max = 1001)
+```
+
+* `type_convert()`函数在一个数据框的所有字符列上应用启发式解析过程：  
+```{r}
+df <- tribble(
+  ~x,~y,
+  "1","1.21",
+  "4","2,32",
+  "3","4,56"
+)
+df
+
+## 注意列类型
+type_convert(df)
+```
+
+* 如果正在读取一个非常大的文件，那么应该将`n_max`设置为一个较小的数，比如10,000或者100,000，这可以让我们在解决常见问题时加快重复试验的过程。
+
+## `readxl`  
+
+要想将其他类型的数据导入 R 中，可以先从下列的`tidyverse`包开始。对矩形数据来说：  
+
+* `haven`可以读取SPSS、Stata和SAS文件:  
+![](images\5.png)
+ 
+* 配合专用的数据库后端程序（如 RMySQL，RSQLite，RpostgreSQL等），DBI可以对相应数据库进行SQL查询，并返回一个数据框  
+* `readxl` 专门为读取 Excel 文件打造(.xlsx和xls均可)
+
+下面主要介绍 `readxl` 的用法，不同于`readr`，`readxl` 不是 `tidyverse` 的核心包，我们总需要显示地加载它：  
+```{r}
+library(readxl)
+```
+
+`read_excel()` 是 `readxl` 中的核心函数，它的第一个参数`path`接受 `xlsx` 或 `xls` 文件的路径。但由于一个 Excel 文件（工作簿）经常包含多个工作表，所以我们在读取时需要指明某张工作表，`excel_sheets()` 函数返回一个工作簿文件中各个工作表(sheet)的名字：  
+
+```{r}
+## readxl附带的Excel文件
+readxl_example()
+## read_expample()函数获取路径
+path <- readxl_example("deaths.xlsx")
+excel_sheets(path)
+```
+
+获悉一个工作簿内部的表结构以后，可以使用`sheets`参数指定要读取的表，可以是一个整数（第几张彪），也可以是字符串（表明）, `read_excel()`默认读取第一张表：  
+```{r}
+deaths <- read_excel(path, sheet = "arts")
+```
+
+
+经常会在读取Excel文件时遇到的一个问题是,有些人喜欢在表格的前面几行或最后几行添加一些无关真正分析内容元数据（metadata），比如在`deaths.xlsx`这个Excel文件中：  
+![](images/9.png)
+
+
+默认设置下，`read_excel()`会将这些元数据一并读入： 
+```{r}
+deaths 
+```
+
+一个很有用的方法是通过Rstudio的File$\rightarrow$Import Dataset$\rightarrow$From Excel 接口导入数据，我们可以通过预览来观察导入后的数据，还可以对`read_excel()`的导入参数进行设置：
+
+![](images\7.png)
+
+
+![](images\8.png)
+
+对于`deaths.xlsx`这个Excel文件，可以结合使用`n_max` 和 `skip` 参数去除不想读取的部分（分别对应图形界面里的Max Rows和Skip：
+```{r}
+read_excel(path,  skip= 4, n_max = 10)
+```
+
+`read_excel()`中另一个很有用的参数是`range`，用于指定一块Excel表中要读取的区域：
+```{r}
+read_excel(path, sheet = "arts", range = "A5:F15")
+## 还可以在range中指定列名
+read_excel(path, range = "arts!A5:F15")
+```
+
+与`range`相关的帮助函数`cell_rows()`、`cell_cols()`和`cell_limits()`可以为区域选择提供更大的自由度，下面的示例中使用文件`geometry.xls`，读取预览：  
+![](images\10.png)
+
+```{r}
+path <- readxl_example("geometry.xls")
+# Specify only the rows or only the columns
+read_excel(path, range = cell_rows(3:6))
+read_excel(path, range = cell_cols("C:D"))
+read_excel(path, range = cell_cols(2))
+
+# Specify exactly one row or column bound
+read_excel(path, range = cell_rows(c(5, NA)))
+read_excel(path, range = cell_rows(c(NA, 4)))
+read_excel(path, range = cell_cols(c("C", NA)))
+read_excel(path, range = cell_cols(c(NA, 2)))
+
+# General open rectangles
+# upper left = C4, everything else unspecified
+read_excel(path, range = cell_limits(c(4, 3), c(NA, NA)))
+# upper right = D4, everything else unspecified
+read_excel(path, range = cell_limits(c(4, NA), c(NA, 4)))
+```
+
+
+
+
+
+
+

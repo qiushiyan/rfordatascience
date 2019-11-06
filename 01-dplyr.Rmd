@@ -1,0 +1,1554 @@
+
+
+# dplyr    
+
+
+可视化是提供洞见的重要工具。但它需要数据格式完全符合我们的要求，这对于原始数据来说是一种奢望。一般来说，我们总要创建一些新变量或者摘要统计量，还可能要对变量进行重命名或者对观测值进行重新怕徐，以遍数据更容易处理。本章将专注于如何用 `dplyr` 包来进行数据转换。  
+首先导入`tidyverse`
+
+```{r,message=F}
+library(tidyverse)
+knitr::opts_chunk$set(message=F,cache=T)
+```
+
+为了介绍 `dplyr` 中的基本数据操作。我们需要使用 `nycflights::flights`，这个数据集包含了 2013 年从纽约市处罚的所有 336776 次航班的信息。该数据来自于美国交通统计局。
+```{r}
+library(nycflights13)
+flights
+```
+
+这里的数据输出和我们之前用过的 data frame 形式有一些差别：只显示了前几行和适合屏幕宽度的几列。这样的差别是因为`flights`数据集被存储在tibble当中，它是一种更简单的数据框，但更加适合在 tidyverse 中使用。相对于普通的数据框，它在打印和取子集两个方面进行了优化，更详细的内容会在后面的章节谈到。  
+
+同时，输出结果列名下面有一行3个或4个字母的缩写。它们描述了每个变量的类型。  
+
+- `int`表示整数型变量  
+- `dbl`表示双精度浮点型变量  
+- `chr`表示字符串  
+- `dttm`表示日期时间（日期+时间）型变量  
+
+还有另外三种常见的变量类型，虽然没有在本数据中出现，但很快就会用到：  
+
+- `lgl`表示逻辑型变量（即布尔变量）  
+- `fct`表示因子  
+- `date`表示日期型变量  
+
+另外，还有一种专门为`tibble`数据格式编写的函数 `glimpse()`，它的功能和 `str()` 类似，但输出更为整洁，显示的数据也更多一些:
+```{r}
+glimpse(flights)
+str(flights)
+```
+
+
+## 5个数据转换核心函数
+本章的五个 `dplyr` 核心函数能解决数据转换中的绝大多数问题：  
+
+- 使用 `filter()` 筛选行  
+- 使用 `arrange()` 排列行    
+- 使用 `select` 选取列  
+- 用现有的变量创建新变量 `mutate()`  
+- 聚合并计算摘要统计量 `summarize()`   
+上面的所有函数都可以和 `group_by()`函数联合起来使用，`group_by()` 函数可以改变以上每个函数的作用范围，让其从在整个数据集上操作变为在每个变量的水平上分别操作。这 6 个函数构成了数据处理的基本工具。  
+
+这些函数有完全相同的参数结构和工作方式：  
+
+- 第一个参数是数据集，表明我们想对什么数据进行处理  
+- 随后的参数是变量名称（不带引号）描述了在数据上进行什么处理，不同的变量之间用逗号分隔  
+- 它们不会改变原数据，而是生成一个新的数据框  
+
+## 使用`filter()`筛选行
+`filter()`函数可以基于观测值筛选行，符合条件的行留下，不符合条件的被剔除，最终得到一个观测子集。第一个参数是数据集的名称，第二个参数以及随后的参数是用来筛选行的条件。例如，我们可以使用以下代码筛选出一月一日的所有航班（条件：月 = 1 且 日=1）
+```{r}
+flights %>% filter(month == 1, day == 1)
+```
+
+
+**`filter()`函数的内部执行原理：**
+以行为单位，如果该行满足所指定的条件，则被筛选出 ； 若不满足，则被剔除。使用`filter()`时，总应该从每一行的角度来思考问题。  
+
+
+因为dplyr中的函数从不改变原数据，如果想储存`filter()`得出的结果，那么需要把它赋值给一个变量。
+```{r}
+jan = flights %>% filter(month == 1, day == 1)
+```
+
+
+R 要么输出结果，要么将结果保存在变量中。如果想要在存储的同时显示结果，可以用括号将赋值语句括起来：
+```{r}
+(jan = flights %>% filter(month == 1, day == 1))
+```
+
+### 运算符
+为了有效地进行筛选，R 提供了一套标准的运算符，包括比较运算符和逻辑运算符。  
+
+**比较运算符**： `==、！= 、 > 、 >= 、 < 、 <= `
+当开始编写条件时，最容易犯的错误就是用`=`而不是`==`来测试是否相等。R 对于这种错误会提供一条启发性的错误信息：  
+```{r,error = T}
+flights %>%
+  filter(month = 1)
+```
+
+
+在判断是否相等时，还有另一个常见问题：浮点数。例如，下面的结果可能出人意料：
+```{r}
+sqrt(2)^2 == 2
+1 /49 * 49 == 1
+```
+
+计算机使用的是有限位运算，不能存储无限位的数。因此我们看到的每个数都是一个近似值。比较浮点数是否相等时，不能用`==`,而应该用`near()`,它用于比较两个数值向量是否相等，且带有一定容忍度(tolerence):
+```{r}
+near(sqrt(2) ^ 2, 2)
+near(1 /49 * 49, 1)
+```
+
+
+**逻辑运算符*
+`filter()`中的多个参数是“与”的关系，如`data %>% filter(condition_1,condition_2,···,condition_n)`表示的是“我希望同时筛选出满足这n个条件的行。如果要实现其他类型的组合，需要使用逻辑（布尔）运算符。`&`表示与，`|`表示或，`!`表示非。下图给出了布尔运算的完整集合：  
+
+![](images\18.png)
+
+例如，想要找出11月**或**12月出发的所有航班：  
+```{r}
+flights %>% filter(month == 11 | month == 12)
+```
+
+
+表达式中的运算顺序和正常语言中的是不一样的。你不能写成`flights %>% filter(month == 11 | 12)`，这种形式的文字翻译确实是“找出11月或12月的所有航班”，但在代码中不是这个意思。代码中的含义是找出所有月份为`11|12`的航班，这个表达式的逻辑值为TRUE，在数字语境中R会将它解读为1，所以这段代码实际上找出的 1 月出发的所有航班。  
+这种问题有一个有用的简写形式：`x %in% y`，这个表达式在x被包含于y的时候返回TRUE，我们可以这样改写上面的代码：
+
+```{r}
+flights %>% filter(month %in% c(11, 12))  ## 找出所有月份值包含在该向量里的行
+```
+
+
+有时可以使用德摩根律来将筛选条件简化：`!(x & y)`等价于`!x | !y`，而`!(x | y)`等价于`!x & !y`。例如，如果想要找出延误时间（到达和出发)都不多于两个小时的航班，以下两种方式均可：
+`flights %>% filter(arr_delay <= 120 & dep_dealy <= 120 )`  
+`flights %>% filter(!(arr_delay > 120| dep_delay > 120 ))`
+
+dplyr中另外一个对筛选有帮助的函数是`between(x,left,right)`，它用于判断x是否落在left和right两个值确定的闭区间里。
+例如找出所有在11月和12月出发的航班也可以这样表达：
+```{r}
+flights %>% filter(between(month, 11, 12))
+```
+
+
+有些时候，`filter()`函数中用来筛选的条件可能比较复杂，需要书写令人费解的逻辑表达式，这时候可以考虑创建一个新变量代表逻辑判断的结果。这样检查代码会容易很多。我们很快就会介绍如何创建新变量。
+
+
+```{block2, type = "rmdcaution"}
+& and && indicate logical AND and | and || indicate logical OR. The shorter form performs elementwise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.
+```
+
+### 缺失值
+NA(not available)表示未知的值、缺失值，缺失值一个很重要的特点是它是“可传染的”。如果运算中包含了缺失值，那么运算结果一般来说也会是缺失值。
+```{r}
+NA > 5
+NA == 10
+NA + 2
+NA / 2
+```
+
+以上的表达式的结果都是NA，这很好理解，如果R不知道表达式其中的一个量究竟是什么值，自然表达式的结果也就不可知。  
+还要注意一件事：
+```{r}
+NA == NA
+```
+
+我们可以这么理解这个结果：  
+
+> 令x为Mary的年龄，我们不知道她有多大：x <- NA  
+> 令y为John的年龄，我们同样不知道他又多大：x <- NA  
+> Mary和John的年龄相同吗？： x == y  
+> 不知道！  
+
+鉴于此，使用`NA == x`来判断x是否是缺失值不可行。我们用函数`is.na()`进行判断：  
+```{r}
+x = NA
+is.na(x)
+```
+
+前面说过，`filter()` 实际上是在提问：某行的某个 \\ 某些变量满足给定的条件吗？如果为 TRUE，则筛选出该行。如果该行在涉及变量上的取值是 NA，那么逻辑表达式也会返回 NA，这些行将被返回结果为 FALSE 的行一并被排除。如果想保留缺失值，同样可以利用逻辑表达式指出：
+```{r}
+df <- tibble(x = c(1, NA, 3))
+df %>% filter(is.na(x) | x > 1)
+```
+
+### 练习
+
+```{exercise}
+找出满足以下条件的所有航班: 
+```
+
+> 到达时间延误两小时或更多的航班 
+  
+```{r}
+flights %>% filter(arr_delay >= 120)
+```
+
+> 飞往休斯顿（IAH机场或者HOU机场）的航班  
+
+```{r}
+flights %>% filter(dest == "IAH" | dest == "HOU")
+```
+
+也可以写成`filter(flights, dest %in% c("HOU","IAH"))`
+
+> 由联合航空（United）、美利坚航空（American）或者三角洲航空（Delat）运营的航班
+  `carrier`列代表了航空公司，但是用两个字母缩写表示： 
+  
+```{r}
+flights["carrier"]
+```
+
+
+我们可以在`airlines`数据集中找到这些缩写的含义：  
+```{r}
+airlines
+```
+
+
+三角洲航空对应 “DL”，“UA” 代表联合航空，“AA”代表美利坚航空   
+```{r}
+flights %>% filter(carrier %in% c("DL", "UA", "AA"))
+```
+> 夏季(7月、8月、9月)出发的航班  
+
+```{r}
+flights %>% filter(month %in% c(7, 8, 9))
+```
+
+
+另一种写法：`filter(flgihts,month >= 7, month <= 9)`  
+用`between()`函数的写法：
+```{r}
+flights %>% filter(between(month,7,9))
+```
+
+> 到达时间延误超过两小时，但出发时间没有延误的航班
+
+```{r}
+flights %>% filter(dep_delay > 120 ,
+                   arr_delay <= 120)
+```
+
+
+> 延误至少一小时，但飞行过程弥补回30分钟的航班
+
+```{r}
+flights %>% filter(dep_delay - arr_delay > 30)
+```
+> 出发时间在午夜和早上6点之间（包括0点和6点）的航班     
+
+  在变量`dep_time`中，0 点用数值 2400 代表：
+```{r}
+summary(flights$dep_time)
+```
+  
+  出于这点，不能简单写成`dep_time <= 600`，而是如下：
+```{r}
+flights %>%  filter(dep_time <= 600 | dep_time == 2400)
+```
+
+
+```{exercise}
+dep_time`有缺失值的航班有多少？其他变量的缺失值情况如何？
+```
+
+
+```{r}
+sum(is.na(flights$dep_time))
+flights %>% filter(is.na(dep_time))
+```
+  
+注意到，所有`dep_time`为 NA 的航班在有关实际到达、出发情况的变量上取值皆为 NA，这些很可能是被取消的航班。  
+
+```{r}
+# 其他变量中的缺失值
+flights %>% 
+  summarize_all( ~ sum(is.na(.)))
+```
+
+  
+> 3. 为什么`NA ^ 0`的值不是NA，而`NA * 0`的值是NA ？为什么NA | TRUE 的值不是NA？为什么FALSE & NA的值不是NA，能找出一般规律吗？  
+
+**只要表达式的值被NA背后的未知量所决定，就返回NA**
+对于所有x的取值，都有$x ^ 0 = 1$，`NA ^ 0`不取决于 NA 到底可能是什么值。  
+但对于$x * 0$，如果x趋近于正负无穷（ R 用`-inf` 和 `inf`代表），则R会返回 `NaN` 错误（not a number），只要知道 NA 究竟是什么，才能知道该表达式的结果
+```{r}
+NA ^ 0
+NA * 0
+c(Inf,-Inf) * 0
+```
+
+同样，对于 `NA | TRUE`，不论 NA 是什么，该表达式总为真 ； 对于`NA & FALSE`，不论 NA 是什么，该表达式总为假。  
+```{r}
+NA | TRUE
+NA & FALSE
+```
+
+而 ` NA & TRUE`和`NA | FALSE`则会返回 NA：
+```{r}
+NA & TRUE
+NA | FALSE
+```
+
+## 使用`arrange()`排列行
+`arrange()`函数的工作方式与`filter()`函数非常相似，但它不是筛选行，而是改变行的顺序。它接受一个数据集和一组作为排序依据的列名（或者更复杂的表达式）作为参数，如果列名不止一个，那么就是用后面的列在前面排序的基础上继续排序：
+```{r}
+flights %>% arrange(year, month, day)  ## 依次按照year/month/day三个变量按升序排序
+```
+
+如果想要按某列降序排列行，可以对该列名使用函数`desc()`：
+```{r}
+flights %>% arrange(desc(arr_delay))  ## 按照到达延误时间从大到小排序
+```
+
+缺失值总是排在最后：  
+```{r}
+df <- tibble(x = c(5, 2, NA))
+df %>% arrange(x)
+```
+
+如果参数是一个关于某些列的表达式`expression(variable_n)`，它的意思是告诉`arrange()`：“按照各行在这个表达式上的取值的从小到大的顺序，排列**原来的**数据集。 
+
+```{r}
+flights %>% arrange((dep_delay ** 2))   ## dep_delay的绝对值小的行被排在前面
+```
+
+例如，我们希望找到总延误时间(dep_delay + arr_delay)最长的航班  
+```{r}
+## 延误时间最长的航班
+flights %>% arrange(desc(arr_delay + dep_delay))
+```
+
+如果A行在两个量上的取值是(2,5)，B行是(1,10)，B会出现在A后面，因为`arrange()`按照这个表达式来进行排列。  
+
+### `slice()`
+
+`slice()`函数按照索引选择指定的观测行，与传统的 “[” 选择方法相比，它与 dplyr 函数的配合更好，支持管道操作：    
+```{r}
+## 选择前5行
+mtcars %>% slice(1:5)
+## 选择最后一行,类似于tail(mtcars,1)
+mtcars %>% slice(1L)
+# Rows can be dropped with negative indices:
+slice(mtcars, -5:-n())
+# In this case, the result will be equivalent to:
+slice(mtcars, 1:4)
+# Equivalent code using filter that will also work with databases,
+# but won't be as fast for in-memory data. For many databases, you'll
+# need to supply an explicit variable to use to compute the row number.
+filter(mtcars, row_number() == 1L)
+filter(mtcars, row_number() == n())
+filter(mtcars, between(row_number(), 5, n()))
+```
+
+当要求依据某种排序选出前/后n个观测时，`arrange()`配合`slice()`会很方便。例如，下面的代码都选出出发时间最早的10架航班，但是第一种方法更简单一些：
+```{r}
+## arrange + slice
+flights %>% arrange(dep_time) %>% slice(1:10)
+## filter
+flights %>% filter(min_rank(dep_time)<=10)
+```
+
+
+
+### 练习  
+
+```{exercise}
+如何使用`arrange()`将缺失值排在最前面？（提示：使用is.na())  
+例：把 flights 数据集中`dep_time`上的 NA 值排在最前面( to sort the data frame by departure time (dep_time) in ascending order but NA values first)  
+```
+
+
+首先`is.na(dep_time)`将把所有NA变为TRUE（1），其他数值变成FALSE（0），所以`desc(is.na(dep_time))`是一个排序依据,它告诉`arrange()`，把那些经过运算`is.na(dep_time)`后值大的行排在前面，即原先的NA值 ；   之后，我们还要处理那些不是NA的值的排列，所以添加一个参数`dep_time`：
+
+```{r}
+flights %>% arrange(desc(is.na(dep_time)), dep_time)
+```
+
+
+```{exercise}
+对`flights`排序以找出延误时间最长的航班。找出出发时间最早的航班。 
+
+```
+
+
+```{r}
+## 延误时间最长的航班
+flights %>% arrange(desc(dep_delay))
+```
+
+
+```{r}
+## 出发时间最早的航班
+flights %>% arrange(dep_time)
+```
+
+
+```{exercise}
+对`flights`排序以找出速度最快的航班     
+
+```
+
+
+这个排序条件需要用到表达式，`速度 = distance / air_time`
+
+```{r}
+flights %>% arrange(distance / air_time)
+```
+
+## 使用`select()`选择列  
+
+如今，数据集有几百个甚至几千个变量已经司空见惯。这种情况下，如何找出真正感兴趣的变量经常是一个挑战。通过基于变量名的操作，`select()`函数可以让我们快速生成一个有用的变量子集。    
+
+虽然航班数据只有 19 个变量，但还是可以用来了解一下`select()`函数的大致用法：  
+```{r}
+## 只选择year,month,day 三个变量
+flights %>% select(year, month, day)
+```
+
+顺便说一句，如果把变量名变成字符串或者它在所有变量中的顺序也可以正常工作,如`flights %>% select("year", "month", "day")`和`flights %>% select(1, 2, 3)`和上面代码会返回一样结果，但是这两种方法都不值得推荐。
+
+当希望选择的列比较多时，可以先用一个向量储存，但用向量储存的必须是字符串形式的列名：
+```{r}
+vars = c("arr_delay", "dep_delay")
+flights %>% select(vars)
+```
+
+
+另一个问题是，如果`vars`本身就是一个变量名，`select()`函数将会只选择出`vars`这一类，而不会读取其中的值，在前面加上操作符`!!!`将会使`select()`按照我们希望的那样工作。  
+```{r}
+df <- tibble(vars = c(1, 2, 3), 
+             number_1 = c(4, 5, 6),
+             number_2 = c(7, 8, 9))
+vars = c("number_1","number_2")
+## 希望选取number_1和number_2两列的错误做法
+df %>% select(vars)
+## 正确做法
+df %>% select(!!!vars)
+```
+
+`select()` 还可以重命名变量，但我们很少这样使用它，因为这样会丢掉所有未明确提及的变量。我们应该使用`select()` 函数的变体 `rename()` 函数来重命名变量，它会把未提及的那些变量按照原名字放到生成的数据框里：  
+```{r}
+## 将tail_num 重命名为tailnum
+rename(flights, tail_num = tailnum)
+```
+
+
+
+
+
+其他常见的`select()`函数用法如下所示：  
+```{r}
+## 选择“year”和“day”之间的所有变量，使用冒号
+flights %>% select(year:day)
+```
+
+```{r}
+## 选择不在“year”和“day”之间的所有列，使用减号
+flights %>% select(-(year:day))
+```
+
+还可以在`select()`函数中使用一些辅助函数：    
+* `starts_with("abc")`：匹配以名字以“abc”开头的列  
+```{r}
+flights %>% select(starts_with("arr"))  ## 所有以arr开头的列
+```
+
+* `ends_with("xyz")`: 匹配名字以“xyz”结尾的列  
+```{r}
+## 所有以"delay"结尾的列
+flights %>% select(ends_with("delay"))
+```
+
+* `contains("ijk")`，匹配名字包含"ijk"的列  
+```{r}
+## 所有包含"time"的列
+flights %>% select(contains("time"))
+```
+
+* `matches("(.)\\1")`：选择名字符合正则表达式要求的列，后面将具体讲述正则表达式   
+* `num_range("x",c(1,2,3))`，选择名字为"x1"、"x2"、"x3"的列   
+```{r}
+df <- tibble(x1 = 1,x2 = 2,x3 = 3)
+df %>% select(num_range("X", 1:3))
+```
+
+
+* `one_of(character_1,···,character_n)`:如果某个列的名字出现在序列里，则选出它  
+```{r}
+flights %>% select(one_of("arr_delay", "dep_delay", "xyz"))
+```
+
+
+
+
+* `everything()`：匹配所有(剩余)变量，当想要将几个变量移到数据集开头时，这种方法很有用
+```{r}
+## 将time_hour和air_time两个变量移到flights数据的开头
+flights %>% select(time_hour,air_time, everything())
+```
+
+* `last_col(offset = n)`：选择倒数第n列，不设置offset时，默认选择最后一列  
+```{r}
+flights %>% select(last_col())
+```
+
+利用这些帮助函数，我们可以为选择列设置任意数目的条件，`select()`中以逗号分隔的列表示**“或”** 关系，如：
+```{r}
+## 找出以“arr”开头或者以“time”结尾的列
+flights %>% select(starts_with("arr"), ends_with("time"))
+```
+
+
+**注意**
+所有帮助函数都忽略大小写，如下所示
+```{r}
+flights %>% select(ends_with("DELAY"))
+```
+
+如果要区分大小写，可以设置任意帮助函数的参数`ignore.case = FALSE`
+```{r}
+flights %>% select(ends_with("DELAY",ignore.case = F))   ## 将不会选择出任何列
+```
+
+### 练习
+
+```{exercise}
+从flights数据集中选择`dep_time、dep_delay、arr_time、arr_delay`，找出尽可能多的方法   
+
+```
+
+
+先查看这些变量的位置：
+
+```{r}
+glimpse(flights)
+```
+
+```{r}
+# 常规方法
+flights %>% select(dep_time, dep_delay, arr_time, arr_delay)
+```
+
+
+```{r}
+# 用one_of()
+vars = c("dep_time", "dep_delay", "arr_time", "arr_delay")
+flights %>% select(one_of(vars))
+```
+
+```{r}
+# 多个条件
+flights %>% select(starts_with("arr_"), starts_with("dep_"))
+```
+
+```{exercise}
+
+如果在`select()`中多次计入一个变量名，会发生什么情况？   
+```
+
+`select()`函数将会忽略重复出现的变量，只选出一列，同时也不会报错：
+
+```{r}
+flights %>% select(year, month, day, year, month, day)
+```
+
+
+
+## 使用`mutate()`添加新变量  
+
+
+
+除了选择现有的列，经常还需要添加新列。新列是现有列的函数，这就 `mutate()` 函数的作用。  
+`mutate()` 总是将新列添加在最后,格式为`新列名= 表达式`。为了便于观察它的效果，我们需要先创建一个更狭窄的数据集，以便能看到新变量。    
+例如，我们希望创建两个新列`gain`和`hours`，分别表示飞机在飞行过程中弥补的延误时间 (`gain = arr_dealy - dep_delay`)，然后把飞行时间换算成小时 `hours = air_time / 60`
+```{r}
+(flights_gain <- flights %>% 
+   select(ends_with("delay"),air_time) %>% 
+   mutate(gain = arr_delay - dep_delay,
+            hours = air_time / 60))
+```
+
+一旦新列被创建，就可以立即使用。例如，可能想知道对gain做时间上的平均：  
+```{r}
+flights_gain %>% mutate(gain_per_hour = gain / hours)
+```
+
+以上的数据转换也可以通过`mutate()`一次完成：  
+```{r}
+flights %>% 
+  select(ends_with("delay"),air_time) %>% 
+  mutate(
+    gain = arr_delay - dep_delay,
+    hours = air_time / 60,
+    gain_per_hour = gain/hours)
+```
+
+
+
+
+如果只想在保留新变量，可以使用`transmute()`：
+
+```{r}
+flights %>% 
+  select(ends_with("delay"),air_time) %>% 
+  transmute(
+    gain = arr_delay - dep_delay,
+    hours = air_time / 60,
+    gain_per_hour = gain/hours)
+```
+
+### 常用创建函数（Using creation functions）
+有多种函数可以帮助`mutate()`创建新变量。比较重要的一点是，这些函数必须是向量化的：它能接受一个向量作为输入，并返回一个向量作为输出，而且输入和输出向量长度相等。下面介绍一些比较常用的函数。  
+
+**算术运算符 +、-、*、/、^**    
+它们都是向量化的，使用所谓的“循环法则(recycling rules)”。如果一个参数比另一个参数短，那么前者会自动扩展到相同的长度，但某个参数是单个数值时，这种方式是最有效的，如`air_time * 60 或者 hours * 60 + minute`等。   
+算术运算符的另一个用途是与我们后面将很快学到的聚集函数结合起来使用。例如,`x / sum(x)`可以计算出x的各个分量在总数中的比例，`y - mean(y)`计算出y的各个分量与均值之间的差异。  
+
+**模运算符 %/% 和 % **  
+%/%（整除）和%%（求余）满足`x == y * (x %/% y) + （x %% y`, 这两个运算符在Python中分别是// 和 % 。  
+模运算非常好用，因为它可以拆分整数。例如，在flights数据集中，可以根据`dep_time`计算出hour和minute：
+```{r}
+## air_time中表示时间的方式是“xyz”表示x点yz分
+flights %>% 
+  transmute(hour = air_time %/% 100,
+            minute = air_time %% 100)   
+```
+
+**对数函数 log()/log2()/log10()**  
+在处理取值范围变化多个数量级的数据时，对数变换很有用。其他条件相同的情况下，更推荐使用`log2()`函数，因为它的解释很容易，对数变换后的变量每增加一个单位，意味着原始变量加倍 ； 减少一个单位，则原始数据变为原来的一半。  
+
+**偏移函数**  
+`lead()`和`lag()`函数分别将一个向量向前或向后移动指定的单位：
+```{r}
+x <- 1:10
+## 将x向前移动2个单位
+lead(x,n=2)
+## 将x向后移动一个单位（默认n=1）
+lag(x)
+```
+
+**累加和滚动聚合**  
+R的基础包提供了计算累加和、累加积、累加最小值和累加最大值的函数：`cumsum()、cumprod()、cummax()、cummin()`；dplyr包还提供了`cummean()`函数以计算累积平均值。
+```{r}
+x <- 1:10
+cumsum(x)
+cumprod(x)
+cummax(x)
+cummin(x)
+cummean(x)
+```
+
+**逻辑比较 >、<=、>、>=、==、!=**  
+如果要进行一系列复杂的逻辑运算，最好将中间结果保存在新变量中，这样就可以检查每一步是否都符合预期。  
+
+**排秩**  
+排秩函数有很多，从`min_rank()`开始，它可以完成最常用的排秩任务。默认的排秩方式是，最小的值获得最前面的秩（升序），使用`desc(x)`可以让最大的值获得前面的名次,NA值对应的秩也是NA：  
+```{r}
+x <- c(1,2,2,NA,3,4)
+min_rank(x)
+min_rank(desc(x))
+```
+
+`min_rank()`函数把相同值赋予相同的秩，如果有n个值秩相同为x，则下一个值的秩会直接从x+n开始
+如果`min_rank()`无法满足需要，可以看一下它的一些变体：   
+
+* `row_number()`,相同值不同秩  
+```{r}
+x <- c(1,2,2,NA,3,4)
+min_rank(x)
+row_number(x)
+```
+
+* `dense_rank`：相同值的秩相同，但下一个值的秩不会跳转
+```{r}
+x <- c(1,2,2,NA,3,4)
+min_rank(x)
+row_number(x)
+dense_rank(x)
+```
+
+* `percent_rank()`: 将秩按照比例压缩为[0,1]的值  
+```{r}
+x <- c(1,2,2,NA,3,4)
+percent_rank(x)
+```
+
+* `ntile()`：breaks the input vector into n buckets.
+```{r}
+x <- c(1,3,4,5,6,8)
+ntile(x,n=2)
+ntile(x,n=3)
+```
+
+### 练习  
+1. 虽然现在的`dep_time`和`sched_dep_time`变量方便阅读，但不适合计算，因为它们实际上并不是连续型数值。将它们转换为一种更方便的表示形式，即从0点开始的分钟数  
+```{r}
+## 观察两个变量的存储方式
+flights %>% 
+  select(dep_time,sched_dep_time)
+```
+
+xyz表示x点yz分，则总分钟数为`x %/% 100 * 60 + x %% 100` ; 但有一个问题是，由于0点是用2400代表的，经过这样的转换它变为1440，我们希望它变为0，所以在外层再套一个` %% 1440`
+
+```{r}
+flights %>% transmute(dep_time_mins = (dep_time %/% 100 * 60 + dep_time %% 100) %% 1440, sched_dep_time_mins = (sched_dep_time %/% 100 * 60 + sched_dep_time %% 100) %% 1440)
+```
+
+2. 比较`dep_time、sched_dep_time和dep_delay`，这三者应该是何种关系？
+
+```{r}
+flights_deptime <-
+  mutate(flights,
+    dep_time_min = (dep_time %/% 100 * 60 + dep_time %% 100) %% 1440,
+    sched_dep_time_min = (sched_dep_time %/% 100 * 60 +
+                          sched_dep_time %% 100) %% 1440,
+    dep_delay_diff = dep_delay - dep_time_min + sched_dep_time_min
+  )
+filter(flights_deptime, dep_delay_diff != 0) %>% select(dep_delay_diff)
+```
+
+如上所示，经过分钟的转换后，有1236行的`dep_delay` 不等于 `dep_time - sched_dep_time`. 有趣的是，这些差值全部等于1440。   
+> the discrepancies could be because a flight was scheduled to depart before midnight, but was delayed after midnight. All of these discrepancies are exactly equal to 1440 (24 hours), and the flights with these discrepancies were scheduled to depart later in the day.  
+
+3. 使用排秩函数找出10个出发延误时间最长的航班  
+```{r}
+## 使min_rank默认小的值获得小的秩，arrange()默认降序排列，其中一个函数中要使用desc()
+flights %>% mutate(delay_rank = min_rank(desc(dep_delay))) %>% arrange(delay_rank) %>% select(year,month,day,dep_delay,delay_rank)
+```
+
+3. `1:3 + 1:10`会返回什么？为什么？  
+```{r}
+1:3 + 1:10
+```
+当一个向量中的值不够用时，这个向量会被循环使用
+`1:3 + 1:10`等价于`c(1 + 1, 2 + 2, 3 + 3, 1 + 4, 2 + 5, 3 + 6, 1 + 7, 2 + 8, 3 + 9, 1 + 10)`
+```{r}
+c(1 + 1, 2 + 2, 3 + 3, 1 + 4, 2 + 5, 3 + 6, 1 + 7, 2 + 8, 3 + 9, 1 + 10)
+```
+
+
+## 使用`summarize()`进行分组摘要  
+最后一个核心函数是`summarize()`，它用来计算摘要统计量，可以将数据框折叠成一行：
+```{r}
+## 计算平均出发延误时间
+summarize(flights,delay = mean(dep_delay,na.rm = TRUE))
+```
+
+如果不和`group_by`函数一起使用，那么`summarize()`也就没什么大用。`group_by()`函数与`summarize()`联合使用的时候可以将分析单位从整个数据集更改为单个分组，接下来，在分组后的数据框上使用dplyr函数时，它们会自动应用到每个分组。更简单第说，你想从哪个层级上分析问题，就在`group_by`中对什么层级进行分组。`group_by() + summarize()`可以实现类似`aggregate()`函数的效果。
+例如，我们想知道每一天的平均出发延误时间，可以先对`(year,month,day)`进行分组，然后再使用`summarize()`：  
+```{r}
+flights %>% 
+  group_by(year,month,day) %>% 
+  summarize(delay = mean(dep_delay,na.rm = T))
+```
+
+注意，`summarize()`很不同的一点就是它会自动选择列，只在结果中显示之前在`group_by`中进行分类的变量和`summarize()`中算出的摘要统计量。   
+
+这个生成的数据框只有365行，因为flights数据集中的时间跨度只有一年，(year,month,day)的唯一组合只可能有365个，这就是`summarize()`中的摘要函数的折叠效果：接受一个向量，只返回一个值，然后再用分组变量的一个组合来标识这个摘要量的对象（哪个层级上的平均值、最大值？）。从这个角度看，`summarize()和mutate()`对函数的要求恰好相反。  
+
+用`aggregate()`函数的写法：  
+```{r}
+aggregate(dep_delay~year+month+day,
+          FUN = mean,
+          data = flights) %>%
+  head(20)
+```
+
+比较这两个结果，我们可以发现`group_by()`中越靠后的参数是越基本的单位，`group_by(year,month,day)`将按照day,month,year的方式开始循环 ； 而`aggregate()`函数则正好相反     
+
+### 缺失值  
+在按照日期计算平均出发延误时间的例子中，使用`mean()`时设置了参数`na.rm =  T`，如果没有这样做，很多日期的平均延误时间将是缺失值：  
+```{r}
+flights %>% 
+  group_by(year,month,day) %>% 
+  summarize(delay = mean(dep_delay))
+```
+
+这是因为聚合函数遵循缺失值的一般规则：如果输入中有缺失值，那么输出也是缺失值。好在所有聚合函数都有一个`na.rm`参数，可以在计算前出去缺失值。      
+在这个示例中，缺失值来源于取消的航班。我们也可以先取出取消的航班来解决却实质问题。保存去除缺失值的数据集为`not_cancelled`，以便我们可以在接下来的几个示例中继续使用：  
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay),!is.na(arr_delay))
+
+not_cancelled %>% 
+  group_by(year,month,day) %>% 
+  summarize(delay = mean(dep_delay))
+```
+
+
+### 计数函数  
+
+`n()` 函数是一个与摘要函数`summarize()`配合的计数函数，它不需要任何参数，单独使用时，它计算的就是行计数：  
+
+```{r}
+flights %>% 
+  summarize(n = n())
+```
+
+和`group_by`联合使用时，它可以计算分组变量的每个水平上各有多少个观测：  
+
+```{r}
+## 每个月各有多少趟航班
+flights %>% 
+  group_by(month) %>% 
+  summarize(n = n())  ## 等价于summarize(n = sum(month))
+```
+
+
+
+`n()`会把缺失值也包含到计数中，如果想要计算出非缺失值的数量，可以使用`sum(is.na(x))`。如果想要计算唯一值的数量，可以使用`n_distinct()`  
+
+```{r}
+## 哪个目的地有最多的航空公司？
+flights %>% 
+  group_by(dest) %>% 
+  summarize(carriers = n_distinct(carrier)) %>% 
+  arrange(desc(carriers))
+```
+
+
+除了`n()` 以外， dplyr 提供了 4 个正式的计数函数：  
+
+```r
+tally(x, wt = NULL, sort = FALSE, name = "n")
+
+count(x, ..., wt = NULL, sort = FALSE, name = "n",
+  .drop = group_by_drop_default(x))
+
+add_tally(x, wt, sort = FALSE, name = "n")
+
+add_count(x, ..., wt = NULL, sort = FALSE, name = "n")
+
+```
+
+`x %>% group_by(var) %>% tally()` 是简化版的 `group_by(var) + summarize(n())`  
+`x %>% count(var)` 等价于 `x %>% gruop_by(var) %>% tally()`  
+
+`x %>% group_by(var) %>% add_tally` 在 **原数据集** 中增添一列，记录 `var` 的不同水平的计数，等价于 `x %>% add_count(var)`，注意这两个函数返回值的维度和**原数据框**相同(摘要数据框往往不利于细节观察)！！它们等价于 `group_by() %>% mutate(n())`
+
+```{r}
+## 无分组时，tally()即为样本数
+mtcars %>%
+  tally
+
+## tally() 的一般用法  
+mtcars %>%
+  group_by(cyl) %>%
+  tally()
+
+## count() 等价 group_by() + tally()
+mtcars %>%
+  count(cyl)
+
+## count() 也可以在已有分组上继续分组  
+mtcars %>%
+  group_by(gear) %>%
+  count(carb)
+
+## add_tally() is short-hand for mutate()
+mtcars %>% 
+  add_tally()
+
+## add_count() is a short-hand for group_by() + add_tally()
+mtcars %>%
+  add_count(cyl, name = "count") %>%
+  select(cyl, count)
+
+# add_count() is useful for groupwise filtering
+# e.g.: show details for species that have a single member
+starwars %>%
+  add_count(species) %>%
+  filter(n == 1)
+
+```
+
+
+另外，在z和一些函数中函数中设置`sort = T`可以使观测按照计数倒序排列，`name`参数可以指定新生成的计数行名字（默认为"n"): 
+
+```{r}
+not_cancelled %>% 
+  count(dest, sort = T, name = "count")
+```
+
+还可以提供一个加权变量。例如，可以使用一下代码算出每架飞机飞行的总里程（实际上就是按计算某变量分组上另一个变量的和）：  
+```{r}
+not_cancelled %>% 
+  count(tailnum, wt = distance)  
+```
+
+
+进行聚合时，包含一列计数`n()`或非缺失值的计数`sum(!is.na())`很有用。这样就可以检查一下，以确保自己没有基于非常有限的样本做结论。    
+例如，查看一下具有最长平均到达延误时间的飞机（基于飞机编号进行识别):    
+```{r}
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarize(delay = mean(arr_delay))
+
+ggplot(delays) + 
+  geom_histogram(aes(delay))
+```
+
+有些飞机的**平均**到达延误事件竟然接近300分钟，我们可以画一张航班数量和平均延误时间的散点图，一遍获得更深刻的理解:    
+
+```{r}
+## n = n()对group_by中的变量水平进行计数，生成一个计数变量命名为n
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarize(
+    delay = mean(arr_delay),
+    n = n())
+
+ggplot(delays) + geom_point(aes(x = n,y = delay),alpha = 0.1)
+```
+
+从散点图可以看出，如果航班对应的出航次数非常少时，平均延误时间的变动特别大，所有延误时间较长的航班的出航次数几乎都在 0 右边一点点。这张图的形状非常能说明问题:当绘制均值（或其他摘要统计量）和分组规模的关系时，总能看到样本量的增加，变动在不断减小。（样本统计量的方差随样本数变小）。    
+
+这种数据模式还有另外一种常见的变体。我们来看一下棒球击球手的平均表现与击球次数之间的关系。我们用Lahman包中的数据埃及算棒球大联盟中的每个棒球队员的加大率（安打数 / 打数):    
+```{r}
+library(Lahman)
+batters <- Batting %>% 
+  group_by(playerID) %>% 
+  summarize(
+    ba = sum(H,na.rm = T) / sum(AB,na.rm = T),
+    ab = sum(AB,na.rm = T))
+
+batters %>% 
+  filter(ab > 100) %>% 
+  ggplot(aes(ab, ba)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+  
+当绘制击球手的能力（用打击率 ba 衡量）与击球机会数量（用总打数ab衡量）之间的关系时，可以看到两个趋势：  
+
+* 总大数越多，不同击球手的打击率之间变动越小  
+* 能力（ba）和击球机会数量（ab）之间存在正相关。这是因为球队会控制击球手的出场，很显然，球队会优先选择最好的队员。  
+
+这对球员排名也有重要印象，如果只是使用`desc(ba)`进行排序，明显受益的将是那些因为出场数很少而侥幸有很高击打率的球员，而不是真正能力最高的球员：  
+```{r}
+batters %>% 
+  arrange(desc(ba))
+```
+
+
+### 逻辑值的计数和比例:`sum(x > 10) 和 mean(y == 0)`
+当与数值型函数一同使用时，`TRUE`会转换为1，`FALSE`会转换为0。这使得`sum()`和`mean()`非常适用于逻辑值：`sum()`可以找出x中TRUE的数量，`mean()`则可以找出比例。  
+
+```{r}
+## 每天中有多少架航班是在早上5点前出发的？（这通常表明前一天延误的航班数量）
+not_cancelled %>% 
+  group_by(year,month,day) %>% 
+  summarize(n_early = sum(dep_time < 500))
+## 每天中到达时间误超过一小时的航班比例是多少？
+not_cancelled %>% 
+  group_by(year,month,day) %>% 
+  summarize(hour_perc = mean(arr_delay > 60))
+```
+
+
+### 其他常用的摘要函数  
+
+R中还提供了许多常用的摘要函数  
+
+**位置度量**    
+我们已经使用过`mean(x)`、但用 `median(x)` 计算中位数也非常有用。  
+```{r}
+## 将聚合函数和逻辑筛选组合起来使用
+not_cancelled %>% group_by(year,month,day) %>% summarize(
+  ## 延误时间的中位数
+  arr_delay1 = median(arr_delay),
+  ## 正延误时间的中位数
+  arr_delay2 = median(arr_delay[arr_delay > 0])
+)
+```
+
+
+**分散程度度量`sd(x)、IQR(x)和mad(x)`**  
+标准差是分散程度的标准度量方式。四分位距INterquartile Range`IQR(x)`和绝对中位差`mad(x)`基本等价，更适合有离群点的情况：
+```{r}
+## 为什么到某些目的地距离比到其他目的地更多变？
+not_cancelled %>% group_by(dest) %>% summarize(distance_sd = sd(distance)) %>% arrange(desc(distance_sd))
+```
+
+**秩的度量:`min(x)、quantile(x,0.25)和max(x)`**  
+分位数是中位数的扩展。例如`quantile(x,0.25)`会找出x中按从小到大顺序大于前25%而小于后75%的值（即下四分位数）
+```{r}
+## 每天最早和最晚的航班何时出发？
+not_cancelled %>% group_by(year,month,day) %>% summarize(first = min(dep_time),last = max(dep_time)) 
+```
+
+
+**定位度量:`first(x)、nth(x,n)、last(x)`**  
+这几个函数的作用与`x[1]、x[n]和x[length(x)]`相同，只是当定位不存在时（比如尝试从只有两个元素的分组中得到第三个元素），这些函数允许通过参数`default`设置一个默认值，而后者不能正常工作。
+
+```{r}
+## 找出每天排在第10的的出发时间记录
+not_cancelled %>% 
+  group_by(month,year,day) %>% 
+  summarize(tenth_dep = nth(dep_time,10))
+```
+
+
+
+
+### 多个分组变量的消耗    
+当时用多个分组变量时，每使用一次`summarize`就会消耗掉一个分组变量，如`group_by(year,month,day)`经过一次`summarize`后生成的数据集默认在`(year,month)`上分组，这使得我们可以对数据集进行循序渐进的分析：  
+
+```{r}
+daily <- not_cancelled %>% group_by(year,month,day) 
+## 每天有多少架航班记录
+(per_day <- daily %>% 
+    summarize(flights = n()))  
+
+## 每月有多少架航班记录
+(per_month <- 
+    per_day %>% 
+    summarize(flights = sum(flights))) 
+## 等价于not_cancelled %>% group_by(year,month) %>% summarize(flights = n()) 
+
+## 每年有多少架航班记录
+(per_year <- 
+    per_month %>% 
+    summarize(flights = sum(flights)))
+## 等价于not_cancelled %>% group_by(year) %>% summarize(flights = n()) 
+```
+
+由于分组操作拥有这样的“继承性质”，有的时候可能想要取消分组，并回到未分组的数据继续操作，那么可以使用`ungroup()`函数取消分组：
+```{r}
+daily %>% 
+  ungroup() %>% 
+  summarize(flights = n())  ## 对数据集整体进行摘要统计
+```
+
+
+
+在循序渐进地进行摘要分析的时候，需要小心：使用求和与计数操作是没有问题的，但如果想要使用加权平均和方差的话，就要仔细考虑一下，任何基于秩的统计数据（如中位数，分为差）都不支持这样的操作。换句话说，对分组结果再求和就是对整体求和，但各分组中的中位数的中位数可不是整体的中位数。  
+
+## `group_by()结合其他函数`  
+
+
+虽然与`summarize()`函数结合起来使用是最有效的，但分组也可以和`mutate()`和`filter()`函数结合使用,以完成非常便捷的操作。  
+当`group_by`和`mutate()`函数结合使用时，摘要函数(summary functions，如`mean,median等`)将会自动以分组为基础，一些非摘要函数也会受到分组的影响，如偏移函数`lead()、lag()`和排秩函数`min_rank()、row_number()`。而普通的数字运算符`+ , -`、逻辑运算符`< , ==`，对数运算`log()`和余数运算`%/% , %%`等将无视分组。  
+同理，当 `group_by` 和 `filter()` 结合使用时，如果用于筛选的条件是上述提到的受分组影响的函数，那么筛选的结果也依赖于分组。  
+
+
+
+```{r}
+## 分组前后mutate()函数效果的对比
+df <- tibble(
+  x = 1:9,
+  group = rep(c("a", "b", "c"), each = 3)
+)
+
+df %>% 
+  mutate(x_mean = mean(x)) %>%
+  group_by(group) %>%
+  mutate(x_mean_2 = mean(x))
+```
+
+```{r}
+## Arithmetic operators +, -, *, /, ^ are not affected by group_by().
+df <- tibble(
+  x = 1:9,
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>% 
+  mutate(y = x + 2) %>%
+  group_by(group) %>%
+  mutate(z = x + 2)
+```
+
+```{r}
+## The modular arithmetic operators %/% and %% are not affected by group_by()
+df <- tibble(
+  x = 1:9,
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>% 
+  mutate(y = x %% 2) %>%
+  group_by(group) %>%
+  mutate(z = x %% 2)
+```
+
+
+```{r}
+## The logarithmic functions log(), log2(), and log10() are not affected by group_by().
+df <- tibble(
+  x = 1:9,
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>% 
+  mutate(y = log(x)) %>%
+  group_by(group) %>%
+  mutate(z = log(x))
+```
+
+
+```{r}
+## The offset functions lead() and lag() respect the groupings in group_by(). The functions lag() and lead() will only return values within each group.
+
+df <- tibble(
+  x = 1:9,
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>%
+  mutate(lag_x = lag(x),
+         lead_x = lead(x)) %>%
+  group_by(group) %>%
+  mutate(
+    lag_x_grouped = lag(x),
+    lead_x_grouped = lead(x)
+  )
+
+
+```
+```{r}
+## The cumulative and rolling aggregate functions cumsum(), cumprod(), cummin(), cummax(), and cummean() calculate values within each group.
+df <- tibble(
+  x = 1:9,
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>%
+  mutate(x_cumsum = cumsum(x)) %>%
+  group_by(group) %>%
+  mutate(x_cumsum_2 = cumsum(x))
+```
+
+
+```{r}
+## Logical comparisons, <, <=, >, >=, !=, and == are not affected by group_by().
+df <- tibble(
+  x = 1:9,
+  y = 9:1,
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>%
+  mutate(x_lte_y = x <= y) %>%
+  group_by(group) %>%
+  mutate(x_lte_y_2 = x <= y)
+```
+
+```{r}
+## Ranking functions like min_rank() work within each group when used with group_by().
+df <- tibble(
+  x = 1:9,
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>%
+  mutate(rnk = min_rank(x)) %>%
+  group_by(group) %>%
+  mutate(rnk2 = min_rank(x))
+```
+
+
+
+
+
+此外,基于 `arrange()` 函数进行的排序一般也无视分组。不过，如果我们在 `arrange()` 中使用表达式作为排序依据，且这个表达式又和分组有关系，那么 `arrange()` 的排序结果就和是否分组有关了，不过这并不算是`arrange()`本身受分组影响。  
+
+```{r}
+## arrange() ignores groups when sorting values.
+df <- tibble(
+  x = runif(9),
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>% 
+  group_by(group) %>%
+  arrange(x)
+```
+
+
+```{r}
+## 和上面的结果进行比较
+df <- tibble(
+  x = runif(9),
+  group = rep(c("a", "b", "c"), each = 3)
+) 
+
+df %>% 
+  group_by(group) %>%
+  mutate(mean = mean(x)) %>%   ## mean受分组影响，最后的排序结果也受分组影响
+  arrange(mean)
+```
+
+
+## 练习   
+
+```{exercise}
+找到每个日期分组中到达时间延迟最长的10条记录  
+```
+
+
+```{r}
+## min_rank自动在分组内排序
+not_cancelled %>% 
+  group_by(year,month,day) %>% 
+  filter(rank(desc(arr_delay)) <= 10) %>% 
+  select(month,year,day,arr_delay)
+```
+
+```{exercise}
+找出一年中到达航班多于 365 次的目的地：
+```
+
+
+```{r}
+## n()以分组为基础
+not_cancelled %>% 
+  count(dest, sort = T) %>% 
+  filter(n > 365)
+```
+
+```{exercise}
+哪一架飞机（用飞机尾号来识别，`tailnum`)具有最差的准点记录：  
+
+```
+
+衡量一个飞机的准点情况有很多种可能的选择，这里只提供两个方向：   
+
+* 该航班未取消且延误（到达和出发）次数占总飞行次数的比例最小  
+* 该航班的平均到达延误时间最长
+
+从第一个方向出发：  
+```{r}
+## 查看飞机飞行次数的分布
+count_by_tail <- flights %>% 
+  group_by(tailnum) %>% 
+  summarize(n = n())
+
+quantile(count_by_tail$n)
+
+
+flights %>%
+  filter(!is.na(tailnum)) %>%
+  mutate(on_time = !is.na(arr_time) & (arr_delay <= 0) & (dep_delay <= 0) ) %>% 
+  group_by(tailnum) %>% 
+  summarize(on_time = mean(on_time), n = n()) %>% ## mean和逻辑值结合计算比例
+  filter(n > 20) %>%  ## 避免因频次过少做出结论,选择20是因为它是飞行次数的下四分位数
+  filter(min_rank(on_time) == 1)     ## 未取消且准点比例最低的飞机
+```
+ 
+接下来是第二个方向：  
+```{r}
+flights %>%
+  group_by(tailnum) %>%
+  summarize(arr_delay = mean(arr_delay,na.rm = T),n = n()) %>%  ##注意这一步的mean中的参数
+  filter(n > 20) %>% 
+  filter(min_rank(desc(arr_delay)) == 1)
+```
+
+
+```{exercise}
+如果想要尽量避免航班延误，应该在一天中的哪个时间搭乘飞机？   
+
+```
+
+
+对 `hour` 分组计算平均到达延误时间：  
+```{r}
+flights %>% 
+  group_by(hour) %>%
+  summarize(arr_delay = mean(arr_delay, na.rm = T)) %>%
+  arrange(arr_delay) 
+```
+
+
+```{exercise}
+计算每个目的地的到达延误总时间的分钟数，以及每条记录到每个目的地的延误时间比例 
+```
+
+```{r}
+flights %>%
+  filter(arr_delay > 0) %>%
+  group_by(dest) %>%
+  mutate(
+    arr_delay_total = sum(arr_delay),  ## 经过分组后，求和在组内操作
+    arr_delay_prop = arr_delay / arr_delay_total
+  ) %>%
+  select(
+    dest, tailnum,
+    arr_delay, arr_delay_prop
+  ) %>%
+  arrange(dest, desc(arr_delay_prop))
+
+```
+
+
+```{exercise}
+延误通常是由临时原因造成的：即使最初引起延误的问题已经解决，但因为要让前面的航班先起飞，所以后面的航班也会延误。使用`lag()` 探究一架航班延误与前一架航班延误之间的关系。
+```
+
+
+
+
+
+```{r}
+## This calculates the departure delay of the preceding flight from the same airport.
+ (lagged_delays <- flights %>% 
+  arrange(origin, month, day, dep_time) %>%  ## 这一步排序确保了偏移是有意义的
+  group_by(origin) %>%
+  mutate(dep_delay_lag = lag(dep_delay)) %>%  ## 偏移函数基于分组
+  filter(!is.na(dep_delay),!is.na(dep_delay_lag)))
+
+lagged_delays %>%
+  group_by(dep_delay_lag) %>%
+  summarise(dep_delay_mean = mean(dep_delay)) %>%
+  ggplot(aes(y = dep_delay_mean, x = dep_delay_lag)) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(0, 1500, by = 120)) +
+  labs(y = "Departure Delay", x = "Previous Departure Delay") + 
+  theme_classic()
+    
+## This plots the relationship between the mean delay of a flight for all values of the previous flight. For delays less than two hours, the relationship between the delay of the preceding flight and the current flight is nearly a line. After that the relationship becomes more variable, as long-delayed flights are interspersed with flights leaving on-time. After about 8-hours, a delayed flight is likely to be followed by a flight leaving on time.
+```
+
+```{exercise}
+根据到达地点的数量，对航空公司进行排序 ; 找出至少有两个航空公司的目的地
+```
+
+
+
+```{r}
+## rank carriers by numer of destinations
+flights %>% 
+  group_by(carrier) %>%
+  summarize(n_dest = n_distinct(dest)) %>%
+  arrange(desc(n_dest))
+
+## find all airports with > 1 carrier
+flights %>%
+  group_by(dest) %>%
+  summarize(n_carriers = n_distinct(carrier)) %>%
+  filter(n_carriers > 1)
+```
+
+
+
+```{exercise}
+每天取消的航班数量和总航班数量存在什么关系？每天的平均到达延误时间和取消航班的比例有什么关系？
+```
+
+   
+
+取消的航班定义为`is.na(arr_delay) | is.na(dep_delay)`
+
+```{r}
+## One pattern in cancelled flights per day is that 
+## the number of cancelled flights increases with the total number of flights per day. 
+flights %>%
+  group_by(year,month,day) %>%
+  summarize(n_cancelled = sum(is.na(arr_delay) | is.na(dep_delay)),n_total = n()) %>%
+  ggplot(aes(x = n_total,y = n_cancelled)) + geom_point()
+
+#2
+flights %>%
+  group_by(year,month,day) %>%
+  summarize(cancelled_prop = mean(is.na(arr_delay) | is.na(dep_delay)),
+            avg_arr_delay = mean(arr_delay,na.rm = T)) %>%
+  ggplot() + geom_point(aes(x = avg_arr_delay,y = cancelled_prop))
+```
+
+```{exercise}
+
+哪个航空公司的延误情况最严重？你能否分清这是因为糟糕的机场设备，还是航空公司的问题？（考虑一下`flights %>% group_by(carrier,dest) %>% summarize(n())`  
+```
+ 
+
+
+```{r}
+flights %>% 
+  group_by(carrier) %>%
+  summarize(avg_arr_delay = mean(arr_delay,na.rm = T)) %>%
+  arrange(desc(avg_arr_delay))
+
+## What airline corresponds to the "F9" carrier code?
+filter(airlines,carrier == "F9")
+```
+
+
+> You can get part of the way to disentangling the effects of airports versus bad carriers by comparing the average delay of each carrier to the average delay of flights within a route (flights from the same origin to the same destination). Comparing delays between carriers and within each route disentangles the effect of carriers and airports. A better analysis would compare the average delay of a carrier’s flights to the average delay of all other carrier’s flights within a route.
+
+```{r}
+flights %>%
+  filter(!is.na(arr_delay)) %>%
+  # Total delay by carrier within each origin, dest
+  group_by(origin, dest, carrier) %>%
+  summarise(
+    arr_delay = sum(arr_delay),
+    flights = n()
+  ) %>%
+  # Total delay within each origin dest
+  group_by(origin, dest) %>%
+  mutate(
+    arr_delay_total = sum(arr_delay),
+    flights_total = sum(flights)
+  ) %>%
+  # average delay of each carrier - average delay of other carriers
+  ungroup() %>%
+  mutate(
+    arr_delay_others = (arr_delay_total - arr_delay) /
+      (flights_total - flights),
+    arr_delay_mean = arr_delay / flights,
+    arr_delay_diff = arr_delay_mean - arr_delay_others
+  ) %>%
+  # remove NaN values (when there is only one carrier)
+  filter(is.finite(arr_delay_diff)) %>%
+  # average over all airports it flies to
+  group_by(carrier) %>%
+  summarise(arr_delay_diff = mean(arr_delay_diff)) %>%
+  arrange(desc(arr_delay_diff))
+```
+
+## 作用域  
+
+这里的作用域是指 `dplyr` 函数能影响的变量范围。一般而言，`arrange()`、`mutate()`、`summarize()` 作用的变量需要显式指明，而它们的一些变体 (scoped variants) 有更加复杂的作用域规则。  
+
+**Scoped variants of a function operates on a selection of variables.**    
+
+The variants suffixed with `_if`, `_at` or `_all` apply an expression (sometimes several) to all variables **within a specified subset**. This subset can contain all variables (`_all` variants), a vars() selection (`_at` variants), or variables selected with a predicate (`_if` variants).  
+
+
+
+https://dplyr.tidyverse.org/reference/mutate_all.html  
+
+https://dplyr.tidyverse.org/reference/summarise_all.html  
+
+https://dplyr.tidyverse.org/reference/filter_all.html  
+
+
+```{r,message=F}
+library(tidyverse)
+```
+
+
+### `arrange()`  
+
+
+
+### `mutate()`  
+
+
+The **scoped** variants of `mutate()` and `transmute()` make it easy to apply the same transformation to multiple variables. There are three variants:   
+
+
+
+* `_all` affects every variable  
+
+* `_at` affects variables selected with a character vector or `vars()`    
+
+* _if affects variables selected with a predicate function  
+
+
+```r
+mutate_all(.tbl, .funs, ...)
+
+mutate_if(.tbl, .predicate, .funs, ...)
+
+mutate_at(.tbl, .vars, .funs, ..., .cols = NULL)
+
+transmute_all(.tbl, .funs, ...)
+
+transmute_if(.tbl, .predicate, .funs, ...)
+
+transmute_at(.tbl, .vars, .funs, ..., .cols = NULL)
+```
+
+
+**Arguments**  
+
+* `tbl`: A tbl object  
+* `.funs`: a function to transform the selection of variables  
+* `...`: Additional arguments for the function calls in `.funs`  
+* `.predicate`: `_if` 变体进行逻辑判断的函数   
+
+
+___  
+
+
+`_all()` 影响所有变量：  
+
+```{r}
+df <- tibble(x = c(10, 100, NA), y = c(1000, NA, 10000))
+df %>% mutate_all(log10)
+```
+
+
+所有 scoped variants 都可以传入任何函数及其参数：  
+
+```{r}
+scale2 <- function(x, na.rm = FALSE) (x - mean(x, na.rm = na.rm)) / sd(x, na.rm)
+df %>% 
+  mutate_all(scale2, na.rm = T)
+```
+
+`_at` 变体作用于变量的某个子集，可以用一个字符向量指定，也可以使用 [使用`select()`选择列] 中的帮助函数，但这些帮助函数必须包裹在 `vars()` 之内，可以把 `vars()` 看作是 scoped variants 内部的 `select()`  
+
+```{r}
+starwars %>% mutate_at(c("height", "mass"), scale2, na.rm = T)
+
+# You can also supply selection helpers to _at() functions but you have
+# to quote them with vars():
+iris <- as_tibble(iris)
+iris %>% mutate_at(vars(matches("Sepal")), scale2)
+iris %>% mutate_at(vars(contains("Length")), scale2)
+```
+
+`_if` 变体作用于 predicate function 返回的逻辑值为真的变量，注意这个参数的位置：  
+
+```{r}
+# The _if() variants apply a predicate function (a function that
+# returns TRUE or FALSE) to determine the relevant subset of
+# columns. Here we divide all the numeric columns by 100:
+starwars %>% mutate_if(is.numeric, scale2, na.rm = TRUE)
+```
+
+
+当需要转换某些变量的类型时，`mutate_if` 会很方便：  
+
+```{r}
+## 解决 data.frame 的强制转换  
+iris %>% mutate_if(is.factor, as.character)
+
+## 双精度转换为整型 
+iris %>% mutate_if(is.double, as.integer)
+```
+
+
+某些情况下，可能希望进行多种数据函数，可以在 `,funs` 中传入一个函数列表，则列表中的每个函数均会作用于所有符合筛选条件的变量。有多个函数时，`mutate` 的 scoped vairiants 生成新列，而非就地修改原来的变量
+
+```{r}
+iris %>% mutate_if(is.numeric, list(scale2, log)) %>%
+  select(-(1:5))
+```
+
+
+通过具名列表，可以控制生成的新列的名称：  
+
+```{r}
+iris %>% mutate_if(is.numeric, list(scale = scale2, log = log)) %>%
+  select(-(1:5))
+```
+
+若列表中只有一个函数，scoped variants 还是会就地修改原变量，传入具名列表可以避免这一点：  
+
+```{r}
+# When there's only one function in the list, it modifies existing
+# variables in place. Give it a name to instead create new variables:
+iris %>% mutate_if(is.numeric, list(scale2))
+iris %>% mutate_if(is.numeric, list(scale = scale2))
+```
+
+### `summarize()`  
+
+
+
