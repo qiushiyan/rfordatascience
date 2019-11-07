@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 new_session: yes
+github-repo: enixam/rfordatascience
 ---
 
 

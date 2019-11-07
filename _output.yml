@@ -9,6 +9,9 @@ bookdown::gitbook:
       after: |
         <li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
     toc_depth: 4
+    edit:
+      link: https://github.com/enixam/rfordatascience/edit/master/%s
+      text: "Edit"
 
 
 
