@@ -1,12 +1,12 @@
 
-
+# (PART) Cleaning and Tidying {-}
 
 
 # Janitor  
 
 http://sfirke.github.io/janitor/articles/janitor.html  
 
-Janitor 包提供了一些简单易用的函数方便数据清洗和探索流程。  
+**Janitor** 包提供了一些简单易用的函数方便数据清洗和探索流程。  
 
 ```{r,message=F}
 library(tidyverse)
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(message=F,cache=T)
 ```
 
 
-## 清洗  
+## 清洗  {#qingxi}
 
 
 ### `clean_names`  
@@ -119,7 +119,7 @@ compare_df_cols_same(df2, df3)
 ```
 
 
-## 探索
+## 探索 {#tansuo}
 
   
 ### `tabyl`  
