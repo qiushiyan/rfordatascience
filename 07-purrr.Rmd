@@ -201,3 +201,68 @@ df %>%
   str()
 ```
 
+## group_
+
+### group_map、group_modify
+
+`group_map()`, `group_modify()` and `group_walk()` are purrr-style functions that can be used to iterate on grouped tibbles.
+
+
+```{r}
+iris %>% 
+  group_by(Species) %>% 
+  group_map(~ broom::tidy(lm(Sepal.Length ~ Sepal.Width, data = .x))) %>% 
+  bind_rows()
+```
+
+
+```{r}
+iris %>% 
+  group_by(Species) %>% 
+  group_modify(~ broom::tidy(lm(Sepal.Length ~ Sepal.Width, data = .x)))
+```
+
+This is similar to `split()` and then `map()`:  
+
+```{r}
+iris %>% 
+  split(.$Species) %>% 
+  map_dfr(~ broom::tidy(lm(Sepal.Length ~ Sepal.Length, data = .x)))
+```
+
+
+### group_split、group_keys、group_data
+
+```{r}
+iris %>% 
+  as_tibble() %>%
+  group_split(Species)
+```
+
+
+
+
+```{r}
+iris %>% 
+  as_tibble() %>%
+  group_by(Species) %>%
+  group_data()
+```
+
+
+only grouping variables:  
+
+```{r}
+iris %>% 
+  as_tibble() %>%
+  group_keys(Species)
+```
+
+only rows:  
+
+```{r}
+iris %>% 
+  as_tibble() %>%
+  group_by(Species) %>% 
+  group_rows()
+```

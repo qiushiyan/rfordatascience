@@ -1,0 +1,70 @@
+
+
+# 处理缺失值  {#handling-missing-values}  
+
+
+## 探索  
+
+
+## 填充
+
+https://jiangjun.link/post/2018/12/r-missing-data  
+
+用中位数或均值填补缺失值   
+
+```{r,message=F}
+library(tidyverse)
+df <- tibble(x = c(1, 2, NA, 5, 9, NA),
+             y = c(NA, 20, 1, NA, 5, NA),
+             z = 5:10)
+
+
+df %>% 
+  mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
+```
+
+\@ref(missing-values) 中的 `fill()`:  
+
+```{r}
+df <- data.frame(Month = c(1:8, NA, 10), Year = c(2000, rep(NA, 9)), values = c(NA, 12:20))
+df
+df %>% fill(starts_with("Y"), .direction = "down")
+```
+
+`drop_na()` 去除带有缺失值的观测：  
+
+```{r}
+df %>% 
+  drop_na(Month)
+
+df %>% 
+  drop_na(Year)
+
+df %>% 
+  drop_na(values)
+```
+
+```{r}
+df %>% 
+  drop_na(Month, values)
+
+df %>% 
+  drop_na(Month, Year, values)
+```
+
+
+或者 `janitor::remove_empty()`  
+
+
+`full_seq()`，得到完整的序列：  
+
+```{r}
+full_seq(c(1, 2, 4, 5, 10), 1)
+```
+
+
+
+
+mice 或 Amelia
+
+

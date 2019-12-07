@@ -8,7 +8,7 @@ bookdown::gitbook:
         <li><a href="./"></a></li>
       after: |
         <li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
-    toc_depth: 4
+    toc_depth: 2
     edit:
       link: https://github.com/enixam/rfordatascience/edit/master/%s
       text: "Edit"

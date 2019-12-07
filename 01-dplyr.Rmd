@@ -736,8 +736,8 @@ c(1 + 1, 2 + 2, 3 + 3, 1 + 4, 2 + 5, 3 + 6, 1 + 7, 2 + 8, 3 + 9, 1 + 10)
 ## 计算平均出发延误时间
 summarize(flights,delay = mean(dep_delay,na.rm = TRUE))
 ```
-
-如果不和`group_by`函数一起使用，那么`summarize()`也就没什么大用。`group_by()`函数与`summarize()`联合使用的时候可以将分析单位从整个数据集更改为单个分组，接下来，在分组后的数据框上使用dplyr函数时，它们会自动应用到每个分组。更简单第说，你想从哪个层级上分析问题，就在`group_by`中对什么层级进行分组。`group_by() + summarize()`可以实现类似`aggregate()`函数的效果。
+ 
+如果不和 `group_by()` 一起使用，那么 `summarize()` 也就没什么大用。`group_by()` 函数与 `summarize()` 联合使用的时候可以将分析单位从整个数据集更改为单个分组，接下来，在分组后的数据框上使用dplyr函数时，它们会自动应用到每个分组。更简单第说，你想从哪个层级上分析问题，就在`group_by`中对什么层级进行分组。`group_by() + summarize()`可以实现类似`aggregate()`函数的效果。
 例如，我们想知道每一天的平均出发延误时间，可以先对`(year,month,day)`进行分组，然后再使用`summarize()`：  
 ```{r}
 flights %>% 
@@ -747,7 +747,7 @@ flights %>%
 
 注意，`summarize()`很不同的一点就是它会自动选择列，只在结果中显示之前在`group_by`中进行分类的变量和`summarize()`中算出的摘要统计量。   
 
-这个生成的数据框只有365行，因为flights数据集中的时间跨度只有一年，(year,month,day)的唯一组合只可能有365个，这就是`summarize()`中的摘要函数的折叠效果：接受一个向量，只返回一个值，然后再用分组变量的一个组合来标识这个摘要量的对象（哪个层级上的平均值、最大值？）。从这个角度看，`summarize()和mutate()`对函数的要求恰好相反。  
+这个生成的数据框只有365行，因为flights数据集中的时间跨度只有一年，(year, month, day)的唯一组合只可能有365个，这就是`summarize()`中的摘要函数的折叠效果：接受一个向量，只返回一个值，然后再用分组变量的一个组合来标识这个摘要量的对象（哪个层级上的平均值、最大值？）。从这个角度看，`summarize()和mutate()`对函数的要求恰好相反。  
 
 用`aggregate()`函数的写法：  
 ```{r}
@@ -757,7 +757,7 @@ aggregate(dep_delay~year+month+day,
   head(20)
 ```
 
-比较这两个结果，我们可以发现`group_by()`中越靠后的参数是越基本的单位，`group_by(year,month,day)`将按照day,month,year的方式开始循环 ； 而`aggregate()`函数则正好相反     
+比较这两个结果，我们可以发现`group_by()`中越靠后的参数是越基本的单位，`group_by(year,month,day)`将按照 day, month, year 的顺序开始循环 ； 而 `aggregate()` 函数则正好相反     
 
 ### 缺失值  
 在按照日期计算平均出发延误时间的例子中，使用`mean()`时设置了参数`na.rm =  T`，如果没有这样做，很多日期的平均延误时间将是缺失值：  
@@ -767,11 +767,11 @@ flights %>%
   summarize(delay = mean(dep_delay))
 ```
 
-这是因为聚合函数遵循缺失值的一般规则：如果输入中有缺失值，那么输出也是缺失值。好在所有聚合函数都有一个`na.rm`参数，可以在计算前出去缺失值。      
+这是因为聚合函数遵循缺失值的一般规则：如果输入中有缺失值，那么输出也是缺失值。好在所有聚合函数都有一个 `na.rm` 参数，可以在计算前出去缺失值。      
 在这个示例中，缺失值来源于取消的航班。我们也可以先取出取消的航班来解决却实质问题。保存去除缺失值的数据集为`not_cancelled`，以便我们可以在接下来的几个示例中继续使用：  
 ```{r}
 not_cancelled <- flights %>% 
-  filter(!is.na(dep_delay),!is.na(arr_delay))
+  filter(!is.na(dep_delay), !is.na(arr_delay))
 
 not_cancelled %>% 
   group_by(year,month,day) %>% 
@@ -1551,5 +1551,41 @@ iris %>% mutate_if(is.numeric, list(scale = scale2))
 
 ### `summarize()`  
 
+
+
+### dance  
+
+`summarize_()` 不能对某些列执行一个action，另一些列执行另一个action，必须同时执行:  
+
+```{r}
+iris %>% 
+  group_by(Species) %>% 
+  summarize_at(vars(Petal.Length, Petal.Width), list(mean = mean, median = median))
+```
+
+```{r}
+# devtools::install_github("romainfrancois/dance")
+library(dance)
+iris %>% 
+  group_by(Species) %>% 
+  tango(
+    swing(mean, starts_with("Petal")),
+    swing(median, starts_with("Sepal"))
+  )
+```
+
+
+
+
+## rowwise operation   
+
+https://github.com/jennybc/row-oriented-workflows
+
+`rowwise()`  
+
+see also https://github.com/romainfrancois/rap
+```{r}
+# devtools::install_github("romainfrancois/rap")
+```
 
 
