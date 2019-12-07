@@ -5,6 +5,27 @@
 
 ## 探索  
 
+`drop_na()` 去除带有缺失值的观测：  
+
+```{r}
+df %>% 
+  drop_na(Month)
+
+df %>% 
+  drop_na(Year)
+
+df %>% 
+  drop_na(values)
+```
+
+```{r}
+df %>% 
+  drop_na(Month, values)
+
+df %>% 
+  drop_na(Month, Year, values)
+```
+
 
 ## 填充
 
@@ -31,26 +52,7 @@ df
 df %>% fill(starts_with("Y"), .direction = "down")
 ```
 
-`drop_na()` 去除带有缺失值的观测：  
 
-```{r}
-df %>% 
-  drop_na(Month)
-
-df %>% 
-  drop_na(Year)
-
-df %>% 
-  drop_na(values)
-```
-
-```{r}
-df %>% 
-  drop_na(Month, values)
-
-df %>% 
-  drop_na(Month, Year, values)
-```
 
 
 或者 `janitor::remove_empty()`  
@@ -63,8 +65,28 @@ full_seq(c(1, 2, 4, 5, 10), 1)
 ```
 
 
+`replace_na()` replace missing values:  
+
+```{r}
+df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"), z = list(1:5, NULL, 10:20))
+df %>% mutate(x = replace_na(x, 0))
+df %>% replace_na(list(x = 0, y = "unknown"))
+```
 
 
-mice 或 Amelia
+```{r}
+# NULL are the list-col equivalent of NAs
+df %>% replace_na(list(z = list(5)))
+```
+
+```{r}
+df$x %>% replace_na(0)
+df$y %>% replace_na("unknown")
+```
+
+
+
+
+more advanced:  mice 或 Amelia
 
 
