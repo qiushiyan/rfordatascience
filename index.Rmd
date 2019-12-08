@@ -1,15 +1,14 @@
 ---
-title: "R for data science 笔记"
+knit: "bookdown::render_book"
 author: "Maxine"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 new_session: yes
 github-repo: enixam/rfordatascience
-always_allow_html: true
 ---
 
 
 # 前言 {#preface .unnumbered}  
 
-内容主要基于 [R for Data Science](https://r4ds.had.co.nz/index.html) 和 [Advanced R](https://adv-r.hadley.nz/) 两本书，前面章节的文字表述借鉴了中文译本。目前基本再现了原书中的内容，接下来会作为一本不断更新的手册，分享一些 R 中好用的数据包和函数。  
+内容主要基于 [R for Data Science](https://r4ds.had.co.nz/index.html) 和 [Advanced R](https://adv-r.hadley.nz/) 两本书，前面章节的文字表述借鉴了中文译本。目前基本再现了原书中的内容。

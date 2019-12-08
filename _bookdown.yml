@@ -1,0 +1,24 @@
+book_filename: r4ds  
+
+new_session: yes
+
+rmd_files: [
+  "index.rmd",
+  
+  "dplyr.Rmd",
+  "tibble.Rmd",
+  "readr.Rmd",
+  "lubridate.Rmd",
+  "forcats.Rmd",
+  "tidyr.Rmd",
+  "purrr.Rmd",
+  "broom.Rmd",
+
+  "vroom.Rmd",
+  "WDI.Rmd",
+
+  "skimr.Rmd",
+  
+  "janitor.Rmd",
+  "missing-values.Rmd",
+]

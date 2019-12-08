@@ -1,4 +1,4 @@
-# (PART) tidyverse {-}
+# (PART) R for data science {-}
 
 # dplyr    
 

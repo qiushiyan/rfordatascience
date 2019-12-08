@@ -2,28 +2,19 @@
 
 # 处理缺失值  {#handling-missing-values}  
 
+```{r,message=F}
+library(tidyverse)
+```
+
 
 ## 探索  
 
-`drop_na()` 去除带有缺失值的观测：  
+`drop_na()` 根据列去除带有缺失值的观测：  
 
 ```{r}
-df %>% 
-  drop_na(Month)
-
-df %>% 
-  drop_na(Year)
-
-df %>% 
-  drop_na(values)
-```
-
-```{r}
-df %>% 
-  drop_na(Month, values)
-
-df %>% 
-  drop_na(Month, Year, values)
+df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"))
+df %>% drop_na() # df %>% drop_na(x, y)
+df %>% drop_na(x)
 ```
 
 
