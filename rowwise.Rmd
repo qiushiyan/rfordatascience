@@ -1,0 +1,17 @@
+
+# rowwise operation  
+
+
+https://github.com/jennybc/row-oriented-workflows
+
+`rowwise()`  
+
+
+
+
+## rap
+
+see https://github.com/romainfrancois/rap
+```{r}
+# devtools::install_github("romainfrancois/rap")
+```

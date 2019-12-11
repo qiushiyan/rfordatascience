@@ -1,7 +1,7 @@
 
 
 
-# 数据导入 {#readr} 
+# readr  
 
 ```{r,message=F,warning=F}
 library(tidyverse)
@@ -53,7 +53,7 @@ head(hotdogs)
 ```
 
 
-## `readr`
+## readr 简介
 
 ![](images\6.png)
 
@@ -572,7 +572,7 @@ type_convert(df)
 
 * 如果正在读取一个非常大的文件，那么应该将`n_max`设置为一个较小的数，比如10,000或者100,000，这可以让我们在解决常见问题时加快重复试验的过程。
 
-## `readxl`  
+## readxl
 
 要想将其他类型的数据导入 R 中，可以先从下列的`tidyverse`包开始。对矩形数据来说：  
 

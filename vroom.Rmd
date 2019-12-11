@@ -2,4 +2,46 @@
 
 # (PART) Importing and APIs {-}
 
-# vroom
+# vroom  
+
+https://vroom.r-lib.org/  
+
+```{r,echo=F}
+knitr::opts_chunk$set(cache=T)
+```
+
+
+```{r}
+library(vroom)
+```
+
+
+```{r}
+file_path <- vroom_example("mtcars.csv")
+vroom(file_path)
+```
+
+
+```{r}
+spec(vroom(file_path))
+```
+
+
+
+```{r}
+compressed <- vroom_example("mtcars.csv.zip")
+vroom(compressed)
+```
+
+
+
+```{r}
+vroom(compressed, col_select = c(model, cyl, gear))
+```
+
+
+```{r}
+mtcars
+```
+
+

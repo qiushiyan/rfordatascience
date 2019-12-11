@@ -2,11 +2,14 @@
 
 # WDI   
 
+```{r,echo=F}
+knitr::opts_chunk$set(cache=T)
+```
+
+
 ```{r,message=F}
 # install.packages("WDI")
 library(WDI)
-library(tidyverse)
-knitr::opts_chunk$set(message=F,cache=T)
 ```
 
 [World Devevlopment Indicators](http://datatopics.worldbank.org/world-development-indicators/)(WDI)是世界银行提供的公开、高质量数据库。指标首先按照领域分类，除了一般常见的统计数据外，还包括农业、气候、贫穷、健康方面的数据。

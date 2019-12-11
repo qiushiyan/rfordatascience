@@ -1,13 +1,12 @@
-# tibble：简单数据框 {#tibble}
+# tibble
 
 
 `tidyverse` 中使用 `tibble` 代替传统的 R 数据框(`data.frame`格式)。tibble 是一种更简单的数据框，它对传统数据框的功能进行了一些修改，以便更易于使用。多数情况下，我们不再区分 tibble 和数据框这两个词 ； 如果想要强调 R 内置的传统数据框，我们用 `data. frame` 来表示。除了这里展示的知识以外，使用命令`vignette("tibble")`命令可以获得更多关于 tibble 的信息。  
 
-
-```{r,message=F}
-library(tidyverse)
-knitr::opts_chunk$set(messgae=F, cache=T)
+```{r, echo = F}
+knitr::opts_chunk$set(cache=T)
 ```
+
 
 ## 简介  
 
@@ -30,7 +29,7 @@ class(iris)
 
 
 
-## 对比tibble和data.frame
+## 对比 tibble 和 data.frame 
 
 tibble 和传统 data.frame 的机理主要有三处不同：创建、打印和取子集。
 

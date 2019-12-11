@@ -11,14 +11,18 @@ rmd_files: [
   "lubridate.Rmd",
   "forcats.Rmd",
   "tidyr.Rmd",
-  "purrr.Rmd",
   "broom.Rmd",
+  "purrr.Rmd",
 
   "vroom.Rmd",
   "WDI.Rmd",
 
   "skimr.Rmd",
+  "data-table.Rmd",
+  "rowwise.Rmd",
   
   "janitor.Rmd",
   "missing-values.Rmd",
 ]
+
+before_chapter_script: "_common.R"

@@ -1,23 +1,29 @@
 
-# 使用 forcats 处理因子   {#forcats}
+# forcats
 
 ## 简介  
+
 因子(factor)在 R 中用于处理分类变量。从历史上看，因子远比字符串容易处理。因此，R基础包的很多函数都自动将字符串转换为因子。这意味着因子经常出现在并不真正适合他们的地方。好在我们不用担心`tidyverse`中出现这种问题，可以将注意力集中于真正需要因子类型的地方。 
 
 *Roger Peng*的文章["stringsAsFactors: An unauthorized bigraphy](https://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/)和*Thomas Lumley*的文章[stringsAsFactors = sigh ](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh)介绍了有关因子和字符串的一些历史背景。  
 
-2006年, `stringsAsFactors` 这一设置的前身 `charToFactor` 被引入了 `data.frame()` 函数中，后来被纳入到 `read.table()` 里。默认情况下，`stringsAsFactors`被设置为`True`，R便会自动把字符串转换为因子型变量。在当时，这种设置是不难理解的。早期R的用户几乎都是统计科班出身的研究者，他们所用数据集里的字符串几乎都代表了一个定性变量，例如`年龄(male/female)`,`国家(US/other)`，`地区(East/West)`。进一步地，由于统计学家们的工作重点几乎都集中在构建各种统计模型上，而像`lm()`和`glm()`的函数只有当一个变量是 `factor` 类型的时候才开始对其编码，在统计模型中构建虚拟变量。  
+2006 年, `stringsAsFactors` 这一设置的前身 `charToFactor` 被引入了 `data.frame()` 函数中，后来被纳入到 `read.table()` 里。默认情况下，`stringsAsFactors`被设置为`True`，R便会自动把字符串转换为因子型变量。在当时，这种设置是不难理解的。早期R的用户几乎都是统计科班出身的研究者，他们所用数据集里的字符串几乎都代表了一个定性变量，例如`年龄(male/female)`,`国家(US/other)`，`地区(East/West)`。进一步地，由于统计学家们的工作重点几乎都集中在构建各种统计模型上，而像`lm()`和`glm()`的函数只有当一个变量是 `factor` 类型的时候才开始对其编码，在统计模型中构建虚拟变量。  
 
 另一个原因更隐秘一些。在内部的存储机制中，因子变量经过一些编码后用数值存储，使得因子比字符串在占用内存空间上更加划算。2007 年后，R 引入了一种“CHARSXP”的方法，使得字符串也被映射为数值存储，`stringsAsFactors = T`在这点上的优势便不复存在了。  
 
 如今，R 的用户群体大大地多样化了，许多人开始抱怨默认设置`stringsAsFactors = T`，因为他们数据集中的字符串未必要用来建模，而可能只是一种标签。例如，在基因组学中，基因位点的名字不是某个模型中的变量，而现在把它们转换为因子也不会再有存储上的优势，反而会使得一些分析方法失效（比如使用正则表达式）。
 
 我们将使用`forcats`包来处理因子，这个包提供了能够处理分类变量（其实就是因子的另一种说法）的工具，其中还包括了处理因子的大量辅助函数。因为 `forcats` 不是`tidyverse`的核心R包，所以需要手动加载。  
-```{r,message=F,warning=F}
-library(tidyverse)
-library(forcats)
-knitr::opts_chunk$set(message=F)
+
+
+```{r,echo=F}
+knitr::opts_chunk$set(message=F,cache=T)
 ```
+
+```{r}
+library(forcats)
+```
+
 
 所有`forcats`包中用于因子处理的核心函数均以`fct_`前缀开头，且**第一个参数均为要处理的因子向量**，这意味着`forcats`包中的函数在使用管道操作时，传入的必须是你要操作的向量。关于`fct_`函数族最有用的一点是，它可以接受传入的向量是字符串变量（而不仅仅是因子类型），且不会在输出结果中改变变量的类型。这意味着字符串可以一方面享受 `fct_` 函数带来的操作便利，一方面保有字符串的特性。
 

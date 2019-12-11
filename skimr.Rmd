@@ -1,6 +1,6 @@
 
 
-# (PART) Exploring and Summarizing {-}  
+# (PART) Exploring and Wrangling {-}  
 
 
 # skimr

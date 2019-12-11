@@ -1,0 +1,17 @@
+
+
+# data.table  
+https://rdatatable.gitlab.io/data.table/  
+
+https://m-clark.github.io/data-processing-and-visualization/data_table.html  
+
+
+
+## dtplyr  
+
+https://dtplyr.tidyverse.org/  
+
+
+## maditr  
+
+https://github.com/gdemin/maditr  

@@ -18,9 +18,12 @@
 
 日期和时间非常复杂，因为它们要兼顾两种物理现象（地球的自转以及围绕太阳的公转）和一系列地理政治现象（包括月份、市区和夏时制）。本章主要讨论`lubridate`包，它可以使得R对日期和时间的处理更加容易。`lubridate`不是`tidyverse`的核心R包，因为只有在处理日期和时间时才需要它。我们还需要将`nycflights`包作为练习数据。  
 
+```{r,echo=F}
+knitr::opts_chunk$set(cache = T)
+```
+
+
 ```{r warning = F}
-knitr::opts_chunk$set(warning = F,message = F, cache = T)
-library(tidyverse)
 library(lubridate)
 library(nycflights13)
 ```

@@ -1,6 +1,6 @@
 
 
-# 数据整理(Tidy data)  {#tidy-data}
+# tidyr
 
 ## 简介  
 
@@ -10,9 +10,6 @@
 
 整洁的数据(Tidy data)是进行数据操作和 ggplot2 可视化的基础，所谓数据整理（清洗、清理），就是把 messy data 转换为 tidy data 的过程。在`tidyverse`核心包中，`tidyr` 包承担数据整理的工作：
 
-```{r,message=F}
-library(tidyverse)
-```
 
 
 
@@ -21,7 +18,10 @@ library(tidyverse)
 2. 每个观测有一个专属行(Each observation must have its own row)  
 3. 每个值必须都有一个专属的存储单元(Each value must its own cell)  
 
-![](images/11.png)
+```{r,echo=F}
+knitr::include_graphics("images/11.png")
+```
+
 
 这三条规则是互相关联的，你不可能只满足三条规则中的两条，所以我们可以更简化地把清洁数据的要求写成：  
 1. 每列是一个变量(Variables go in columns)  

@@ -1,6 +1,6 @@
 
 
-# 处理缺失值  {#handling-missing-values}  
+# 处理缺失值  {#missing-values}  
 
 ```{r,message=F}
 library(tidyverse)
