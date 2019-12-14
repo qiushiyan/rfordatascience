@@ -1,9 +1,33 @@
 
 
-# data.table  
+# data.table {#data-table}
 https://rdatatable.gitlab.io/data.table/  
 
-https://m-clark.github.io/data-processing-and-visualization/data_table.html  
+https://m-clark.github.io/data-processing-and-visualization/data_table.html   
+
+
+```{r}
+library(data.table)
+```
+
+```{r}
+dt <- data.table(x = rnorm(1000),
+                 y = rnorm(1000))
+dt
+```
+
+
+```{r}
+dt[, z := rnorm(1000)]
+dt
+```
+
+```{r}
+dt2 <- dt
+dt[, z := NULL]
+
+dt2
+```
 
 
 
@@ -15,3 +39,8 @@ https://dtplyr.tidyverse.org/
 ## maditr  
 
 https://github.com/gdemin/maditr  
+
+
+## tidyfast  
+
+https://github.com/TysonStanley/tidyfast  

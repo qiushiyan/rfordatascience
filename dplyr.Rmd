@@ -7,7 +7,9 @@ knitr::opts_chunk$set(cache=T)
 ```
 
 
-为了介绍 `dplyr` 中的基本数据操作。可以使用 `nycflights::flights`，这个数据集包含了 2013 年从纽约市处罚的所有 336776 次航班的信息。该数据来自于美国交通统计局。
+**dplyr** 承担了 tidyverse 中最基本也最重要的数据处理、转换、分析功能(to my mind)。它的设计思想是发展处一套简洁、统一的数据操作语法(a grammar of data manipulation)，用英语中常见的动词命名操作数据的函数，并充分利用管道符 `%>%` 和更“现代”的数据框格式 `tibble` 增加代码可读性。^[tidyverse 之外，\@ref(data-table) 中介绍的以 `data.table` 为中心的数据整理方法也值得一看]
+
+为了介绍 **dplyr** 中的基本数据操作。可以使用 `nycflights::flights`，这个数据集包含了 2013 年从纽约市处罚的所有 336776 次航班的信息。该数据来自于美国交通统计局。
 ```{r}
 library(nycflights13)
 flights

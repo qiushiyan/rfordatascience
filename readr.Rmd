@@ -3,17 +3,18 @@
 
 # readr  
 
-```{r,message=F,warning=F}
-library(tidyverse)
-knitr::opts_chunk$set(message=F,cache=T)
+```{r,echo=F}
+knitr::opts_chunk$set(cache=T)
 ```
 
 
 
 
-## 基础包中的数据导入 
 
-R的基础包中有 3 个最主要的数据导入函数：
+
+## base R 中的数据读取 
+
+base R中有 3 个最主要的数据导入函数：
 
 函数 | 用途
 -----| ----
@@ -33,13 +34,13 @@ R的基础包中有 3 个最主要的数据导入函数：
 我们使用本地数据集`hotdogs.txt`简要说明这些函数的用法，它没有列名，且用空格分隔：
 ```{r}
 ## 分别使用三个函数
-hotdogs1 <- read.table("data\\hotdogs.txt",sep = "\t")
+hotdogs1 <- read.table("data/hotdogs.txt",sep = "\t")
 head(hotdogs1)
 
-hotdogs2 <- read.csv("data\\hotdogs.txt",sep = "\t",header = F)
+hotdogs2 <- read.csv("data/hotdogs.txt",sep = "\t",header = F)
 head(hotdogs2)
 
-hotdogs2 <- read.delim("data\\hotdogs.txt",header = F)
+hotdogs2 <- read.delim("data/hotdogs.txt",header = F)
 head(hotdogs2)
 ```
 
@@ -55,18 +56,21 @@ head(hotdogs)
 
 ## readr 简介
 
-![](images\6.png)
+```{r,echo=F}
+knitr::include_graphics("images/6.png")
+```
 
-`readr` 是 `tidyverse` 的核心 R 包之一，所以我们不必在手动加载它，其中的多数函数能够将平面文件(flat files)转换为数据框。相对于R基础包中有同样功能的函数，它有以下的优点：  
 
-* 一般来说，它们比基础模块中的函数速度更快（约快 10 倍）。如果只考虑速度的话，还可以尝试使用 `data.table::fread()`。这个函数与 `tidyverse` 的兼容性不是很好，但确实更快一些   
-* 它们可以生成`tibble`，而且不会将字符串向量转换为因子，不使用行名称，也不会随意改动列名称。这些都是使用 R 基础包时比较烦人的事情  
-* 它们更容易重复使用。R基础包中的函数会继承操作系统的功能，并依赖环境变量，因此，可以在你的计算机上正常运行的代码未必适用于他人的计算机  
+**readr** 是 tidyverse 的核心 R 包之一，作用是将平面数据(flat files)快速读取至 R 中，并转换为易用的 tibble 格式。相对于 base R 中有的数据读取函数，它有以下的优点：  
 
-**主要函数**有：  
+* 一般来说，它们比基础模块中的函数速度更快（约快 10 倍）。如果只考虑读取速度的话，还可以尝试使用第 \@ref(data-table) 章中的 `fread()` 或第 \@ref(vroom) 章中的 `vroom()`  
+* 它们可以生成 `tibble`，而且不会将字符串向量转换为因子，不使用行名称，也不会随意改动列名称。这些都是使用 base R 时比较烦人的事情  
+* 它们更容易重复使用。base R 中的函数会继承操作系统的功能，并依赖环境变量，因此，可以在你的计算机上正常运行的代码未必适用于他人的计算机  
 
-* `read_csv()` 读取逗号分割文件、`read_csv2()` 读取分号分隔文件（这在用逗号表示小数点的国家非常普遍），`read_tsv()` 读取制表符分隔文件，`read_delim()`函数可以读取使用任意分隔符的文件(通过指定`delim`参数)  
-* `read_fwf()` 读取固定宽度的文件(fixed width file)。既可以使用`fwf_width()`函按照宽度来设定域，也可以使用 `fwf_positions()` 函数按照位置来设定域。`read_table()` 读取固定宽度文件的一种常用变体，其中使用空白字符来分隔各列  
+**主要函数有**：  
+
+* `read_csv()` 读取逗号分割文件、`read_csv2()` 读取分号分隔文件（这在用逗号表示小数点的国家非常普遍），`read_tsv()` 读取制表符分隔文件，`read_delim()`函数可以读取使用任意分隔符的文件(通过指定 `delim` 参数)  
+* `read_fwf()` 读取固定宽度的文件(fixed width file)。既可以使用 `fwf_width()` 函按照宽度来设定域，也可以使用 `fwf_positions()` 函数按照位置来设定域。`read_table()` 读取固定宽度文件的一种常用变体，其中使用空白字符来分隔各列  
 
 **重要参数**：  
 
