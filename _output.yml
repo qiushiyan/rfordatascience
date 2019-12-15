@@ -5,7 +5,7 @@ bookdown::gitbook:
     toc:
       collapse: section
       before: |
-        <li><a href="./"></a></li>
+        <li><a href="./">R4DS: tidyverse and beyond</a></li>
       after: |
         <li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
     edit:
