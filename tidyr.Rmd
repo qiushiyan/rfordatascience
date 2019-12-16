@@ -2,7 +2,7 @@
 
 # tidyr
 
-## 简介  
+## 简介  {#tidyr-intro}
 
 > “Happy families are all alike; every unhappy family is unhappy in its own way.” –– Leo Tolstoy    
 
@@ -397,8 +397,7 @@ tibble(x = c("X1", "X2", "Y1", "Y2")) %>%
 
 
 
-## 缺失值  {#missing-values}
-
+## 缺失值 {#tidyr-missing}
 数据整理改变了数据的呈现方式，随之而来的一个话题便是缺失值。通常当我们泛泛地使用"缺失值 (missing value)" 这个名词的时候，其实是指以下两种"缺失"方式中的某一种：  
 
 * 显式缺失(Explicitly missing): 在数据中用`NA`标识
@@ -589,7 +588,7 @@ who6 %>%
 ```
 
 
-## 拓展：None-tidy data  
+## 拓展：None-tidy data  {#non-tidy}
 
 Before we continue on to other topics, it’s worth talking briefly about non-tidy data. Earlier in the chapter, I used the pejorative term “messy” to refer to non-tidy data. That’s an oversimplification: there are lots of useful and well-founded data structures that are not tidy data. There are two main reasons to use other data structures:  
 

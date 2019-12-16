@@ -7,7 +7,7 @@ library(tidyverse)
 ```
 
 
-## 探索  
+## 探索  {#explore-missing}
 
 `drop_na()` 根据列去除带有缺失值的观测：  
 
@@ -18,7 +18,7 @@ df %>% drop_na(x)
 ```
 
 
-## 填充
+## 填充 {#fill-missing}
 
 https://jiangjun.link/post/2018/12/r-missing-data  
 
