@@ -11,6 +11,7 @@ rmd_files: [
   "lubridate.Rmd",
   "forcats.Rmd",
   "tidyr.Rmd",
+  "relational.Rmd",
   "broom.Rmd",
   "purrr.Rmd",
 
@@ -23,6 +24,8 @@ rmd_files: [
   
   "janitor.Rmd",
   "missing-values.Rmd",
+  
+  "reference.Rmd"
 ]
 
 before_chapter_script: "_common.R"

@@ -25,7 +25,7 @@ knitr::include_graphics("images/20.png")
 ```
 
 
-数据库中包含了超过 1600 个这样的时间序列，很多有效跨度超过了 50 年。[WDI](https://cran.r-project.org/web/packages/WDI/index.html) 包提供了在 WDI 数据库中搜索、提取、格式化信息的接口。  
+数据库中包含了超过 1600 个这样的时间序列，很多有效跨度超过了 50 年。**WDI**[@R-WDI] 包提供了在 WDI 数据库中搜索、提取、格式化信息的接口。  
 
 
 ## `WDIsearch()`  
