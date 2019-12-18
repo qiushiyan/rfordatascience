@@ -2,9 +2,6 @@
 
 # 处理缺失值  {#missing-values}  
 
-```{r,message=F}
-library(tidyverse)
-```
 
 
 ## 探索  {#explore-missing}
@@ -73,6 +70,14 @@ df %>% replace_na(list(z = list(5)))
 ```{r}
 df$x %>% replace_na(0)
 df$y %>% replace_na("unknown")
+```
+
+
+`visdat::vis_missing()`  
+
+```{r}
+library(visdat)
+vis_miss(df)
 ```
 
 

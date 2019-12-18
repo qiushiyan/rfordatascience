@@ -1,0 +1,9 @@
+
+
+# visdat  
+
+```{r}
+library(visdat)
+```
+
+https://docs.ropensci.org/visdat/  

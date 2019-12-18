@@ -17,9 +17,10 @@ rmd_files: [
 
   "vroom.Rmd",
   "WDI.Rmd",
-
-  "skimr.Rmd",
+  
   "data-table.Rmd",
+  "skimr.Rmd",
+  "visdat.Rmd",
   "rowwise.Rmd",
   
   "janitor.Rmd",
