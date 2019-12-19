@@ -6,4 +6,9 @@
 library(visdat)
 ```
 
-https://docs.ropensci.org/visdat/  
+https://docs.ropensci.org/visdat/    
+
+```{r}
+vis_dat(ggplot2::diamonds)
+```
+
