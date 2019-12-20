@@ -1,6 +1,8 @@
 
 
-# WDI   
+# Data APIs
+
+## WDI
 
 ```{r,echo=F}
 knitr::opts_chunk$set(cache=T)
@@ -28,7 +30,7 @@ knitr::include_graphics("images/20.png")
 数据库中包含了超过 1600 个这样的时间序列，很多有效跨度超过了 50 年。**WDI**[@R-WDI] 包提供了在 WDI 数据库中搜索、提取、格式化信息的接口。  
 
 
-## `WDIsearch()`  
+### `WDIsearch()`  
 
 `WDIserach()` 用于在 WDI 数据库中搜索可用的指标，是之后用 `WDI()` 提取相关数据的基础。  
 
@@ -68,7 +70,7 @@ WDIsearch(string = 'gdp.*capita.*constant') %>%
 ```
 
 
-## `WDI`  
+### `WDI`  
 
 `WDIsearch()` 得到了指标的**编码**之后，就可以用 `WDI()` 下载相关数据：  
 
@@ -97,3 +99,12 @@ WDI(indicator = c(child_motality = "5.51.01.03.mortal"),  country = c("US", "CN"
     extra = TRUE) %>% 
   as_tibble() 
 ```
+
+## ipumsr  
+
+https://github.com/mnpopcenter/ipumsr  
+
+```{r}
+# install.packages("ipumsr")
+```
+
