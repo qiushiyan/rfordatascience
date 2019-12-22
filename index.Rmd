@@ -6,7 +6,7 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 github-repo: enixam/rfordatascience
-bibliography: [packages.bib, bib.bib]
+bibliography: [packages.bib, references.bib]
 biblio-style: "apalike"
 link-citations: true
 notice: |

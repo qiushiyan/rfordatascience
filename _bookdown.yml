@@ -16,7 +16,8 @@ rmd_files: [
   "purrr.Rmd",
 
   "vroom.Rmd",
-  "WDI.Rmd",
+  
+  "apis.Rmd",
   
   "data-table.Rmd",
   "skimr.Rmd",
@@ -26,7 +27,7 @@ rmd_files: [
   "janitor.Rmd",
   "missing-values.Rmd",
   
-  "reference.Rmd"
+  "references.Rmd"
 ]
 
 before_chapter_script: "_common.R"
