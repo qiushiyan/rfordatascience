@@ -27,6 +27,11 @@ rmd_files: [
   "janitor.Rmd",
   "missing-values.Rmd",
   
+  "tidymodels.Rmd",
+  "caret.Rmd",
+  "vtreat.Rmd",
+  
+  
   "references.Rmd"
 ]
 
