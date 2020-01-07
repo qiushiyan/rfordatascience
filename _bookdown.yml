@@ -16,13 +16,11 @@ rmd_files: [
   "purrr.Rmd",
 
   "vroom.Rmd",
-  
   "apis.Rmd",
   
   "data-table.Rmd",
-  "skimr.Rmd",
-  "visdat.Rmd",
   "rowwise.Rmd",
+  "summary.Rmd",
   
   "janitor.Rmd",
   "missing-values.Rmd",

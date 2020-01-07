@@ -1,0 +1,93 @@
+
+
+# Data Summary
+
+
+## skimr 
+
+**skimr**[@R-skimr] 是由 [rOpenSci project](https://github.com/ropensci) 开发的用于探索性数据分析的包，可以看作增强版的 `summary()`，根据不同的列类型返回整洁有用的统计量。如：  
+
+```{r,include=F}
+knitr::opts_chunk$set(render = knitr::normal_print,cache = T)
+```
+
+
+```{r}
+library(skimr)
+skim(iris)
+```
+
+由于 `skim()` 的返回结果在 bookdown 里显示效果不太好，这里只给出一个最简单的例子，关于该包的具体使用可见 [Introduction to skimr](https://qiushi.netlify.com/post/introduction-to-skimr/)  
+
+## visdat 
+
+
+```{r}
+# install.packages("visdata")
+library(visdat)
+```
+
+https://docs.ropensci.org/visdat/    
+
+```{r}
+vis_dat(ggplot2::diamonds)
+```
+
+## summarytools  
+
+由于很多 summarytools 中的函数往往直接生成 markdown 代码，为了在 rmarkdown 正确美观的呈现它们需要同时设置 summarytools 中和 knitr 中的一些全局选项：（详细可见[Recommendations for Using summarytools With Rmarkdown](https://cran.r-project.org/web/packages/summarytools/vignettes/Recommendations-rmarkdown.html#dfsummary)）。  
+
+```{r}
+library(summarytools)
+```
+
+
+```{r}
+st_options(bootstrap.css     = FALSE,       # Already part of the theme so no need for it
+           plain.ascii       = FALSE,       # One of the essential settings
+           style             = "rmarkdown", # Idem.
+           dfSummary.silent  = TRUE,        # Suppresses messages about temporary files
+           footnote          = NA,          # Keeping the results minimalistic
+           subtitle.emphasis = FALSE)       # For the vignette theme, this gives
+                                            # much better results. Your mileage may vary.
+
+st_css()  # This is a must; without it, expect odd layout, especially with dfSummary()
+```
+
+
+
+```{r}
+library(knitr)
+opts_chunk$set(comment = NA, 
+               prompt = FALSE,
+               results='asis',
+               collapse = FALSE)
+```
+
+如果之前没有设置 `collpase = TRUE`, `collapse = FALSE` 不是必要的
+
+
+
+### `freq`
+
+```{r,collpase = FALSE, result = "asis", comment = NA, prompt = FALSE}
+freq(iris$Species, plain.ascii = FALSE, style = "rmarkdown", headings = FALSE)
+```
+
+
+```{r}
+freq(iris$Species, report.nas = FALSE, headings = FALSE)
+```
+
+```{r}
+freq(iris$Species, report.nas = FALSE, totals = FALSE,
+     cumul = FALSE, style = "rmarkdown", headings = FALSE)
+```
+
+
+### `descr()`  
+
+```{r}
+descr(iris)
+```
+

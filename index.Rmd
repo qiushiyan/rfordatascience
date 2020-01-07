@@ -9,7 +9,7 @@ github-repo: enixam/rfordatascience
 bibliography: [packages.bib, references.bib]
 biblio-style: "apalike"
 link-citations: true
-notice: |
+nocite: |
   @R-base
 ---
 
@@ -22,9 +22,9 @@ notice: |
 
 另一方面，当下的 R 社区发展迅猛，一大批更为好用、高效的 R 包也在不断涌现，既有 Rstudio 旗下 tidyverse 的衍生系列(如 [**tidymodels**](https://www.tidyverse.org/blog/2018/08/tidymodels-0-0-1/)), 也有 "民间" 的贡献（如 [**data.table**](https://rdatatable.gitlab.io/data.table/)）。虽然学海无涯，作为学习者总还是希望能够多掌握一些，多明白一些。于是便希望这份笔记不限于原书，而是能记录一些其他自学 R 与数据科学实践的内容。最大的受益者自然是未来的自己，但若能为他人对 R 的学习提供些许帮助，自然也十分高兴。  
 
-鉴于笔者目前只是个大三的学生，也没有经历过统计、计算机等专业的系统学习，似乎连“才疏学浅”这样的谦辞也谈不到了。无论如何，若是您发现了任何错误或有任何方面的意见，欢迎通过邮箱 565702994@qq.com 与我联系。  
+鉴于笔者没有经历过统计、计算机等专业的系统学习，似乎连“才疏学浅”这样的谦辞也成为一种过誉。无论如何，若发现了任何错误或有任何方面的意见，欢迎在 https://github.com/enixam/rfordatascience/issues 提交 issue 或者通过邮箱 565702994@qq.com 与我联系。  
 
-第 \@ref(dplyr) ~ \@ref(purrr) 章的文字表述借鉴了中文译本。目前对原书中内容的再现和扩展（第一部分）已经基本完成，随缘更新。    
+第 \@ref(dplyr) ~ \@ref(purrr) 章的文字表述借鉴了中文译本。目前对原书中内容的再现和扩展（第一部分）已经基本完成(除了 **ggplot2** 相关部分)，随缘更新。    
 
 绝大部分代码需要首先加载 tidyverse, 其中包含的 R 包默认已经被加载好 : 
 
