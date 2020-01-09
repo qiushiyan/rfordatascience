@@ -9,29 +9,29 @@ https://rdatatable.gitlab.io/data.table/
 
 https://m-clark.github.io/data-processing-and-visualization/data_table.html   
 
+<center>
+```{r, echo = FALSE}
+knitr::include_graphics("images/22.png")
+```
+</center>
 
 ```{r}
 library(data.table)
 ```
 
-```{r}
-dt <- data.table(x = rnorm(1000),
-                 y = rnorm(1000))
-dt
-```
-
 
 ```{r}
-dt[, z := rnorm(1000)]
-dt
+y = list(id = 1:2, name = c("a", "b"))
+x = as.data.table(y)
+x
 ```
 
 ```{r}
-dt2 <- dt
-dt[, z := NULL]
-
-dt2
+class(x)
 ```
+
+
+## 基本使用 {#data-table-basics}
 
 
 

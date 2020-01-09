@@ -23,7 +23,7 @@ knitr::include_graphics("images/11.png")
 ```
 
 
-这三条规则是互相关联的，你不可能只满足三条规则中的两条，所以我们可以更简化地把清洁数据的要求写成：  
+这三条规则是互相关联的，不可能只满足三条规则中的两条，所以我们可以更简化地把清洁数据的要求写成：  
 1. 每列是一个变量(Variables go in columns)  
 2. 每行是一个观测(Observatiosn go in rows)
 
@@ -49,7 +49,7 @@ table4b
 为什么要为获得清洁的数据如此大费周折呢？主要有两个优点：  
 
 1. 清洁数据的规则使得我们可以遵从一个一致、明确的结构存储数据。学习处理这些数据的工具变得很容易，因为你的对象在底层是一致的。  
-2. 把变量存储在列中可以把R的向量化函数优势发挥到极致。我们已经学过 `mutate()` 和 `summarize()` 函数，许多内置的 R 函数都是对向量进行操作的。只要有了清洁的数据，后面的数据变换工作就很容易：  
+2. 把变量存储在列中可以把 R 的向量化函数优势发挥到极致。例如 `mutate()` 和 `summarize()` ，许多内置的 R 函数都是对向量进行操作的。只要有了清洁的数据，后面的数据变换工作就很容易：  
 ```{r}
 # Compute rate per 10,000
 table1 %>% 
@@ -117,9 +117,14 @@ t2_cases_per_cap %>%
 ## `spread()`和`gather()`
 
 请看下面的两张表格：  
-![](images/12.png)
 
-细看两表，不难发现它们实质上相同的数据(第二张表是以x为行字段，y为列字段，z为值的数据透视表)。第一种形式成为**长数据(long data,indexed data，指标型数据)**，在长数据（指标型）数据汇总，你需要看指标来找到需要变量的数值（变量x，y，z的值）。第二种称为**宽数据(wide data,Cartesian data,笛卡尔型数据)**，需要看行和列的交叉点来找到对应的值。我们不能简单的说哪一种格式梗优，因为两种形式都有可能是整洁的，这取决于值"A"、"B"、"C"、"D"的含义。  
+<center>
+```{r}
+knitr::include_graphics("images/12.png")
+```
+</center>
+
+细看两表，不难发现它们实质上相同的数据(第二张表是以 x 为行字段，y 为列字段，z 为值的数据透视表)。第一种形式成为**长数据(long data,indexed data，指标型数据)**，在长数据（指标型）数据汇总，你需要看指标来找到需要变量的数值（变量x，y，z的值）。第二种称为**宽数据(wide data,Cartesian data,笛卡尔型数据)**，需要看行和列的交叉点来找到对应的值。很难简单地说哪一种格式更优，因为两种形式都有可能是整洁的，这取决于值"A"、"B"、"C"、"D"的含义。  
 
 注意到上面的确实值：在一种形式下显示存在的缺失值在另一种格式下不一定能直接看得出来。NA代表了一种缺失情况，但有时数值确实单纯是因为那里没有值。（而不是因为记录失误，没有获取到等原因）  
 
@@ -584,7 +589,7 @@ who6 <- who %>%
           summarize(n = n())
 
 who6 %>%
-  filter(n>1)
+  filter(n > 1)
 ```
 
 
@@ -630,7 +635,7 @@ library(tidyverse)
 ```
 
 
-### `pivot_longer ` 和 `pivot_wider`  
+### `Pivoting` 
 
 `pivot_longer()` 和 `pivot_wider()` 分别对应原来的 `gather()` 和 `spread()`，如今 API 更加容易理解：  
 
@@ -881,7 +886,7 @@ df %>%
 ```
 
 
-### `pivot_wider()`  
+#### `pivot_wider()`  
 
 The `fish_encounters` dataset, contributed by [Myfanwy Johnston](https://fishsciences.github.io/post/visualizing-fish-encounter-histories/), describes when fish swimming down a river are detected by automatic monitoring stations:  
 
@@ -895,6 +900,48 @@ fish_encounters %>%
   pivot_wider(names_from = station,
               values_from = seen,
               )
+```
+
+## Rectangling  
+
+```{r}
+library(repurrrsive)
+```
+
+```{r}
+repos <- tibble(repo = gh_repos)
+repos
+```
+
+```{r}
+repos <- repos %>% 
+  unnest_longer(repo) 
+repos
+```
+
+
+
+```{r}
+repos %>% hoist(repo, 
+  login = c("owner", "login"), 
+  name = "name",
+  homepage = "homepage",
+  watchers = "watchers_count"
+)
+```
+
+
+```{r}
+repos %>% 
+  hoist(repo, 
+    login = "owner"
+)
+```
+
+```{r}
+repos %>% 
+  hoist(repo, owner = "owner") %>% 
+  unnest_wider(owner)
 ```
 
 
