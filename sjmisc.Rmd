@@ -45,7 +45,7 @@ efc %>% tabyl(e42dep, c161sex, show_na = FALSE)
 
 ## `rec()`: 重新编码
 
-
+https://strengejacke.github.io/sjmisc/articles/recodingvariables.html
 
 ```{r}
 efc$burden <- rec(
