@@ -126,7 +126,7 @@ t2_cases_per_cap %>%
 
 
 <center>
-```{r, fig.cap="图片和后面的动图来自 https://www.garrickadenbuie.com/project/tidyexplain/#spread-and-gather "}
+```{r, fig.cap="More images at https://www.garrickadenbuie.com/project/tidyexplain/#spread-and-gather", echo = FALSE}
 knitr::include_graphics("images/12.jpg")
 ```
 </center>
@@ -376,21 +376,20 @@ pnl %>%
 
 #### Duplicated column names
 
-如果某个数据框中的变量有重复的名字，用 `gather()`聚合这些变量所在的列时会返回一条错误：  
+如果某个数据框中各列有重复的名字，用 `gather()` 聚合这些变量所在的列时会返回一条错误：  
 
 ```r
 Error: Can't bind data because some arguments have the same name
 ```
 
-这是因为被聚合的列名被当做 `key` 列的值，又因这些值是重复的，故不能唯一标识一条记录。`pivot_longer` 针对这一点做了优化，尝试聚合这些列时，会自动生成一个标识列：  
+这是因为被聚合的列名被当做 `key` 列的值，又因这些值是重复的，故不能唯一标识一条记录。`pivot_longer()` 针对这一点做了优化，尝试聚合这些列时，会自动生成一个标识列：  
 
 ```{r}
 #  To create a tibble with duplicated names
 # you have to explicitly opt out of the name repair 
 # that usually prevents you from creating such a dataset:
 
-df <- tibble(x = 1:3, y = 4:6, y = 5:7, y = 7:9, .name_repair = "minimal") 
-df
+(df <- tibble(x = 1:3, y = 4:6, y = 5:7, y = 7:9, .name_repair = "minimal")) 
 ```
 
 ```{r}
