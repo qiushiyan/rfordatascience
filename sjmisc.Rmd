@@ -1,0 +1,60 @@
+
+# sjmisc  
+
+
+```{r}
+library(sjmisc)
+```
+
+```{r}
+data(efc)
+(efc <- efc %>% as_tibble())
+```
+
+## `frq`
+
+```{r}
+efc %>%
+  pull(c161sex) %>% 
+  frq()
+```
+
+## `flat_table`
+
+```{r}
+flat_table(efc, e42dep, c161sex)
+```
+
+
+```{r}
+flat_table(efc, e42dep, c161sex, margin = "col")
+```
+
+
+```{r}
+library(janitor)
+efc %>% tabyl(e42dep, c161sex, show_na = FALSE)
+```
+
+## rec
+
+```{r}
+efc %>% 
+  pull(neg_c_7) %>% 
+  frq()
+```
+
+```{r}
+efc %>% 
+  pull(neg_c_7) %>% 
+  rec(
+    rec = c("min:9=1 [low]; 10:12=2 [moderate]; 13:max=3 [high]; else=NA"),
+    var.label = "Subjective burden",
+    as.num = FALSE # we want a factor
+) %>% 
+  frq()
+```
+
+
+
+

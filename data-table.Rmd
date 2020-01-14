@@ -1,7 +1,28 @@
 
-# (PART) Exploring and Wrangling {-}  
+# (PART) Exploring and Wrangling {-}    
+
+
 
 # data.table {#data-table}  
+
+All C++ code chunks will be combined to the chunk below:
+
+
+
+First we include the header `Rcpp.h`:
+
+```{Rcpp, eval=FALSE}
+#include <Rcpp.h>
+```
+
+Then we define a function:
+
+```{Rcpp, eval=FALSE}
+// [[Rcpp::export]]
+int timesTwo(int x) {
+  return x * 2;
+}
+```
 
 **data.table**[@R-data.table]
 
