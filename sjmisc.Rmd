@@ -1,6 +1,7 @@
 
 # sjmisc  
 
+https://strengejacke.github.io/sjmisc/articles/exploringdatasets.html  
 
 ```{r}
 library(sjmisc)
@@ -11,15 +12,19 @@ data(efc)
 (efc <- efc %>% as_tibble())
 ```
 
-## `frq`
+## `frq()` 和 `flat_table()` 一维和二维频数表
 
 ```{r}
 efc %>%
-  pull(c161sex) %>% 
-  frq()
+  frq(c161sex)
+```
+```{r}
+efc %>% 
+  group_by(e42dep) %>% 
+  frq(c161sex)
 ```
 
-## `flat_table`
+
 
 ```{r}
 flat_table(efc, e42dep, c161sex)
@@ -36,24 +41,24 @@ library(janitor)
 efc %>% tabyl(e42dep, c161sex, show_na = FALSE)
 ```
 
-## rec
+
+
+## `rec()`: 重新编码
+
+
 
 ```{r}
-efc %>% 
-  pull(neg_c_7) %>% 
-  frq()
+efc$burden <- rec(
+  efc$neg_c_7,
+  rec = c("min:9=1 [low]; 10:12=2 [moderate]; 13:max=3 [high]; else=NA"),
+  var.label = "Subjective burden",
+  as.num = FALSE # we want a factor
+)
+# print frequencies
+frq(efc$burden)
 ```
 
-```{r}
-efc %>% 
-  pull(neg_c_7) %>% 
-  rec(
-    rec = c("min:9=1 [low]; 10:12=2 [moderate]; 13:max=3 [high]; else=NA"),
-    var.label = "Subjective burden",
-    as.num = FALSE # we want a factor
-) %>% 
-  frq()
-```
+
 
 
 
