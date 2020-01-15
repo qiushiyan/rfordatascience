@@ -233,7 +233,20 @@ iris %>%
 ```
 
 
-### group_split、group_keys、group_data
+### group_nest、group_split、group_keys、group_data
+
+
+`group_nest()` is similar to `tidyr::nest()`, but focuses on the variables to **nest** by instead of the nested columns.  
+
+```{r}
+iris %>% 
+  as_tibble() %>%
+  group_nest(Species)
+```
+
+
+`group_split()` is a tidy version of `base::split()`. In particular, it respects a group_by()-like grouping specification, and refuses to name its result.
+
 
 ```{r}
 iris %>% 

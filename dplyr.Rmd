@@ -10,6 +10,7 @@ knitr::opts_chunk$set(cache=T)
 **dplyr** 承担了 tidyverse 中最基本也最重要的数据处理、转换、分析功能(to my mind)。它的设计思想是发展处一套简洁、统一的数据操作语法(a grammar of data manipulation)，用英语中常见的动词命名操作数据的函数，并充分利用管道符 `%>%` 和更“现代”的数据框格式 `tibble` 增加代码可读性。^[tidyverse 之外，\@ref(data-table) 中介绍的以 `data.table` 为中心的数据整理方法也值得一看]
 
 为了介绍 **dplyr** 中的基本数据操作。可以使用 `nycflights::flights`，这个数据集包含了 2013 年从纽约市处罚的所有 336776 次航班的信息。该数据来自于美国交通统计局。
+
 ```{r}
 library(nycflights13)
 flights
@@ -780,14 +781,14 @@ not_cancelled %>%
 
 ### 计数函数  
 
-`n()` 函数是一个与摘要函数`summarize()`配合的计数函数，它不需要任何参数，单独使用时，它计算的就是行计数：  
+`n()` 函数是一个与摘要函数 `summarize()` 配合的计数函数，它不需要任何参数，单独使用时，它计算的就是行计数：  
 
 ```{r}
 flights %>% 
   summarize(n = n())
 ```
 
-和`group_by`联合使用时，它可以计算分组变量的每个水平上各有多少个观测：  
+和 `group_by()` 联合使用时，它可以计算分组变量的每个水平上各有多少个观测：  
 
 ```{r}
 ## 每个月各有多少趟航班
@@ -1411,7 +1412,7 @@ flights %>%
 
 ## 作用域  
 
-这里的作用域是指 `dplyr` 函数能影响的变量范围。一般而言，`arrange()`、`mutate()`、`summarize()` 作用的变量需要显式指明，而它们的一些变体 (scoped variants) 有更加复杂的作用域规则。  
+这里的作用域 (scope) 是指 `dplyr` 函数能影响的变量范围。一般而言，`arrange()`、`mutate()`、`summarize()` 作用的变量需要显式指明，而它们的一些变体 (scoped variants) 有更加复杂的作用域规则。  
 
 **Scoped variants of a function operates on a selection of variables.**    
 
@@ -1424,12 +1425,6 @@ https://dplyr.tidyverse.org/reference/mutate_all.html
 https://dplyr.tidyverse.org/reference/summarise_all.html  
 
 https://dplyr.tidyverse.org/reference/filter_all.html  
-
-
-```{r,message=F}
-library(tidyverse)
-```
-
 
 ### `arrange()`  
 
