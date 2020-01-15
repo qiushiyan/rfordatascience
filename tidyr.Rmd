@@ -9,6 +9,7 @@
 > –– Leo Tolstoy    
 > “Tidy datasets are all alike, but every messy dataset is messy in its own way.” 
 > –– Hadley Wickham
+
 整洁的数据(Tidy data)是进行数据操作和 ggplot2 可视化的基础，所谓数据整理（清洗、清理），就是把 messy data 转换为 tidy data 的过程。在 tidyverse 生态中，**tidyr** 便负责数据的整理和变型：
 
 
@@ -31,6 +32,7 @@ knitr::include_graphics("images/11.png")
 
 
 同样的数据可以有不同的表现形式，但只有满足整洁数据的三个条件的数据集才是最容易使用的。以下的 3 个数据集背后的均来自1999年和2000年世界卫生组织在阿富汗、巴西和中国的一次肺结核病例调查，都有 `country`、`year`、`cases` 和 `population`四个变量，但采用了不同的组织方式:
+
 ```{r}
 table1
 table2
@@ -141,7 +143,8 @@ pivot_wider(data,
   values_from = value)
 ```
 
-`names_to` 和 `values_to` 参数相当于原来 `gather()` 中的 `key` 和 `value`，其中 “键” 列的默认名称变为 “name” 
+`names_to` 和 `values_to` 参数相当于原来 `gather()` 中的 `key` 和 `value`，其中 “键” 列的默认名称变为 “name”   
+同理, `names_from` 和 `values_from` 相当于原来 `spread()` 中的 `key` 和 `value`
 
 ```{r, echo = FALSE}
 knitr::include_graphics("images/gather-spread.gif")
@@ -171,6 +174,7 @@ ec2 <- economics %>% as_tibble() %>%
   pivot_wider(names_from = "month", values_from = "rate")
 ec2
 ```
+
 化宽为长：  
 
 ```{r}
@@ -181,7 +185,7 @@ ec2 %>%
 以上就是 `pviot_longer` 的基本用法，下面来处理一些更复杂的情况。  
 
 
-#### Numeric data in column names**  
+#### Numeric data in column names
 
 `pivot_longer()` 提供了 **names_ptype** 和 **values_ptypes** 两个参数调整数据集变长后键列和值列的数据类别。看一下 billboard 数据集：  
 
@@ -202,7 +206,7 @@ billboard_tidy <- billboard %>%
 billboard_tidy
 ```
 
-**names_prefix** 去除前缀 "wk"(否则无法从字符串转换为数值)，`names_ptype` 以列表的形式转换键列的数据类型。同理, **value_ptype** 可以转换值列的数据类型。  
+`names_prefix` 去除前缀 "wk"(否则无法从字符串转换为数值)，`names_ptype` 以列表的形式转换键列的数据类型。同理, `values_ptype` 可以转换值列的数据类型。  
 
 ```{r}
 ## 计算保持周数
@@ -213,7 +217,7 @@ billboard_tidy %>%
 ```
 
 
-#### Many variables in column names* 
+#### Many variables in column names
 
 在 tidyr 1.0.0 之前，当进行一定处理后发现多个变量被糅合到一列中时，可能会考虑使用 `separate()` 或者 `extract`:   
 
@@ -380,7 +384,7 @@ df %>%
 
 `pivot_wider()` 是 `pivot_longer()` 的逆操作，虽然在获得 tidy data 上，前者没有后者常用，但它经常被用来创建一些 summary table。  
 
-`fish_encounters` 数据记录了观测站对一批鱼群的观测情况(1 表示在该观测站发现该鱼)：
+`fish_encounters` 数据记录了一些沿河观测站对一批鱼群的观测情况(`seen` 为发现次数)：
 
 ```{r}
 fish_encounters
@@ -403,7 +407,171 @@ fish_encounters %>%
 ```
 
 ```{block2, type = "todo"}
+`fish_encoutners` 的贡献者 [Myfanwy Johnston](https://fishsciences.github.io/post/visualizing-fish-encounter-histories/) 在个人网站上有一篇相关的文章  
+```
 
+#### Aggregation  
+
+`pivot_wider()` 可以用来执行一些简单的聚合操作。`warpbreaks` 是一个关于经纱强度的控制试验，每个处理 `(wool, tension)` 上进行了 9 次试验：
+
+```{r}
+(warpbreaks <- warpbreaks %>% as_tibble() %>% select(wool, tension, breaks))
+warpbreaks %>% count(wool, tension)
+```
+
+现在想知道每个处理下的平均断头次数，只需展开 `wool` 或 `tension` 中的任意一个：  
+
+```{r, message = TRUE, warning = TRUE}
+warpbreaks %>% 
+  pivot_wider(names_from = wool, values_from = breaks)
+```
+
+由于 `(wool, tension)` 不能唯一确认一个观测，多个观测被压缩至一个列表中，`values_fn(breaks = mean)` 求得平均值：  
+
+```{r}
+warpbreaks %>% 
+  pivot_wider(names_from = wool, values_from = breaks,
+              values_fn = list(breaks = mean))
+```
+
+For more complex summary operations, I recommend summarising before reshaping, but for simple cases it’s often convenient to summarise within `pivot_wider()`  
+
+#### Generate column name from multiple variables  
+
+现有一个数据集存储了关于产品、生产国家、生产年份和产量的水平组合：  
+
+```{r}
+production <- expand_grid(
+    product = c("A", "B"), 
+    country = c("AI", "EI"), 
+    year = 2000:2014
+  ) %>%
+  filter((product == "A" & country == "AI") | product == "B") %>% 
+  mutate(production = rnorm(nrow(.)))
+
+production
+```
+
+假设现在希望对于每个 `product` 和 `country` 的组合均创建一列，关键是在 `names_from` 中传入一个向量：
+
+```{r}
+production %>% 
+  pivot_wider(names_from = c(product, country), values_from = production)
+```
+
+`names_sep` 可以指定除了 `_` 以外的分隔符。`names_prefix` 为展开后的各列**添加**前缀(as opposed to removing in `pivot_longer()`)
+
+#### Multiple value columns  
+
+The `us_rent_income` dataset contains information about median income and rent for each state in the US for 2017 (from the American Community Survey, retrieved with the **tidycensus** package).  
+
+```{r}
+us_rent_income
+```
+
+Here both `estimate` and `moe` are values columns, so we can supply them to `values_from`:
+
+```{r}
+us_rent_income %>% pivot_wider(names_from = variable, values_from = c(estimate, moe))
+```
+
+Note that the name of the variable is automatically appended to the output columns.
+
+#### When there is no identifying variable
+
+A final challenge is inspired by [Jiena Gu](https://github.com/jienagu/tidyverse_examples/blob/master/example_long_wide.R). Imagine you have a contact list that you’ve copied and pasted from a website: 
+
+```{r}
+contacts <- tribble(
+  ~field, ~value,
+  "name", "Jiena McLellan",
+  "company", "Toyota", 
+  "name", "John Smith", 
+  "company", "google", 
+  "email", "john@google.com",
+  "name", "Huxley Ratcliffe"
+)
+contacts
+```
+
+This is challenging because there’s no variable that identifies which observations belong together. 
+
+直接化宽时，出现列表列（没有第三个标识变量）
+```{r}
+contacts %>% pivot_wider(names_from = field, values_from = value)
+```
+
+
+We can fix this by noting that every contact starts with a name, so we can create **a unique id** by counting every time we see “name” as the `field`:   
+
+```{r}
+(contacts <- contacts %>% 
+  mutate(
+    person_id = cumsum(field == "name")
+  ))
+```
+
+```{r}
+contacts %>% 
+  pivot_wider(names_from = field, values_from = value)
+```
+
+
+### Combining `pivot_longer()` and `pivot_wider()`  
+
+Some problems can’t be solved by pivotting in a single direction. The examples in this section show how you might combine `pivot_longer()` and `pivot_wider()` to solve more complex problems.
+
+
+#### world bank data
+
+```{r}
+world_bank_pop
+```
+
+```{r}
+pop2 <- world_bank_pop %>% 
+  pivot_longer(`2000`:`2017`, names_to = "year", values_to = "value")
+pop2
+```
+
+Next we need to consider the `indicator` variable:
+
+```{r}
+world_bank_pop %>% count(indicator)
+```
+
+```{r}
+# Use NA to omit the variable in the output.
+pop3 <- pop2 %>% 
+  separate(indicator, c(NA, "area", "variable"), sep = "\\.")
+pop3
+```
+
+```{r}
+pop3 %>% 
+  pivot_wider(names_from = variable, values_from = value)
+```
+  
+
+#### mutli choice data
+
+```{r}
+(multi <- tribble(
+  ~id, ~choice1, ~choice2, ~choice3,
+  1, "A", "B", "C",
+  2, "C", "B",  NA,
+  3, "D",  NA,  NA,
+  4, "B", "D",  NA
+))
+```
+
+
+```{r}
+multi %>% 
+  pivot_longer(-id, names_to = "name", values_to = "value", values_drop_na = TRUE) %>%
+  mutate(checked = TRUE) %>% 
+  pivot_wider(names_from = value, values_from = checked,
+              values_fill = list(checked = FALSE))
 ```
 
 
@@ -429,6 +597,8 @@ stocks %>%
   spread(year, return) %>%
   gather(`2015`:`2016`, key = "year", value = "return",convert = T)
 ```
+
+
 > 2.为什么下面的数据框不能应用`spread()`？可以添加一列解决这个问题吗？  
 ```{r,error = T}
 people <- tribble(
@@ -663,6 +833,8 @@ who %>%
   select(-new, -iso2, -iso3) %>% 
   separate(sexage, c("sex", "age"), sep = 1)
 ```
+
+
 ### 练习  
 > 1. 在清理`who`数据框时，我们说`iso2`和`iso3`在有了`country`之后是冗余的，证明这一点  
 如果`iso2`和`iso3`相对于`country`是冗余的，则在数据集中对于变量`country`的每个值，仅有一个`iso2`和`iso3`的水平组合(`country`能唯一确定一条观测)。  
