@@ -79,7 +79,7 @@ ggplot(table1, aes(year, cases)) +
 用`table2`计算发病率 (rate = cases / population), 需要进行以下四步操作：
   * 得到每个国家每年的`cases`  
   * 得到每个国家每年的`population`  
-  * 计算`rate = cases / population`  
+  * 计算 `rate = cases / population`  
   * 把算好的数据存储到正确的位置 
 ```
 
@@ -477,7 +477,7 @@ us_rent_income %>% pivot_wider(names_from = variable, values_from = c(estimate, 
 
 Note that the name of the variable is automatically appended to the output columns.
 
-#### When there is no identifying variable
+#### When there is no identifying variable   {#contact}
 
 A final challenge is inspired by [Jiena Gu](https://github.com/jienagu/tidyverse_examples/blob/master/example_long_wide.R). Imagine you have a contact list that you’ve copied and pasted from a website: 
 
@@ -596,9 +596,12 @@ multi2 %>%
 
 
 
+
 ### 练习  
 
-> 1. 在下面的例子中，研究为什么`spread()`和`gather()`不是完美对称的。
+```{exercise}
+在下面的例子中，研究为什么 `pivot_longer()` 和 `pivot_wider()` 不是完美对称的
+```
 
 ```{r}
 (stocks <- tibble(
@@ -607,30 +610,41 @@ multi2 %>%
   return = c(1.88, 0.59, 0.92, 0.17)
 ))
 stocks %>%
-  spread(year, return) %>%
-  gather(`2015`:`2016`, key = "year", value = "return")
+  pivot_wider(names_from = year, values_from = return) %>%
+  pivot_longer(-half, names_to = "year", values_to = "return")
 ```
 
-先后使用`spread()`和`gather()`无法得到一个相同的数据集（除了列的顺序）是因为，数据整理有时会丢失列的类型信息。当`spread()`将变量`year`的值`2015`和`2016`用作列的名字时，它们自然被转化为了字符串`"2015"`和`"2016"`；随后`gather()`把列名用作键列`year`的值，从而`year`自然变成了一个字符向量。  
-如果想要复原这个数据集，可以在`gather()`中使用`convert = T`，不过这时返回的数据类型是R经过猜测的结果，并不总保证和原数据一致，数据整理带来的不可避免的信息损耗。  
+先后使用 `pivot_wider()` 和 `pivot_longer()`无法得到一个相同的数据集（除了列的顺序）是因为，数据整理有时会丢失列的类型信息。当 `pivot_wider()` 将变量 `year` 的值 `2015` 和 `2016` 用作列的名字时，它们自然被转化为了字符串`"2015"`和`"2016"`；随后 `pivot_longer()` 把列名用作键列`year`的值，从而`year`自然变成了一个字符向量，可以用 `names_ptypes` 避免这一点  
+。  
 ```{r}
 stocks %>%
-  spread(year, return) %>%
-  gather(`2015`:`2016`, key = "year", value = "return",convert = T)
+  pivot_wider(names_from = year, values_from = return) %>%
+  pivot_longer(-half, names_to = "year", values_to = "return",
+               names_ptypes = list(year = double()))
 ```
 
 
-> 2.为什么下面的数据框不能应用`spread()`？可以添加一列解决这个问题吗？  
-```{r,error = T}
-people <- tribble(
+```{exercise}
+为什么下面的数据框不能应用 `pivot_wider()`？可以添加一列解决这个问题吗？  
+```
+
+```{r,message = FALSE, warning = FALSE}
+(people <- tribble(
   ~name, ~key, ~value,
   "Phillip Woods", "age", 45,
   "Phillip Woods", "height", 186,
   "Phillip Woods", "age", 50,
   "Jessica Cordero", "age", 37,
   "Jessica Cordero", "height", 156
-)
+))
+
+people %>% 
+  pivot_wider(names_from = key, values_from = value)
 ```
+
+这个例子和 \@ref(contact)
+
+
 因为这个数据集里有两个对于"Phillip Woods"在变量`age`上年龄的观测，`spread()`就要把由`(Phillips Woods,age)`确定的单元格里“塞进两个值”。本质上因为`name`和`key`这两个变量上的值不能唯一确定一行，所以我们只要添加一列，让`name`、`key`和新列可以唯一确定一行即可： 
 ```{r}
 people2 <- people %>%
