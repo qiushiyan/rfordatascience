@@ -594,9 +594,6 @@ multi2 %>%
 ```
 
 
-
-
-
 ### 练习  
 
 ```{exercise}
@@ -642,25 +639,329 @@ people %>%
   pivot_wider(names_from = key, values_from = value)
 ```
 
-这个例子和 \@ref(contact)
+这个例子和 \@ref(contact) 中的 `contact` 很类似，虽然这里有第三列 `name`，但仍不足以唯一标识任意观测
 
 
-因为这个数据集里有两个对于"Phillip Woods"在变量`age`上年龄的观测，`spread()`就要把由`(Phillips Woods,age)`确定的单元格里“塞进两个值”。本质上因为`name`和`key`这两个变量上的值不能唯一确定一行，所以我们只要添加一列，让`name`、`key`和新列可以唯一确定一行即可： 
+因为这个数据集里有两个对于 "Phillip Woods" 在变量`age`上年龄的观测，`pivot_wider()`就要把由`(Phillips Woods, age)`确定的单元格里“塞进两个值”。本质上因为 `name` 和 `key` 这两个变量上的值不能唯一确定一行，所以我们只要添加一列，让`name`、`key`和新列可以唯一确定一行即可： 
 ```{r}
-people2 <- people %>%
-  group_by(name, key) %>%
-  mutate(obs = row_number())
-people2
-spread(people2,key,value)
+people %>% 
+  mutate(id = row_number()) %>% 
+  pivot_wider(names_from = key, values_from = value)
 ```
-## `separate()`和`untie()`  
-`spread()`函数和`gather()`函数可以帮你解决数据中的变量放错了位置的问题。而`separate()`和`untie()`函数则是为了解决以下问题：多个变量挤在了同一列中，或者一个变量分散到了不同列中。  
+
+## nesting  
+
+Nesting creates **a list-column of data frames**; unnesting flattens it back out into regular columns. Nesting is *implicitly a summarising operation*: you get one row for each group defined by the non-nested columns. This is useful in conjunction with other summaries that work with whole datasets, most notably models.
+
+Since a nested data frame is no more than a data frame where one (or more) list-columns of data frames. You can create simple nested data frames by hand:  
+
+```{r}
+# df1 is a nested data frame
+(df1 <- tibble(
+  g = c(1, 2, 3),
+  data = list(
+    tibble(x = 1, y = 2),
+    tibble(x = 4:5, y = 6:7),
+    tibble(x = 10)
+  )
+))
+```
+
+Or more commonly, we can create nested data frames using `tidyr::nest()`. `df %>% nest(x, y)` specifies the columns to be nested; i.e. the columns that will appear in the inner data frame. Alternatively, you can nest() a grouped data frame created by `dplyr::group_by()`. The **grouping variables remain in the outer data frame and the others are nested**. The result preserves the grouping of the input.
+
+**Variables supplied to nest() will override grouping variables** so that `df %>% group_by(x, y)` %>% `nest(z)` will be equivalent to df %>% nest(z).
+
+```{r}
+df2 <- tribble(
+  ~g, ~x, ~y,
+   1,  1,  2,
+   2,  4,  6,
+   2,  5,  7,
+   3, 10,  NA
+)
+df2 %>% nest(data = c(x, y))
+```
+
+```{r}
+# grouped nesting
+df2 %>% group_by(g) %>% nest()
+```
+
+**Nesting is easiest to understand in connection to grouped data**: each row in the output corresponds to one group in the input. We’ll see shortly this is particularly convenient when you have other per-group objects.
+
+The opposite of `nest()` is `unnest()`. You give it the name of a list-column containing data frames, and it row-binds the data frames together, repeating the outer columns the right number of times to line up.  
+
+```{r}
+df1 %>% unnest(data)
+```
+
+顺便附上两个类似的操作：
+- `dplyr::group_nest()` == `group_by() + nest()`  
+- `dplyr::group_split` = `base::split()`
+
+### nested data and models
+
+Nested data is a great fit for problems where you have one of something for each group. A common place this arises is when you’re **fitting multiple models**.  
+
+```{r}
+mtcars_nested <- mtcars %>% 
+  group_by(cyl) %>% 
+  nest()
+
+mtcars_nested
+```
+Once you have a list of data frames, it’s very natural to produce a list of models:
+
+```{r}
+mtcars_nested <- mtcars_nested %>% 
+  mutate(model = map(data, ~ lm(mpg ~ wt, data = .x)))
+mtcars_nested
+```
+
+And then you could even produce a list of predictions:  
+
+```{r}
+mtcars_nested %>% 
+  mutate(prediction = map(model, predict))
+```
+
+## rectangling  
+
+**Rectangling** is the art and craft of taking a deeply nested list (often sourced from wild caught JSON or XML) and taming it into a tidy data set of rows and columns. There are three functions from tidyr that are particularly useful for rectangling:
+
+- `unnest_longer()` takes each element of a list-column and makes a new row.
+- `unnest_wider()` takes each element of a list-column and makes a new column.
+- `unnest_auto()` guesses whether you want `unnest_longer()` or `unnest_wider()`.
+- `hoist()` is similar to unnest_wider() but only plucks out selected components, and can reach down multiple levels.  
+
+A very large number of data rectangling problems can be solved by combining these functions with a splash of `dplyr` (largely eliminating prior approaches that combined `mutate()` with multiple `purrr::map()`s).
+
+To illustrate these techniques, we’ll use the **repurrrsive** package, which provides a number deeply nested lists originally mostly captured from web APIs.
+
+```{r}
+library(repurrrsive)
+```
+
+### Github users  
+
+We’ll start with `gh_users`, a list which contains information about six GitHub users. 
+
+```{r}
+listviewer::jsonedit(gh_users)
+```
+Each user is a named list, where each element represents a column: 
+
+
+
+To begin, we put the gh_users list into a data frame:
+
+```{r}
+(users <- tibble(user = gh_users))
+```
+
+Each element of column `user` is yet another list, where each element represents a column.
+
+```{r}
+names(users$user[[1]])
+```
+
+Obviously we could use `unnest_wider()` to turn the list components into columns:  
+
+```{r}
+users %>% unnest_wider(user)
+```
+
+But in this case, there are many components and we don’t need most of them so we can instead use `hoist()`. `hoist()` allows us to pull out selected components using the same syntax as `purrr::pluck()`:
+
+```{r}
+users %>% hoist(user,
+                followers = "followers",
+                login = "login",
+                url = "html_url")
+```
+
+`hoist()` 从列表列中提取出指明的元素作为新变量，保留余下的元素 
+
+`hoist()` removes the named components from the user list-column, so you can think of it as moving components out of the inner list into the top-level data frame  
+
+### Github repos
+
+We start off `gh_repos` similarly, by putting it in a tibble:  
+
+```{r}
+repos <- tibble(repo = gh_repos)
+repos
+```
+
+By comparison, `gh_repos` is more nested than `gh_users`, with elements in the 2nd hierarchy being repositorys that `gh_users` own, and thus requires one more level of information to record each repo.  
+
+```{r}
+listviewer::jsonedit(gh_repos)
+```
+
+
+This time the elements of user are a list of repositories that belong to that user. These are observations, so should become new rows, so we use `unnest_longer()` rather than `unnest_wider()`:
+
+```{r}
+repos <- repos %>% unnest_longer(repo)
+repos
+```
+
+Now each rwo representes a repository, then we can use `unnest_wider()` or `hoist()`:
+
+```{r}
+repos %>% hoist(repo, 
+  login = list("owner", "login"), 
+  name = "name",
+  homepage = "homepage",
+  watchers = "watchers_count"
+)
+```
+
+Note the use of `list("owner", "login")`: this allows us to **reach two levels deep inside of a list**  using the same syntax as `purrr::pluck()`. An alternative approach would be to pull out just owner and then put each element of it in a column:
+
+```{r}
+repos %>% 
+  hoist(repo, owner = "owner") %>% 
+  unnest_wider(owner)
+```
+
+Instead of looking at the list and carefully thinking about whether it needs to become rows or columns, you can use `unnest_auto()`. It uses a handful of heuristics to figure out whether `unnest_longer()` or `unnest_wider()` is appropriate, and tells you about its reasoning.
+
+```{r, message = TRUE}
+tibble(repo = gh_repos) %>% 
+  unnest_auto(repo) %>% 
+  unnest_auto(repo)
+```
+
+
+### Game of Throne characters   
+
+
+`got_chars` has a similar structure to `gh_users`: it’s a list of named lists, where each element of the inner list describes some attribute of a GoT character. 
+
+```{r}
+listviewer::jsonedit(got_chars)
+```
+
+We start in the same way, first by creating a data frame and then by unnesting each component into a column:  
+
+```{r}
+chars <- tibble(char = got_chars)
+chars
+```
+
+```{r}
+chars2 <- chars %>% unnest_wider(char)
+chars2
+```
+
+This is more complex than `gh_users` because some component of char are themselves a list, giving us a collection of list-columns:  
+
+```{r}
+chars2 %>% select_if(is.list)
+```
+
+What you do next will depend on the purposes of the analysis. Maybe you want a row for every book and TV series that the character appears in:
+
+```{r}
+chars2 %>% 
+  select(name, books, tvSeries) %>% 
+  pivot_longer(c(books, tvSeries), names_to = "media", values_to = "value") %>% 
+  unnest_longer(value)
+```
+
+Or maybe you want to build a table that lets you match title to name:  
+
+```{r}
+chars2 %>% 
+  select(name, title = titles) %>% 
+  unnest_longer(title)
+```
+
+### Geocoding with google
+
+```{r}
+has_key <- !identical(Sys.getenv("GOOGLE_MAPS_API_KEY"), "")
+if (!has_key) {
+  message("No Google Maps API key found; code chunks will not be run")
+}
+
+# https://developers.google.com/maps/documentation/geocoding
+geocode <- function(address, api_key = Sys.getenv("GOOGLE_MAPS_API_KEY")) {
+  url <- "https://maps.googleapis.com/maps/api/geocode/json"
+  url <- paste0(url, "?address=", URLencode(address), "&key=", api_key)
+
+  jsonlite::read_json(url)
+}
+```
+
+### Sharla Gelfand’s discography  
+
+We’ll finish off with the most complex list, from Sharla Gelfand’s discography. We’ll start the usual way: putting the list into a single column data frame, and then widening so each component is a column. I also parse the date_added column into a real date-time:
+
+```{r}
+listviewer::jsonedit(discog)
+```
+
+```{r}
+discs <- tibble(disc = discog) %>% 
+  unnest_wider(disc) %>% 
+  mutate(date_added = as.POSIXct(strptime(date_added, "%Y-%m-%dT%H:%M:%S"))) 
+
+discs 
+```
+
+At this level, we see information about when each disc was added to Sharla’s discography, not any information about the `disc` itself. To do that we need to widen the basic_information column:
+
+```{r, error = TRUE}
+discs %>% unnest_wider(basic_information)
+```
+
+Unfortunately that fails because there’s an id column inside basic_information. We can quickly see what’s going on by setting `names_repair = "unique"`(default to `"check_unique"` which makes no name repair, but check they are unique):  
+
+```{r}
+discs %>% unnest_wider(basic_information, names_repair = "unique")
+```
+
+The problem is that basic_information repeats the id column that’s also stored at the top-level, so we can just drop that:
+```{r}
+discs %>% 
+  unnest_wider(basic_information, names_repair = "unique") %>% 
+  select(starts_with("id"))
+
+discs %>% 
+  select(-id) %>% 
+  unnest_wider(basic_information)
+```
+
+Alternatively, we could use `hoist()`   
+
+```{r}
+discs %>% 
+  hoist(basic_information,
+    title = "title",
+    year = "year",
+    label = list("labels", 1, "name"),
+    artist = list("artists", 1, "name")
+  )
+```
+
+
+
+
+## `separate()` 和 `untie()`  
+
+`separate()`和`untie()`函数则是为了解决以下问题：多个变量挤在了同一列中，或者一个变量分散到了不同列中。  
+
 ### `separate()`  
-现在我们知道了如何用`spread()`和`gather()`将`table2`和`table4`整理为tidy data，现在要学会如何用`separate()`处理`table3`了：  
+
+ 
 ```{r}
 table3
 ```
-在`table3`中，`rate`同时包含了`cases`和`population`两个变量，我们需要把它拆分(separate)为两列，`separate()`函数可以将这一混杂的列拆分成多个变量，它包含以下四个主要参数：  
+
+在 `table3` 中，`rate` 同时包含了 `cases` 和 `population` 两个变量，我们需要把它拆分(separate)为两列，`separate()` 函数可以将这一混杂的列拆分成多个变量，它包含以下四个主要参数：  
 * `data`: 需要调整的数据框  
 * `col`: 需要进行拆分的列的列名  
 * `into`:  拆分后新生成变量的列名，格式为字符串向量  
@@ -670,53 +971,74 @@ table3
 table3 %>%
   separate(col = rate,into = c("cases","population"))
 ```
+
 整理的图示：  
-![](images\15.png)
+```{r, echo = FALSE}
+knitr::include_graphics("images/15.png")
+```
+
 注意，以上输出的tibble中，`cases`和`population`被设定为字符串类型，使用`convert = T`将其转换为数值变量
+
 ```{r}
 table3 %>% 
   separate(rate, into = c("cases", "population"), convert = T)
 ```
-### `unite()`  
-`unite()`函数是`separate()`的逆运算——它可以将多列合并为一列。尽管它不太常用，但是知道这个函数还是很重要的。  
-在`table5`中，原来的`year`变量被拆成了两个列，可以用`unite()`，只需要指定要合并后的列名和要合并的列。默认情况下，新列中将用`_`分隔符
+
+### `unite()` 
+
+`unite()` 是 `separate()` 的逆运算——它可以将多列合并为一列.
+在 `table5` 中，原来的 `year` 变量被拆成了两个列，可以用 `unite()`，只需要指定要合并后的列名和要合并的列。默认情况下，新列中将用`_`分隔符
 ```{r}
 table5
-unite(table5,col = year, century,year)
+unite(table5, col = year, century, year)
 ```
-设置`sep`参数可以取消分隔符：  
+
+
+`sep = ""` 可以取消分隔符：  
 ```{r}
-unite(table5,col = year,century,year,sep="")
+unite(table5, col = year, century, year, sep="")
 ```
+
 整理的图示：
-![](images\16.png)
+```{r, echo = FALSE}
+knitr::include_graphics("images/16.png")
+```
+
 ```{r}
 table6 <- unite(table5,col = year,century,year,sep="")
 table5
 ```
+
 ### 练习  
-> 1. `separate()`中的`extra`和`fill`参数的作用是什么？用下面两个数据框进行实验： 
+```{exercise}
+`separate()`中的`extra`和`fill`参数的作用是什么？用下面两个数据框进行实验： 
+```
+
 ```{r,error = T}
 tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
   separate(x, into = c("one", "two", "three"))
 tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% 
   separate(x, into = c("one", "two", "three"))
 ```
-`extra`用来告诉`separate()`函数如何处理分列过程中多出来的元素(too many pieces，即`into`指定的列数小于原数据中某行可分的元素个数)，`fill`负责如何处理元素不够的情况(not enough pieces，即`into`指定的列数大于原数据中某行可分的元素个数)。默认情况下，`extra = "drop"`，`separate()`将丢弃多余的元素，并生成一条警告信息：  
+
+`extra` 用来告诉 `separate()` 函数如何处理分列过程中多出来的元素(too many pieces，即 `into` 指定的列数小于原数据中某行可分的元素个数)，`fill` 负责如何处理元素不够的情况(not enough pieces，即`into`指定的列数大于原数据中某行可分的元素个数)。默认情况下，`extra = "drop"`，`separate()` 将丢弃多余的元素，并生成一条警告信息：  
+
 ```{r}
 tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
-  separate(x, into = c("one", "two", "three"),extra = "drop")
+  separate(x, into = c("one", "two", "three"), extra = "drop")
 ```
+
 `extra = "merge"`将把多余的元素和前一个元素当做一个整体：  
 ```{r}
-tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
-  separate(x, c("one", "two", "three"),extra = "merge")
+tibble(x = c("a, b, c", "d, e, f, g", "h, i, j")) %>% 
+  separate(x, c("one", "two", "three"), extra = "merge")
 ```
 对于元素过少的情况，默认的`fill = "warn"`将会用`NA`进行填充，但会生成一条警告。`fill = "right"`会尽可能让靠左的列拥有可用的元素，用`NA`填充右边的列；`fill = "left"`正好相反。这两种手动设置都不会产生`warning`:  
 ```{r}
-tibble(x = c("a,b,c", "d,e,", "h,i,j")) %>% 
-  separate(x, c("one", "two", "three"),fill = "left")
-tibble(x = c("a,b,c", "d,e,", "h,i,j")) %>% 
+tibble(x = c("a, b, c", "d, e, ", "h, i, j")) %>% 
+  separate(x, c("one", "two", "three"), fill = "left")
+
+tibble(x = c("a,b,c", "d, e, ", "h, i, j")) %>% 
   separate(x, c("one", "two", "three"),fill = "right")
 ```
 > 2.`unite()`和`separate()`均有一个`remove`参数，它的作用是什么？    
@@ -725,14 +1047,21 @@ tibble(x = c("a,b,c", "d,e,", "h,i,j")) %>%
 table5 
 table5 %>% unite(col = year_unite,century,year,sep = "",remove = F)
 ```
-> 3. 探究`tidyr`中一个与`separate()`类似的函数`extract()`的用法  
-`separate()`函数的分列操作是基于参数`sep`的，无论是给`sep`传入字符串指定分隔符，还是用数值指定分隔的位置，`separate()`必须要有一个分隔符才能正常运作（可以把`sep = n`看做第n个和第n+1个元素之间的一个空白分隔符）  
+
+```{exercise}
+探究 **tidyr** 中一个与 `separate()` 类似的函数 `extract()` 的用法  
+```
+
+
+`separate()`函数的分列操作是基于参数 `sep` 的，无论是给 `sep` 传入字符串指定分隔符，还是用数值指定分隔的位置，`separate()` 必须要有一个分隔符才能正常运作（可以把`sep = n`看做第 n 个和第 n+1 个元素之间的一个空白分隔符）  
 `extract()`用一个正则表达式`regex`描述要分隔的列`col`中存在的模式，在正则表达式中的每个子表达式(用`()`定义)将被认为是`into`中的一个元素，因此，`extract()`比`separate()`使用起来更加广泛灵活。例如下面的数据集无法用`separate()`分列，因为无法用一个各行的分隔符(的位置)不一样，但用`extract()`中的正则表达式就很简单：  
 ```{r}
 tibble(x = c("X1", "X20", "AA11", "AA2")) %>%
   extract(x, c("variable", "id"), regex = "([A-Z]+)([0-9]+)")
 ```
+
 适当设计`regex`，实现的效果可以与设置`sep`完全一致：  
+
 ```{r}
 # example with separators
 tibble(x = c("X_1", "X_2", "AA_1", "AA_2")) %>%
@@ -741,13 +1070,16 @@ tibble(x = c("X_1", "X_2", "AA_1", "AA_2")) %>%
 tibble(x = c("X1", "X2", "Y1", "Y2")) %>%
   extract(x, c("variable", "id"), regex = "([A-Z])([0-9])")
 ```
+
 ## 缺失值 {#tidyr-missing}
+
 数据整理改变了数据的呈现方式，随之而来的一个话题便是缺失值。通常当我们泛泛地使用"缺失值 (missing value)" 这个名词的时候，其实是指以下两种"缺失"方式中的某一种：  
 * 显式缺失(Explicitly missing): 在数据中用`NA`标识
 * 隐式缺失(Implicitly missing): 未出现在数据中的值  
-`R for Data Science`中对这两种缺失的概括：  
+*R for Data Science* 中对这两种缺失的概括：  
 > An explicit missing value is the presence of an absence; an implicit missing value is the absence of a presence.
 通过一个简单的数据框区分两种数据缺失的方式：  
+
 ```{r}
 stocks <- tibble(
   year   = c(2015, 2015, 2015, 2015, 2016, 2016, 2016),
@@ -756,30 +1088,37 @@ stocks <- tibble(
 )
 stocks
 ```
-我们很容易找到`stocks`第四条观测在变量`return`上的一个`NA`，因为它是显式缺失的。另一个隐式缺失的值是`(year = 2016,qtr = 1)`对应的观测，它没有出现在数据集中。  
-数据呈现方式上的改变可以将隐式缺失值变成显式。比如，用`spread()`函数构造以`year`为行字段，以`return`为值的透视表,这样就会产生一个属于水平`(year = 2016,qtr = 1)`的单元格：  
+
+我们很容易找到`stocks`第四条观测在 `return` 上的一个 `NA` ，因为它是显式缺失的。另一个隐式缺失的值是 `(year = 2016, qtr = 1)` 对应的观测，它没有出现在数据集中。  
+数据呈现方式上的改变可以将隐式缺失值变成显式。比如，用 `pivot_wider()`函数构造以 `year` 为行字段，以 `return` 为值的透视表,这样就会产生一个属于水平 `(year = 2016, qtr = 1)`的单元格：  
+
 ```{r}
 stocks %>%
-  spread(key = year,value = return)
+  pivot_wider(names_from = year, values_from = return)
 ```
-现在，再使用`gather()`不能得到原来的数据框，因为将比原来多出一行显示的缺失值
+
+现在，再使用 `pivot_longer()` 不能得到原来的数据框，因为将比原来多出一行显示的缺失值
 ```{r}
 stocks %>%
-  spread(key = year,value = return) %>%
-  gather(key = year,value = return,`2015`:`2016`)
+  pivot_wider(names_from = year, values_from = return) %>% 
+  pivot_longer(-qtr, names_to = "year", values_to = "return")
 ```
-如果研究者认为这些缺失值是无足轻重的,`na.rm = T`将在`gather()`生成的数据框中移除含有缺失值的行：  
+
+如果研究者认为这些缺失值是无足轻重的,`values_drop_na = TRUE` 将在 `pivot_longer()` 生成的数据框中移除含有缺失值的行，这会同时移除显式和隐式缺失值：  
 ```{r}
 ## 现在输出数据框比原来少一行
 stocks %>%
-  spread(key = year,value = return) %>%
-  gather(key = year,value = return,`2015`:`2016`,na.rm = T)
+  pivot_wider(names_from = year, values_from = return) %>% 
+  pivot_longer(-qtr, names_to = "year", values_to = "return", values_drop_na = TRUE)
 ```
-另一个用于处理确实值的有用工具是`complete()`函数，它将生成一个指定列集合里面所有的水平组合，并自动将原本隐式的缺失值填充为`NA`
+
+另一个用于处理确实值的有用工具是 `complete()` 函数，它将生成一个指定列集合里面所有的水平组合，并暴露隐式的缺失值：
+
 ```{r}
 stocks %>%
   complete(year, qtr)
 ```
+
 `fill()` 函数专门用来填充缺失值,它接受一些需要填充缺失值的列，并用最近的值调换 `NA`，`.direction` 参数控制用填充的方向：`direction = “up"` 将由下往上填充，`NA` 将被替换为它下面那一列的值；`direction = "donw"` 反之
 ```{r}
 treatment <- tribble(
@@ -794,9 +1133,12 @@ treatment %>%
 treatment %>%
   fill(person,.direction = "down")
 ```
+
 ## Case Study  
+
 To finish off the chapter, let’s pull together everything you’ve learned to tackle a realistic data tidying problem. The `tidyr::who` dataset contains tuberculosis (TB) cases broken down by year, country, age, gender, and diagnosis method. The data comes from the *2014 World Health Organization Global Tuberculosis Report*, available at [http://www.who.int/tb/country/data/download/en/](http://www.who.int/tb/country/data/download/en/).  
 There’s a wealth of epidemiological information in this dataset, but it’s challenging to work with the data in the form that it’s provided:
+
 ```{r,message = F}
 who
 ```
@@ -805,17 +1147,18 @@ The best place to start is almost always to gather together the columns that are
 * It looks like `country`, `iso2`, and `iso3` are three variables that redundantly specify the country.  
 * `year` is also a variable  
 * We don’t know what all the other columns are yet, but given the structure in the variable names (e.g. `new_sp_m014`, `new_ep_m014`, `new_ep_f014`) these are likely to be values, not variables.  
-So we need to gather together all the columns from `new_sp_m014` to `newrel_f65`. We don’t know what those values represent yet, so we’ll give them the generic name `"key"`. We know the cells represent the count of cases, so we’ll use the variable `cases`. There are a lot of missing values in the current representation, so for now we’ll use `na.rm` just so we can focus on the values that are present.
+So we need to pivot all the columns from `new_sp_m014` to `newrel_f65`. We don’t know what those values represent yet, so we’ll give them the generic name `"name"`. We know the cells represent the count of cases, so we’ll use the variable `cases`. There are a lot of missing values in the current representation, so for now we’ll use `values_drop_na = TRUE` just so we can focus on the values that are present.
+
 ```{r}
 who1 <- who %>% 
-  gather(key,value = "cases",-country:-year,na.rm = T)
+  pivot_longer(-(1:4), names_to = "name", values_to = "cases", values_drop_na = TRUE)
 who1
 ```
-We can get some hint of the structure of the values in the new `key` column by counting them:  
+We can get some hint of the structure of the values in the new `name` column by counting them:  
 ```{r}
-who1 %>%
-  count(key)
+who1 %>% count(name)
 ```
+
 You might be able to parse this out by yourself with a little thought and some experimentation, but luckily we have the data dictionary handy. It tells us:  
 1. The first three letters of each column denote whether the column contains new or old cases of TB. **In this dataset, each column contains new cases**.  
 2. The next two letters describe the type of TB:
@@ -833,56 +1176,61 @@ You might be able to parse this out by yourself with a little thought and some e
   * `5564` = 55 – 64 years old  
   * `65` = 65 or older  
   
-We need to make a minor fix to the format of the column names: unfortunately the names are slightly inconsistent because instead of `new_rel` we have `newrel` (it’s hard to spot this here but if you don’t fix it we’ll get errors in subsequent steps). You’ll learn about `str_replace()` in strings, but the basic idea is pretty simple: replace the characters “newrel” with “new_rel”. This makes all variable names consistent.
+We need to make a minor fix to the format of the column names: unfortunately the names are slightly inconsistent because instead of `new_rel` we have `newrel` (it’s hard to spot this here but if you don’t fix it we’ll get errors in subsequent steps). You’ll learn about `str_replace()` in strings, but the basic idea is pretty simple: replace the characters `“newrel”` with `“new_rel”`. This makes all variable names consistent.
+
 ```{r}
 who2 <- who1 %>% 
-  mutate(key = stringr::str_replace(key, "newrel", "new_rel"))
+  mutate(key = stringr::str_replace(name, "newrel", "new_rel"))
 who2
 ```
-**We can separate the values in each code with two passes of `separate()`. The first pass will split the codes at each underscore**.  
+**We can separate the values in each code with two passes of `extracct()`. 
+
 ```{r}
 who3 <- who2 %>% 
-  separate(key, c("new", "type", "sexage"), sep = "_")
+  extract(name, into = c("type", "sex", "age"),
+          regex = "new_(\\w{2,3})_([fm])(\\d+)")
+
 who3
 ```
-Then we might as well drop the `new` column because it’s constant in this dataset. While we’re dropping columns, let’s also drop `iso2` and `iso3` since they’re redundant.  
+
+Then, let’s also drop `iso2` and `iso3` since they’re redundant(see \ref(ex:)).  
+
 ```{r}
-who3 %>% 
-  count(new)
-who4 <- who3 %>% 
-  select(-new, -iso2, -iso3)
+who4 <- who3 %>% select(-iso2, -iso3)
 ```
-Next we’ll separate `sexage` into `sex` and `age` by splitting after the first character:  
-```{r}
-who5 <- who4 %>% 
-  separate(sexage, c("sex", "age"), sep = 1)
-who5
-```
-The `who` dataset is now tidy!
-I’ve shown you the code a piece at a time, assigning each interim result to a new variable. This typically isn’t how you’d work interactively. Instead, you’d gradually build up a complex pipe:  
-```{r}
-who %>%
-  gather(key, value, new_sp_m014:newrel_f65, na.rm = TRUE) %>% 
-  mutate(key = stringr::str_replace(key, "newrel", "new_rel")) %>%
-  separate(key, c("new", "var", "sexage")) %>% 
-  select(-new, -iso2, -iso3) %>% 
-  separate(sexage, c("sex", "age"), sep = 1)
-```
+
+Now `who4` is a tidy version of `tidyr::who`!  
+
 
 
 ### 练习  
-> 1. 在清理`who`数据框时，我们说`iso2`和`iso3`在有了`country`之后是冗余的，证明这一点  
-如果`iso2`和`iso3`相对于`country`是冗余的，则在数据集中对于变量`country`的每个值，仅有一个`iso2`和`iso3`的水平组合(`country`能唯一确定一条观测)。  
-这里要用到`distinct()`函数，它将返回数据框中某些列出现的的全部不重复的水平组合（注意`complete()`是”制造出“全部可能的水平组合），和`unique()`类似，但速度更快： 
+
+```{exercise}
+在清理 `who` 数据集时，我们说`iso2`和`iso3`是冗余的，证明这一点
+```
+
+
+  
+如果 `iso2` 和 `iso3` 是冗余的，则在数据集中对于变量组合 `(country, year)` 的每个值，都能唯一确定一个观测(因为 `(country, year)` 本身可以被用作键)。   
+
 ```{r}
-who6 <- who %>%
-          distinct(country,iso2,iso3) %>%
-          group_by(country) %>%
-          summarize(n = n())
-who6 %>%
+who %>% 
+  count(country, year) %>% 
+  filter(n > 1)
+```
+
+
+另一个思路是 `distinct()` 函数，它将返回数据框中某些列出现的的全部不重复的水平组合（注意`complete()`是”制造出“全部可能的水平组合），和 `unique()` 类似，但速度更快： 
+
+```{r}
+who %>%
+  distinct(country, iso2, iso3) %>%
+  group_by(country) %>%
+  summarize(n = n()) %>% 
   filter(n > 1)
 ```
 ## 拓展：None-tidy data  {#non-tidy}
+
 Before we continue on to other topics, it’s worth talking briefly about non-tidy data. Earlier in the chapter, I used the pejorative term “messy” to refer to non-tidy data. That’s an oversimplification: there are lots of useful and well-founded data structures that are not tidy data. There are two main reasons to use other data structures:  
 * Alternative representations may have substantial performance or space advantages.  
 * Specialised fields have evolved their own conventions for storing data that may be quite different to the conventions of tidy data.  
@@ -923,6 +1271,7 @@ fish_encounters %>%
               values_from = seen,
               )
 ```
+
 ## Rectangling  
 ```{r}
 library(repurrrsive)
