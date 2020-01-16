@@ -522,11 +522,15 @@ contacts %>%
 Some problems can’t be solved by pivotting in a single direction. The examples in this section show how you might combine `pivot_longer()` and `pivot_wider()` to solve more complex problems.
 
 
-#### world bank data
+#### world bank data  
+
+`world_bank_pop` contains data from the World Bank about population per country from 2000 to 2018.
 
 ```{r}
 world_bank_pop
 ```
+
+It’s not obvious exactly what steps are needed yet, but I’ll start with the most obvious problem: `year` is spread across multiple columns.
 
 ```{r}
 pop2 <- world_bank_pop %>% 
@@ -540,12 +544,16 @@ Next we need to consider the `indicator` variable:
 world_bank_pop %>% count(indicator)
 ```
 
+Here `SP.POP.GROW` is population growth, `SP.POP.TOTL` is total population, and `SP.URB.*` are the same but only for urban areas. Let’s split this up into two variables: `area` (total or urban) and the actual variable (population or growth):
+
 ```{r}
 # Use NA to omit the variable in the output.
 pop3 <- pop2 %>% 
-  separate(indicator, c(NA, "area", "variable"), sep = "\\.")
+  separate(indicator, c(NA, "area", "variable"), sep = "\\.")  # sep takes a regex
 pop3
 ```
+
+Now we can complete the tidying by pivoting `variable` and `value` to make `TOTL` and `GROW` columns:
 
 ```{r}
 pop3 %>% 
@@ -553,7 +561,9 @@ pop3 %>%
 ```
   
 
-#### mutli choice data
+#### mutli choice data   
+
+Based on a suggestion by Maxime Wack, https://github.com/tidyverse/tidyr/issues/384), the final example shows how to deal with a common way of recording multiple choice data. Often you will get such data as follows:
 
 ```{r}
 (multi <- tribble(
@@ -565,14 +575,25 @@ pop3 %>%
 ))
 ```
 
+But the actual order isn’t important, and you’d prefer to have the individual questions in the columns. You can achieve the desired transformation in two steps. First, you make the data longer, eliminating the explcit `NA`s, and adding a column to indicate that this choice was chosen: 
 
 ```{r}
-multi %>% 
-  pivot_longer(-id, names_to = "name", values_to = "value", values_drop_na = TRUE) %>%
-  mutate(checked = TRUE) %>% 
-  pivot_wider(names_from = value, values_from = checked,
+multi2 <- multi %>% 
+  pivot_longer(-id, values_drop_na = TRUE) %>% 
+  mutate(checked = TRUE)
+multi2
+```
+
+Then you make the data wider, filling in the missing observations with `FALSE`; note the use of `id_cols = id` here, this eliminated the `name` column and combines mutilples rows per person into one row, since we don't need `name` in identifying an observation:
+
+```{r}
+multi2 %>% 
+  pivot_wider(id_cols = id,
+              names_from = value, values_from = checked, 
               values_fill = list(checked = FALSE))
 ```
+
+
 
 
 ### 练习  
