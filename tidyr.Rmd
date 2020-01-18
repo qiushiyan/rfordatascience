@@ -1,6 +1,16 @@
 
 # tidyr  
 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(message = TRUE, out.width = "90%", cache = TRUE)
+```
+
+
+```{r, message = FALSE}
+library(tidylog)
+library(lubridate)
+```
+
 
 
 ## tidy data 简介  {#tidyr-intro}
@@ -113,7 +123,7 @@ t2_cases_per_cap %>%
     country = t2_cases$country,
     year = t2_cases$year
   ) %>%
-  select(country,year,rate)
+  select(country, year, rate)
 ```
 
 ## pivoting  
@@ -163,11 +173,12 @@ relig_income %>% pivot_longer(-religion,
                               values_to = "population")
 ```
 
-另一个例子：美国劳工市场的月度数据，首先创建一个 messy data：
+另一个例子：美国劳工市场的月度数据，首先创建一个 messy data：  
+
+
 ```{r}
-library(lubridate)
 ec2 <- economics %>% as_tibble() %>%
-  transmute(year = year(date),
+  transmute(year =  year(date),
             month = month(date),
             rate = unemploy) %>%
   filter(year > 2005) %>% 
@@ -187,7 +198,7 @@ ec2 %>%
 
 #### Numeric data in column names
 
-`pivot_longer()` 提供了 **names_ptype** 和 **values_ptypes** 两个参数调整数据集变长后键列和值列的数据类别。看一下 billboard 数据集：  
+`pivot_longer()` 提供了 `names_ptype` 和 `values_ptypes` 调整数据集变长后键列和值列的数据类型。看一下 `billboard` 数据集：  
 
 ```{r}
 billboard
@@ -203,8 +214,12 @@ billboard_tidy <- billboard %>%
                names_prefix = "wk",
                names_ptypes = list(week = integer()),
                values_drop_na = T)
+```
+
+```{r}
 billboard_tidy
 ```
+
 
 `names_prefix` 去除前缀 "wk"(否则无法从字符串转换为数值)，`names_ptype` 以列表的形式转换键列的数据类型。同理, `values_ptype` 可以转换值列的数据类型。  
 
@@ -219,7 +234,7 @@ billboard_tidy %>%
 
 #### Many variables in column names
 
-在 tidyr 1.0.0 之前，当进行一定处理后发现多个变量被糅合到一列中时，可能会考虑使用 `separate()` 或者 `extract`:   
+在 tidyr 1.0.0 之前，当进行一定处理后发现多个变量被糅合到一列中时，可能会考虑使用 `separate()` 或者 `extract()`:   
 
 ```{r}
 who
@@ -705,8 +720,7 @@ Nested data is a great fit for problems where you have one of something for each
 
 ```{r}
 mtcars_nested <- mtcars %>% 
-  group_by(cyl) %>% 
-  nest()
+  group_nest(cyl) 
 
 mtcars_nested
 ```
@@ -715,6 +729,7 @@ Once you have a list of data frames, it’s very natural to produce a list of mo
 ```{r}
 mtcars_nested <- mtcars_nested %>% 
   mutate(model = map(data, ~ lm(mpg ~ wt, data = .x)))
+
 mtcars_nested
 ```
 
@@ -879,22 +894,6 @@ chars2 %>%
   unnest_longer(title)
 ```
 
-### Geocoding with google
-
-```{r}
-has_key <- !identical(Sys.getenv("GOOGLE_MAPS_API_KEY"), "")
-if (!has_key) {
-  message("No Google Maps API key found; code chunks will not be run")
-}
-
-# https://developers.google.com/maps/documentation/geocoding
-geocode <- function(address, api_key = Sys.getenv("GOOGLE_MAPS_API_KEY")) {
-  url <- "https://maps.googleapis.com/maps/api/geocode/json"
-  url <- paste0(url, "?address=", URLencode(address), "&key=", api_key)
-
-  jsonlite::read_json(url)
-}
-```
 
 ### Sharla Gelfand’s discography  
 
@@ -948,15 +947,35 @@ discs %>%
 ```
 
 
+A more systematic approach would be to create separate tables for artist and label:
+
+```{r}
+# table for artist
+discs %>% 
+  hoist(basic_information, artist = "artists") %>% 
+  select(disk_id = id, artist) %>% 
+  unnest_longer(artist) %>% 
+  unnest_wider(artist)
+```
+
+```{r}
+# table for label
+discs %>% 
+  hoist(basic_information, format = "formats") %>% 
+  select(disk_id = id, format) %>% 
+  unnest_longer(format) %>% 
+  unnest_wider(format) %>% 
+  unnest_longer(descriptions)
+```
+
 
 
 ## `separate()` 和 `untie()`  
 
-`separate()`和`untie()`函数则是为了解决以下问题：多个变量挤在了同一列中，或者一个变量分散到了不同列中。  
+`separate()` 和 `untie()` 函数则是为了解决以下问题：多个变量挤在了同一列中，或者一个变量分散到了不同列中。  
 
 ### `separate()`  
 
- 
 ```{r}
 table3
 ```
@@ -977,7 +996,7 @@ table3 %>%
 knitr::include_graphics("images/15.png")
 ```
 
-注意，以上输出的tibble中，`cases`和`population`被设定为字符串类型，使用`convert = T`将其转换为数值变量
+注意，以上输出的tibble中，`cases` 和 `population`被设定为字符串类型，使用`convert = T`将其转换为数值变量
 
 ```{r}
 table3 %>% 
@@ -1010,6 +1029,7 @@ table5
 ```
 
 ### 练习  
+
 ```{exercise}
 `separate()`中的`extra`和`fill`参数的作用是什么？用下面两个数据框进行实验： 
 ```
@@ -1071,13 +1091,104 @@ tibble(x = c("X1", "X2", "Y1", "Y2")) %>%
   extract(x, c("variable", "id"), regex = "([A-Z])([0-9])")
 ```
 
+## Miscellanea Functions  
+
+There are several remaining useful functions in `tidyr` than cannot be categorized.  
+
+
+### chop and unchop  
+
+Chopping and unchopping **preserve the width of a data frame, changing its length.** `chop()` makes `df` shorter by converting rows within each group into list-columns. `unchop()` makes `df` longer by expanding list-columns so that each element of the list-column gets its own row in the output.    
+
+**Note that we get one row of output for each unique combination of non-chopped variables**: 
+
+```{r}
+df <- tibble(x = c(1, 1, 1, 2, 2, 3), y = 1:6, z = 6:1)
+df %>% chop(c(y, z))
+```
+
+`chop()` differs from `nest` in \@ref(nest) in that it does not collpase columns, just turns them into a list:  
+```{r}
+df %>% nest(data = c(y, z))
+```
+
+`unchop()`:  
+
+```{r}
+df <- tibble(x = 1:4, y = list(integer(), 1L, 1:2, 1:3))
+df
+
+df %>% unchop(y)
+```
+
+If there's a size-0 element (like `NULL` or an empty data frame), that entire row will be dropped from the output. If you want to preserve all rows, use `keep_empty = TRUE` to replace size-0 elements with a single row of missing values.
+
+```{r}
+# equivalent to df %>% unnest_longer(y)
+df %>% unchop(y, keep_empty = TRUE)
+```
+
+```{r}
+
+# Incompatible types -------------------------------------------------
+# If the list-col contains types that can not be natively
+df <- tibble(x = 1:2, y = list("1", 1:3))
+
+try(df %>% unchop(y))
+
+df %>% unchop(y, ptype = tibble(y = integer()))
+
+df %>% unchop(y, ptype = tibble(y = character()))
+  
+df %>% unchop(y, ptype = tibble(y = list()))
+
+```
+
+**ptype**: Optionally, supply a data frame prototype for the output `cols`, overriding the default that will be guessed from the combination of individual value
+
+
+### uncount  
+
+Performs the opposite operation to `dplyr::count()`, duplicating rows according to a weighting variable (or expression)  
+
+```{r}
+df <- tibble(x = c("a", "b", "c"), n = c(1, 2, 3))
+uncount(df, n)
+```
+
+we can supply a string `.id` to create a new variable which gives a unique identifier for each created row:  
+
+```{r}
+uncount(df, n, .id = "id")
+```
+
+`uncount()` can be helpful in convertnig **frequency form data** to **case form data**, e.g:    
+
+```{r}
+(fiber <- read_csv("data/Fiber.csv"))
+fiber %>% uncount(count)
+```
+
+Other way that can achieve this transformation: `rep()`:  
+```{r}
+fiber[rep(1:nrow(fiber), fiber$count), -3]
+```
+
+
+
+
 ## 缺失值 {#tidyr-missing}
 
 数据整理改变了数据的呈现方式，随之而来的一个话题便是缺失值。通常当我们泛泛地使用"缺失值 (missing value)" 这个名词的时候，其实是指以下两种"缺失"方式中的某一种：  
-* 显式缺失(Explicitly missing): 在数据中用`NA`标识
-* 隐式缺失(Implicitly missing): 未出现在数据中的值  
+
+* 显式缺失(Explicitly missing): 在数据中用 `NA` 标识  
+
+* 隐式缺失(Implicitly missing): 未出现在数据中的值   
+
 *R for Data Science* 中对这两种缺失的概括：  
 > An explicit missing value is the presence of an absence; an implicit missing value is the absence of a presence.
+
+
 通过一个简单的数据框区分两种数据缺失的方式：  
 
 ```{r}
@@ -1183,7 +1294,8 @@ who2 <- who1 %>%
   mutate(key = stringr::str_replace(name, "newrel", "new_rel"))
 who2
 ```
-**We can separate the values in each code with two passes of `extracct()`. 
+
+We can separate the values in each code with two passes of `extracct()`(This can also be done in the previous `pivot_longer()` step  by passing a vector to `names_to`). 
 
 ```{r}
 who3 <- who2 %>% 
@@ -1193,7 +1305,7 @@ who3 <- who2 %>%
 who3
 ```
 
-Then, let’s also drop `iso2` and `iso3` since they’re redundant(see \ref(ex:)).  
+Then, let’s also drop `iso2` and `iso3` since they’re redundant (see Exercise \@ref(exr:redundancy) below for proof).  
 
 ```{r}
 who4 <- who3 %>% select(-iso2, -iso3)
@@ -1205,7 +1317,7 @@ Now `who4` is a tidy version of `tidyr::who`!
 
 ### 练习  
 
-```{exercise}
+```{exercise redundancy}
 在清理 `who` 数据集时，我们说`iso2`和`iso3`是冗余的，证明这一点
 ```
 
@@ -1229,78 +1341,15 @@ who %>%
   summarize(n = n()) %>% 
   filter(n > 1)
 ```
+
 ## 拓展：None-tidy data  {#non-tidy}
 
 Before we continue on to other topics, it’s worth talking briefly about non-tidy data. Earlier in the chapter, I used the pejorative term “messy” to refer to non-tidy data. That’s an oversimplification: there are lots of useful and well-founded data structures that are not tidy data. There are two main reasons to use other data structures:  
+
 * Alternative representations may have substantial performance or space advantages.  
+
 * Specialised fields have evolved their own conventions for storing data that may be quite different to the conventions of tidy data.  
+
 Either of these reasons means you’ll need something other than a tibble (or data frame). If your data does fit naturally into a rectangular structure composed of observations and variables, I think tidy data should be your default choice. But there are good reasons to use other structures; tidy data is not the only way.
 If you’d like to learn more about non-tidy data, I’d highly recommend this thoughtful blog post by Jeff Leek: [http://simplystatistics.org/2016/02/17/non-tidy-data/](http://simplystatistics.org/2016/02/17/non-tidy-data/)  
-## `tidyr 1.0.0` 
-tidyr 于 2019 年 9 月 14 日发布了版本 1.0.0，有以下重大变化：  
-* New `pivot_longer()` and `pivot_wider()` provide improved tools for reshaping, superceding `spread()` and `gather()`.   
-* New `unnest_auto()`, `unnest_longer()`, `unnest_wider()`, and `hoist()` provide new tools for rectangling, converting deeply nested lists into tidy data frames.  
-* `nest()` and `unnest()` have been changed to match an emerging principle for the design of `...` interfaces. Four new functions (`pack()`/`unpack()`, and `chop()`/`unchop()`) reveal that nesting is the combination of two simpler steps.  
-* New `expand_grid()`, a variant of `base::expand.grid()`. This is a useful function to know about, but also serves as a good reason to discuss the important role that `vctrs` plays behind the scenes. You shouldn’t ever have to learn about `vctrs`, but it brings improvements to consistency and performance.  
-参考 https://www.tidyverse.org/articles/2019/09/tidyr-1-0-0/  
-文档：  
-* [`vignette("pivot")`](https://tidyr.tidyverse.org/articles/pivot.html)、[`vignette("rectangle")`](https://tidyr.tidyverse.org/articles/rectangle.html) and [`vignette("nest")`](https://tidyr.tidyverse.org/articles/nest.html) provide detailed documentation and case studies of pivotting, rectangling, and nesting respectively.  
-* [`vignette("in-packages")`](https://tidyr.tidyverse.org/articles/in-packages.html) provides best practices for using tidyr inside another package, and detailed advice on working with multiple versions of tidyr if an interface change has affected your package.   
-```{r,message=F}
-library(tidyverse)
-```
-### `Pivoting` 
-#### `pivot_longer()`  
-基本用法：  
-```{r}
-relig_income
-relig_income %>% 
-  pivot_longer(cols = -religion, 
-               names_to = "income",
-               values_to = "count")
-```
-____
-#### `pivot_wider()`  
-The `fish_encounters` dataset, contributed by [Myfanwy Johnston](https://fishsciences.github.io/post/visualizing-fish-encounter-histories/), describes when fish swimming down a river are detected by automatic monitoring stations:  
-```{r}
-fish_encounters
-```
-```{r}
-fish_encounters %>% 
-  pivot_wider(names_from = station,
-              values_from = seen,
-              )
-```
 
-## Rectangling  
-```{r}
-library(repurrrsive)
-```
-```{r}
-repos <- tibble(repo = gh_repos)
-repos
-```
-```{r}
-repos <- repos %>% 
-  unnest_longer(repo) 
-repos
-```
-```{r}
-repos %>% hoist(repo, 
-  login = c("owner", "login"), 
-  name = "name",
-  homepage = "homepage",
-  watchers = "watchers_count"
-)
-```
-```{r}
-repos %>% 
-  hoist(repo, 
-    login = "owner"
-)
-```
-```{r}
-repos %>% 
-  hoist(repo, owner = "owner") %>% 
-  unnest_wider(owner)
-```

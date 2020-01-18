@@ -2,65 +2,157 @@
 
 # 处理缺失值  {#missing-values}  
 
-
-
-## 探索  {#explore-missing}
-
-`drop_na()` 根据列去除带有缺失值的观测：  
-
 ```{r}
-df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"), z = c("1", "2", "3"))
-df %>% drop_na() # df %>% drop_na(x, y)
-df %>% drop_na(x)
+library(tidylog)
 ```
 
+
+
+## 探索  {#explore-missing}  
+
+### naniar   
+
+http://naniar.njtierney.com/
+
+```{r}
+library(naniar)
+```
+
+#### shadown matrices  
+
+#### summaries
+
+#### visualizations     
+
+http://naniar.njtierney.com/articles/naniar-visualisation.html
+
+```{r}
+ggplot(airquality) + 
+  geom_miss_point(aes(Ozone, Solar.R))
+```
+
+```{r}
+ggplot(data = airquality,
+       aes(x = Ozone,
+           y = Solar.R)) + 
+  geom_miss_point() + 
+  facet_wrap(~Month, ncol = 2) + 
+  theme(legend.position = "bottom")
+```
+
+
+
+```{r}
+gg_miss_upset(airquality)
+```
+
+```{r}
+gg_miss_upset(riskfactors)
+```
+
+
+### replace with NA  
+
+http://naniar.njtierney.com/articles/replace-with-na.html  
+
+```{r}
+df <- tibble::tribble(
+  ~name,           ~x,  ~y,              ~z,  
+  "N/A",           1,   "N/A",           -100, 
+  "N A",           3,   "NOt available", -99,
+  "N / A",         NA,  29,              -98,
+  "Not Available", -99, 25,              -101,
+  "John Smith",    -98, 28,              -1)
+```
+
+
+```{r}
+df %>% replace_with_na(replace = list(x = -99))
+```
+
+```{r}
+df %>% replace_with_na(replace = list(x = c(-99, -98)))
+```
+
+
+```{r}
+df %>%
+  replace_with_na(replace = list(x = c(-99,-98),
+                             z = c(-99, -98)))
+```
+
+```{r}
+df %>% replace_with_na_all(condition = ~.x == -99)
+```
+
+```{r}
+common_na_numbers
+```
+
+
+```{r}
+common_na_strings
+```
+
+```{r}
+df %>% replace_with_na_all(~.x %in% common_na_strings)
+```
+
+
+### janitor
 
 **Janitor** 中的 `tabyl`
 
 ```{r}
-tabyl(df, y)
+janitor::tabyl(df, y)
+```
+
+### sjmisc  
+
+when missing variable is factor `sjmisc::frq`
+
+```{r}
+library(sjmisc)
 ```
 
 
 
 
 
-## 填充 {#fill-missing}
+## 处理   
+
 
 https://jiangjun.link/post/2018/12/r-missing-data  
 
-用中位数或均值填补缺失值   
-
-```{r,message=F}
-library(tidyverse)
+用中位数或均值填补缺失值:
+```{r}
 df <- tibble(x = c(1, 2, NA, 5, 9, NA),
              y = c(NA, 20, 1, NA, 5, NA),
              z = 5:10)
 
 
-df %>% 
-  mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
+df %>% mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
 ```
 
-\@ref(missing-values) 中的 `fill()`:  
+### tidyr   
+
+`drop_na()` 根据列去除带有缺失值的观测：  
 
 ```{r}
-df <- data.frame(Month = c(1:8, NA, 10), Year = c(2000, rep(NA, 9)), values = c(NA, 12:20))
-df
-df %>% fill(starts_with("Y"), .direction = "down")
+airquality %>% drop_na() # df %>% drop_na(Ozone, Solar.R, Wind, Temp, Month, Day)
+airquality %>% drop_na(Solar.R)
 ```
 
-
-
-
-或者 `janitor::remove_empty()`  
-
-
-`full_seq()`，得到完整的序列：  
+`fill()` 
 
 ```{r}
-full_seq(c(1, 2, 4, 5, 10), 1)
+df <- data.frame(Month = rep(1:12, 2), Year = c(2000, rep(NA, 11), 2001, rep(NA, 11)))
+df %>% fill(Year) # .direction = "down"
+df %>% fill(Year, .direction = "up")
+df %>% fill(Year, .direction = "updown")
+df %>% fill(Year, .direction = "downup")
 ```
+
 
 
 `replace_na()` replace missing values:  
@@ -82,6 +174,37 @@ df$x %>% replace_na(0)
 df$y %>% replace_na("unknown")
 ```
 
+
+`full_seq()`，得到完整的序列：  
+
+```{r}
+full_seq(c(1, 2, 4, 5, 10), 1)
+```
+
+### janitor
+
+```{r}
+library(janitor)
+```
+
+
+`remove_empty(dat, which = c("rows", "cols"))`  
+
+```{r}
+(df <- tibble(x = c(1, NA, 3),
+             y = rep(NA, 3),
+             z = c(4, NA, 5)))
+
+df %>% remove_empty()
+df %>% remove_empty("rows")
+df %>% remove_empty("cols")
+```
+
+
+
+
+
+### visdat
 
 `visdat::vis_missing()`  
 

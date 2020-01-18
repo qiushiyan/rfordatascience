@@ -1,0 +1,17 @@
+fiber,bloat,count
+bran,high,0
+gum,high,5
+both,high,2
+none,high,0
+bran,medium,1
+gum,medium,3
+both,medium,3
+none,medium,2
+bran,low,4
+gum,low,2
+both,low,5
+none,low,4
+bran,none,7
+gum,none,2
+both,none,2
+none,none,6

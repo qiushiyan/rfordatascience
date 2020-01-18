@@ -91,3 +91,30 @@ freq(iris$Species, report.nas = FALSE, totals = FALSE,
 descr(iris)
 ```
 
+## gt and gtsummary  
+
+```{r}
+# devtools::install_github("rstudio/gt")
+# install.packages("gtsummary")
+library(gt)
+library(gtsummary)
+```
+
+```{r}
+tbl_summary(
+    data = trial[c("trt", "age", "grade", "response")],
+    by = trt
+  ) %>%
+  add_p() 
+```
+
+## naniar  
+
+```{r}
+library(naniar)
+ggplot(data = airquality,
+       aes(x = Ozone,
+           y = Solar.R)) +
+  geom_miss_point()
+```
+
