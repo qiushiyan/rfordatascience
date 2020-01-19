@@ -1,0 +1,5 @@
+
+# Excel data  
+
+tidyxl https://github.com/nacnudus/tidyxl
+unpivotr https://github.com/nacnudus/unpivotr
