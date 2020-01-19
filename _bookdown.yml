@@ -29,6 +29,7 @@ rmd_files: [
   "tidymodels.Rmd",
   "caret.Rmd",
   "vtreat.Rmd",
+  "performance.Rmd",
   
   
   "references.Rmd"

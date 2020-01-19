@@ -1,0 +1,8 @@
+
+# performance  
+
+https://easystats.github.io/performance/
+```{r}
+# install.packages("performance")
+```
+
