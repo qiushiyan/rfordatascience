@@ -1,5 +1,22 @@
 
-# Excel data  
+# Excel Data  
 
 tidyxl https://github.com/nacnudus/tidyxl
-unpivotr https://github.com/nacnudus/unpivotr
+unpivotr https://github.com/nacnudus/unpivotr  
+
+```{r}
+# install.packages("tidyxl")
+# install.packages("unpivotr")
+library(tidyxl)
+library(unpivotr)
+```
+
+```{r}
+path <- system.file("extdata", "worked-examples.xlsx", package = "unpivotr")
+xlsx_cells(path)
+```
+
+```{r}
+readxl::read_excel(path)
+```
+
