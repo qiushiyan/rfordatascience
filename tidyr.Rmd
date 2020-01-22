@@ -682,9 +682,9 @@ Since a nested data frame is no more than a data frame where one (or more) list-
 ))
 ```
 
-Or more commonly, we can create nested data frames using `tidyr::nest()`. `df %>% nest(x, y)` specifies the columns to be nested; i.e. the columns that will appear in the inner data frame. Alternatively, you can nest() a grouped data frame created by `dplyr::group_by()`. The **grouping variables remain in the outer data frame and the others are nested**. The result preserves the grouping of the input.
+Or more commonly, we can create nested data frames using `tidyr::nest()`. `df %>% nest(x, y)` specifies the columns to be nested; i.e. the columns that will appear in the inner data frame. Alternatively, you can `nest()` a grouped data frame created by `dplyr::group_by()`. The **grouping variables remain in the outer data frame and the others are nested**. The result preserves the grouping of the input.
 
-**Variables supplied to nest() will override grouping variables** so that `df %>% group_by(x, y)` %>% `nest(z)` will be equivalent to df %>% nest(z).
+**Variables supplied to nest() will override grouping variables** so that `df %>% group_by(x, y)` %>% `nest(z)` will be equivalent to `df %>% nest(z)`.
 
 ```{r}
 df2 <- tribble(
@@ -714,33 +714,61 @@ df1 %>% unnest(data)
 - `dplyr::group_nest()` == `group_by() + nest()`  
 - `dplyr::group_split` = `base::split()`
 
-### nested data and models
+### Case Study: Managing multiple models
 
 Nested data is a great fit for problems where you have one of something for each group. A common place this arises is when you’re **fitting multiple models**.  
 
 ```{r}
-mtcars_nested <- mtcars %>% 
-  group_nest(cyl) 
+gapminder <- gapminder::gapminder
+gapminder_nest <- gapminder %>% 
+  mutate(year1950 = year - 1950) %>% 
+  group_nest(continent, country)
 
-mtcars_nested
+gapminder_nest
 ```
-Once you have a list of data frames, it’s very natural to produce a list of models:
+
+Now`gapminder_nest` is a tibble with 142 rows representing 142 countries with their respective time series data from 1952 - 2007 stored in the list column `data`. Then we can combine `mutate()` and `map` to create a new column to fit a linear model for each country:  
 
 ```{r}
-mtcars_nested <- mtcars_nested %>% 
-  mutate(model = map(data, ~ lm(mpg ~ wt, data = .x)))
+mod_fit <- function(data) {
+  lm(lifeExp ~ year1950, data = data)
+}
 
-mtcars_nested
+gapminder_model <- gapminder_nest %>% 
+  mutate(model = map(data, mod_fit))
+gapminder_model
 ```
-
-And then you could even produce a list of predictions:  
+Then using `broom` functions to generate "tidy" model summaries:  
 
 ```{r}
-mtcars_nested %>% 
-  mutate(prediction = map(model, predict))
+gapminder_summary <- gapminder_model %>% 
+  mutate(
+    glance = map(model, broom::glance),
+    tidy = map(model, broom::tidy),
+    augment = map(model, broom::augment)
+  )
+
+gapminder_summary
 ```
 
-## rectangling  
+`unnest()` each column: 
+
+```{r}
+# which country has the best fit
+gapminder_summary %>% 
+  unnest(glance) %>% 
+  arrange(desc(r.squared))
+
+
+gapminder_summary %>% 
+  unnest(tidy)
+
+gapminder_summary %>% 
+  unnest(augment)
+```
+
+
+## Rectangling  
 
 **Rectangling** is the art and craft of taking a deeply nested list (often sourced from wild caught JSON or XML) and taming it into a tidy data set of rows and columns. There are three functions from tidyr that are particularly useful for rectangling:
 
