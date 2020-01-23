@@ -10,7 +10,69 @@
 ## filtering join  
 
 
-## fuzzy join  
+## fuzzyjoin  
+
+
+### inexact matching  
+
+```{r}
+library(dplyr)
+library(stringr)
+library(janeaustenr)
+```
+
+
+```{r}
+# combine 50 rows into a passage
+passages <- tibble(text = prideprejudice) %>%
+  group_by(passage = 1 + row_number() %/% 50) %>%
+  summarize(text = str_c(text, collapse = " "))
+
+passages
+```
+
+
+```{r}
+characters <- readr::read_csv(
+"character,character_regex
+Elizabeth,Elizabeth
+Darcy,Darcy
+Mr. Bennet,Mr. Bennet
+Mrs. Bennet,Mrs. Bennet
+Jane,Jane
+Mary,Mary
+Lydia,Lydia
+Kitty,Kitty
+Wickham,Wickham
+Mr. Collins,Collins
+Lady Catherine de Bourgh,de Bourgh
+Mr. Gardiner,Mr. Gardiner
+Mrs. Gardiner,Mrs. Gardiner
+Charlotte Lucas,(Charlotte|Lucas)
+")
+
+characters
+```
+
+Which character appears in most passages(**the dataset with the `text` column must always come first**):  
+
+```{r}
+character_passages <- passages %>% 
+  regex_inner_join(characters, by = c("text" = "character_regex"))
+
+character_passages %>% count(character, sort = TRUE)
+```
+
+```{r}
+# character_passages %>% 
+#   select(-character_regex) %>% 
+#   pivot_wider(names_from = "character", values_from = "text") %>% 
+#   mutate_all(str_length) %>% 
+#   mutate_all(~ replace_na(.x, 0))
+```
+
+
+### stringdist
 
 ```{r}
 library(fuzzyjoin)
@@ -21,10 +83,17 @@ misspellings
 ```
 
 
-```{r}
+```{r, cache = TRUE}
 library(qdapDictionaries)
 words <- as_tibble(DICTIONARY)
+
+words
 ```
 
 
+```{r, cache = TRUE}
+misspellings %>% 
+  sample_n(1000) %>% 
+  stringdist_inner_join(words, by = c("misspelling" = "word"), max_dist = 1)
+```
 
