@@ -6,9 +6,6 @@
 # data.table {#data-table}  
 
 All C++ code chunks will be combined to the chunk below:
-
-
-
 First we include the header `Rcpp.h`:
 
 ```{Rcpp, eval=FALSE}
@@ -42,17 +39,17 @@ library(data.table)
 
 
 ```{r}
-y = list(id = 1:2, name = c("a", "b"))
-x = as.data.table(y)
-x
+mtcars_dt <- as.data.table(mtcars) 
+mtcars_dt
 ```
 
 ```{r}
-class(x)
+class(mtcars_dt)
 ```
 
 
 ## 基本使用 {#data-table-basics}
+
 
 
 
@@ -74,8 +71,8 @@ https://github.com/TysonStanley/tidyfast
 
 https://diskframe.com/  
 
+https://www.youtube.com/watch?v=3XMTyi_H4q4
 
-```{r}
-# install.packages("disk.frame")  
-```
+
+
 

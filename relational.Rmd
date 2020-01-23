@@ -12,3 +12,19 @@
 
 ## fuzzy join  
 
+```{r}
+library(fuzzyjoin)
+```
+
+```{r}
+misspellings
+```
+
+
+```{r}
+library(qdapDictionaries)
+words <- as_tibble(DICTIONARY)
+```
+
+
+
