@@ -24,6 +24,7 @@ rmd_files: [
   "summary.Rmd",
   
   "janitor.Rmd",
+  "santoku.Rmd",
   "missing-values.Rmd",
   
 #  "tidymodels.Rmd",
