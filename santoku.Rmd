@@ -1,5 +1,7 @@
 
-# santoku  
+# santoku    
+
+https://hughjonesd.github.io/santoku/tutorials/00-visualintroduction.html
 
 ```{r}
 # devtools::install_github("hughjonesd/santoku")
@@ -10,42 +12,51 @@ library(santoku)
 `cut()` in base R  
 
 ```{r}
-Z <- stats::rnorm(10000)
-cut(Z, breaks = 5) %>% table()  # 5 equal lenght intervals  
-cut(Z, breaks = -5:5) %>% table()
+x <- rnorm(100)
+cut(x, 5) %>% table()  # 5 equal intervals
+cut(x, -3:3) %>% table()
 ```
+
+`ntile()` in dplyr:  
+
+```{r}
+ntile(x, 5) %>% table()
+```
+
+
+
 
 `chop()`
 
 ```{r}
-chopped <- chop(Z, breaks = -5:5)
+chopped <- chop(x, breaks = -5:5)
 
 chopped %>% table()
 
 # chop() returns a factor
-tibble(Z, chopped)
+tibble(x, chopped)
 ```
 
-If data is beyond the limits of `breaks`, they will be extended automatically:  
+If data is beyond the limits of `breaks`, they will be extended automatically, unless `extend = FALSE`, and values beyond the bounds will be converted to `NA`:  
 
 ```{r}
-chopped <- chop(Z, breaks = c(-1, 1))
-tibble(Z, chopped)
+chopped <- chop(x, breaks = -1:1, extend = FALSE)
+tibble(x, chopped)
 ```
 
 To chop a single number into a separate category, put the number twice in `breaks`:
 
 ```{r}
-Z_fives <- Z 
-Z_fives[1:5] <- 5
+x_zeros <- x 
+x_zeros[1:5] <- 0
 
-chopped <- chop(Z_fives, c(2, 5, 5, 7))
-tibble(Z, chopped)
+chopped <- chop(x_zeros, c(-1, 0, 0, 1))
+tibble(x, chopped)
 ```
 
 To quickly produce a table of chopped data, use `tab()`:  
 
 ```{r}
-tab(Z, breaks = -1:1)
+tab(x, breaks = -3:3)
 ```
 
