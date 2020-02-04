@@ -1,24 +1,24 @@
 
-# (PART) Cleaning and Tidying {-}
+# (PART) Manipulating {-}
 
 
 # Janitor  
 
-http://sfirke.github.io/janitor/articles/janitor.html  
+blog: http://sfirke.github.io/janitor/articles/janitor.html  
 
-**Janitor**[@R-janitor] 包提供了一些简单易用的函数方便数据清洗和探索流程。  
+**janitor**[@R-janitor] 提供了一些简单易用的函数方便数据清洗和探索流程。  
 
-```{r,echo=F}
+```{r,echo = F}
 knitr::opts_chunk$set(cache=T)
 ```
 
 
-```{r,message=F}
+```{r,message = F}
 library(janitor)
 ```
 
 
-## 清洗  {#qingxi}
+## cleaning  {#cleaning}
 
 
 ### `clean_names`  
@@ -54,7 +54,7 @@ test_df %>%
 
 
 
-与 Base R 中的 `make.names()` 对比 (注意这个函数不是基于数据框的)：  
+与 Base R 中的 `make.names()` 对比 (注意这个函数是基于字符向量的)：  
 
 ```{r}
 names(test_df) %>% 
@@ -89,7 +89,7 @@ as_tibble(iris, .name_repair  = janitor::make_clean_names)
 
 ### `compare_df_cols`  
 
-使用 `dplyr::bind_rows()` 或者 `rbind()，或者存在子集关系。 `compare_df_cols()` 检查多个数据框或者数据框列表，并检查其各个列是否一致：  
+使用 `dplyr::bind_rows()` 或者 `rbind()`，或者存在子集关系。 `compare_df_cols()` 检查多个数据框或者数据框列表，并检查其各个列是否一致：  
 
 ```{r}
 df1 <- data.frame(a = 1:2, b = c("big", "small")) # a factor by default
@@ -122,7 +122,7 @@ compare_df_cols_same(df2, df3)
 ```
 
 
-## 探索 {#tansuo}
+## Exploring {#tansuo}
 
   
 ### `tabyl`  

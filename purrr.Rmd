@@ -281,3 +281,59 @@ iris %>%
   group_by(Species) %>% 
   group_rows()
 ```
+
+## Other useful tools  
+
+### adverbs 
+
+`partial` wraps a function:  
+
+```{r}
+mean(c(10, NA, 5, 7), na.rm = TRUE)
+
+my_mean <- partial(mean, na.rm = TRUE)
+my_mean(c(10, NA, 5, 7))
+```
+
+`negate()` negates a predicate function:  
+
+```{r}
+lst <- list("a", 3, 22, NULL, "q", NULL)
+map_lgl(lst, ~ !is.null(.))
+```
+
+
+```{r}
+is_not_null <- negate(is.null)
+map_lgl(lst, is_not_null)
+```
+
+`safely()` and `possibly()`:  
+
+```{r}
+add_ten <- function(x) {
+  x + 10
+}
+
+add_ten_safely <- safely(add_ten)
+map(lst, add_ten_safely)
+```
+
+```{r}
+# If you’re not interested in what the error is
+add_ten_possibly <- possibly(add_ten, otherwise = "not numeric")
+map(lst, add_ten_possibly)
+```
+
+`compose()` lets you string together multiple functions  
+
+```{r}
+add_ten_log_and_round <- compose(round, log, add_ten)
+c(1, 5, 100) %>% add_ten_log_and_round()
+# is equal to
+c(1, 5, 10) %>% 
+  add_ten() %>% 
+  log() %>% 
+  round()
+```
+

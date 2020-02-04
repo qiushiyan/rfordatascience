@@ -657,7 +657,7 @@ people %>%
 这个例子和 \@ref(contact) 中的 `contact` 很类似，虽然这里有第三列 `name`，但仍不足以唯一标识任意观测
 
 
-因为这个数据集里有两个对于 "Phillip Woods" 在变量`age`上年龄的观测，`pivot_wider()`就要把由`(Phillips Woods, age)`确定的单元格里“塞进两个值”。本质上因为 `name` 和 `key` 这两个变量上的值不能唯一确定一行，所以我们只要添加一列，让`name`、`key`和新列可以唯一确定一行即可： 
+因为这个数据集里有两个对于 "Phillip Woods" 在 `age` 上年龄的观测，`pivot_wider()` 就要把由`(Phillips Woods, age)`确定的单元格里“塞进两个值”。本质上因为 `name` 和 `key` 这两个变量上的值不能唯一确定一行，所以我们只要添加一列，让`name`、`key`和新列可以唯一确定一行即可： 
 ```{r}
 people %>% 
   mutate(id = row_number()) %>% 
@@ -767,6 +767,33 @@ gapminder_summary %>%
   unnest(augment)
 ```
 
+A similar case can be found at \@ref(viz-many-models)
+
+### Case Study:  Multicple hoice data  
+
+```{r}
+multiple_choice <- tibble(method = c(
+  "CNNs",
+  "Bayesian, Logistic Regression",
+  "Data Visualization, Decision Trees",
+  "Linear Regression, A/B Testing",
+  "Data Visualization, Text Analytics"
+))
+
+multiple_choice %>% 
+  mutate(method = str_split(method, ",")) %>% 
+  unnest(method)
+```
+
+
+```{r}
+multiple_choice %>% 
+  pull(method) %>% 
+  str_split(",")
+```
+
+
+Then we can do `count()` and plot the most frequent methods mentioned.  
 
 ## Rectangling  
 
@@ -1228,7 +1255,7 @@ stocks <- tibble(
 stocks
 ```
 
-我们很容易找到`stocks`第四条观测在 `return` 上的一个 `NA` ，因为它是显式缺失的。另一个隐式缺失的值是 `(year = 2016, qtr = 1)` 对应的观测，它没有出现在数据集中。  
+我们很容易找到 `stocks` 第四条观测在 `return` 上的一个 `NA` ，因为它是显式缺失的。另一个隐式缺失的值是 `(year = 2016, qtr = 1)` 对应的观测，它没有出现在数据集中。  
 数据呈现方式上的改变可以将隐式缺失值变成显式。比如，用 `pivot_wider()`函数构造以 `year` 为行字段，以 `return` 为值的透视表,这样就会产生一个属于水平 `(year = 2016, qtr = 1)`的单元格：  
 
 ```{r}
