@@ -203,7 +203,7 @@ df %>%
   str()
 ```
 
-## group_
+## group functions
 
 ### group_map、group_modify
 
@@ -216,7 +216,6 @@ iris %>%
   group_map(~ broom::tidy(lm(Sepal.Length ~ Sepal.Width, data = .x))) %>% 
   bind_rows()
 ```
-
 
 ```{r}
 iris %>% 
@@ -236,7 +235,7 @@ iris %>%
 ### group_nest、group_split、group_keys、group_data
 
 
-`group_nest()` is similar to `tidyr::nest()`, but focuses on the variables to **nest** by instead of the nested columns.  
+`group_nest()` is similar to `group_by() + tidyr::nest()`: 
 
 ```{r}
 iris %>% 

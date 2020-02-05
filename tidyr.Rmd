@@ -118,7 +118,7 @@ t2_cases_per_cap
 t2_cases_per_cap %>%
   mutate(rate = cases/population) %>%
   select(1,2,5) %>%  
-  ## 改变列名
+  # 改变列名
   mutate(
     country = t2_cases$country,
     year = t2_cases$year
@@ -769,7 +769,7 @@ gapminder_summary %>%
 
 A similar case can be found at \@ref(viz-many-models)
 
-### Case Study:  Multicple hoice data  
+### Case Study:  Multicple hoice data  {#multi-choice}
 
 ```{r}
 multiple_choice <- tibble(method = c(
@@ -1041,7 +1041,7 @@ table3
 * `into`:  拆分后新生成变量的列名，格式为字符串向量  
 * `sep`: 对如何拆分原变量的描述，其可以是正则表达式，如`_`表示通过下划线拆分，或`[^a-z]`表示通过任意非字符字母拆分，或一个指定位置的整数。默认情况下，`sep`将认定一个非字符字母进行划分  
 ```{r}
-## 这个例子里，sep不是必需的
+# 这个例子里，sep 不是必需的
 table3 %>%
   separate(col = rate,into = c("cases","population"))
 ```
@@ -1057,6 +1057,26 @@ knitr::include_graphics("images/15.png")
 table3 %>% 
   separate(rate, into = c("cases", "population"), convert = T)
 ```
+
+
+A seemingly similar function `tidyr::separate_rows()` separate existing columns based on `sep` to make new rows, instead columns:  
+
+```{r}
+df <- tibble(
+  x = 1:3,
+  y = c("a", "d,e,f", "g,h"),
+  z = c("1", "2,3,4", "5,6")
+)
+
+df %>% separate_rows(y, z, sep = ",")
+```
+
+The multiple choice data mentioned in \@ref(multi-choice) can easily be solved when using `separate_rows()`:  
+
+```{r}
+multiple_choice %>% separate_rows(method, sep = ",")
+```
+
 
 ### `unite()` 
 
