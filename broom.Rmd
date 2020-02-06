@@ -21,7 +21,7 @@ gapminder %>%
   mutate(tidied = map(t_test, broom::tidy)) %>%
   unnest(tidied) %>% 
   ggplot() + 
-  geom_errorbar(aes(xmin = conf.low,
+  geom_errorbarh(aes(xmin = conf.low,
                     xmax = conf.high,
                     y = continent))
 ```

@@ -23,7 +23,7 @@ skim(iris)
 
 
 ```{r}
-# install.packages("visdata")
+# install.packages("visdat")
 library(visdat)
 ```
 

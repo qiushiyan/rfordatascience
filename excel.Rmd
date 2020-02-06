@@ -7,8 +7,8 @@ unpivotr https://github.com/nacnudus/unpivotr
 ```{r}
 # install.packages("tidyxl")
 # install.packages("unpivotr")
-library(tidyxl)
-library(unpivotr)
+# library(tidyxl)
+# library(unpivotr)
 ```
 
 ```{r}

@@ -131,9 +131,6 @@ janitor::tabyl(df, y)
 
 when missing variable is factor `sjmisc::frq`
 
-```{r}
-library(sjmisc)
-```
 
 
 

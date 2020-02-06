@@ -785,12 +785,7 @@ multiple_choice %>%
   unnest(method)
 ```
 
-
-```{r}
-multiple_choice %>% 
-  pull(method) %>% 
-  str_split(",")
-```
+The trick here is that `str_split()` creates a list column, and then `unnest()` can unnest the column. A more general function `separate_rows()` in this case can be found at \@ref(separate)
 
 
 Then we can do `count()` and plot the most frequent methods mentioned.  
@@ -1029,7 +1024,7 @@ discs %>%
 
 `separate()` 和 `untie()` 函数则是为了解决以下问题：多个变量挤在了同一列中，或者一个变量分散到了不同列中。  
 
-### `separate()`  
+### `separate()` {#separate}
 
 ```{r}
 table3
@@ -1059,7 +1054,7 @@ table3 %>%
 ```
 
 
-A seemingly similar function `tidyr::separate_rows()` separate existing columns based on `sep` to make new rows, instead columns:  
+A seemingly similar function `tidyr::separate_rows()` separate existing columns based on `sep`, and then breaks each component into new rows, instead of columns:  
 
 ```{r}
 df <- tibble(

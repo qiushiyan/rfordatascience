@@ -2,10 +2,6 @@
 
 # dplyr    
 
-```{r, echo=F}
-knitr::opts_chunk$set(cache=T)
-```
-
 
 **dplyr** 承担了 tidyverse 中最基本也最重要的数据处理、转换、分析功能(to my mind)。它的设计思想是发展处一套简洁、统一的数据操作语法(a grammar of data manipulation)，用英语中常见的动词命名操作数据的函数，并充分利用管道符 `%>%` 和更“现代”的数据框格式 `tibble` 增加代码可读性。^[tidyverse 之外，\@ref(data-table) 中介绍的以 `data.table` 为中心的数据整理方法也值得一看]
 
@@ -670,20 +666,26 @@ ntile(x,n=3)
 ```
 
 ### 练习  
-1. 虽然现在的`dep_time`和`sched_dep_time`变量方便阅读，但不适合计算，因为它们实际上并不是连续型数值。将它们转换为一种更方便的表示形式，即从0点开始的分钟数  
+
+```{exercise}
+虽然现在的`dep_time`和`sched_dep_time`变量方便阅读，但不适合计算，因为它们实际上并不是连续型数值。将它们转换为一种更方便的表示形式，即从 0 点开始的分钟数
+```
+
 ```{r}
-## 观察两个变量的存储方式
+# 观察两个变量的存储方式
 flights %>% 
-  select(dep_time,sched_dep_time)
+  select(dep_time, sched_dep_time)
 ```
 
-xyz表示x点yz分，则总分钟数为`x %/% 100 * 60 + x %% 100` ; 但有一个问题是，由于0点是用2400代表的，经过这样的转换它变为1440，我们希望它变为0，所以在外层再套一个` %% 1440`
+xyz 表示 x 点 yz 分，则总分钟数为`x %/% 100 * 60 + x %% 100` ; 但有一个问题是，由于 0 点是用2400代表的，经过这样的转换它变为 1440，我们希望它变为 0，所以在外层再套一个` %% 1440`
 
 ```{r}
-flights %>% transmute(dep_time_mins = (dep_time %/% 100 * 60 + dep_time %% 100) %% 1440, sched_dep_time_mins = (sched_dep_time %/% 100 * 60 + sched_dep_time %% 100) %% 1440)
+flights %>% transmute(
+  dep_time_mins = (dep_time %/% 100 * 60 + dep_time %% 100) %% 1440, 
+  sched_dep_time_mins = (sched_dep_time %/% 100 * 60 + sched_dep_time %% 100) %% 1440)
 ```
 
-2. 比较`dep_time、sched_dep_time和dep_delay`，这三者应该是何种关系？
+2. 比较`dep_time、sched_dep_time 和 dep_delay`，这三者应该是何种关系？
 
 ```{r}
 flights_deptime <-
@@ -848,9 +850,6 @@ mtcars %>%
 starwars %>%
   add_count(species) %>%
   filter(n == 1)
-
-starwars %>% 
-  distinct(species, .keep`) 
 ```
 
 
@@ -1547,13 +1546,13 @@ iris %>%
 
 ```{r}
 # devtools::install_github("romainfrancois/dance")
-library(dance)
-iris %>% 
-  group_by(Species) %>% 
-  tango(
-    swing(mean, starts_with("Petal")),
-    swing(median, starts_with("Sepal"))
-  )
+# library(dance)
+# iris %>% 
+#   group_by(Species) %>% 
+#   tango(
+#     swing(mean, starts_with("Petal")),
+#     swing(median, starts_with("Sepal"))
+#   )
 ```
 
 

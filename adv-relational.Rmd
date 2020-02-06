@@ -7,8 +7,7 @@ http://varianceexplained.org/fuzzyjoin/reference/index.html
 ### inexact matching  
 
 ```{r}
-library(dplyr)
-library(stringr)
+library(fuzzyjoin)
 library(janeaustenr)
 ```
 
@@ -98,14 +97,14 @@ video: https://www.youtube.com/watch?v=-n4XaYHDlG8
 
 ## `after_joni()`  
 
-```{r, cache = TRUE}
+```{r}
 library(funneljoin)
 answers <- vroom::vroom("../data/rquestions/Answers.csv") 
 questions <- vroom::vroom("../data/rquestions/Questions.csv")
 ```
 
 Look at the data:
-```{r}
+```{r, cache = TRUE}
 (answers <- answers %>% 
   janitor::clean_names() %>% 
   filter(!is.na(owner_user_id)))
@@ -115,7 +114,7 @@ Look at the data:
   filter(!is.na(owner_user_id)))
 ```
 
-```{r}
+```{r, cache = TRUE}
 first_answer_after_first_question <- questions %>%
   after_left_join(answers,
              by_time = "creation_date",
@@ -199,7 +198,7 @@ https://krlmlr.github.io/dm
 
 ```{r}
 # devtools::install_github("krlmlr/dm")
-library(dm)
-dm_nycflights13()
+# library(dm)
+# dm_nycflights13()
 ```
 
