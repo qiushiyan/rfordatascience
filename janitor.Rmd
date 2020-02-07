@@ -64,11 +64,11 @@ names(test_df) %>%
 改变命名规范：  
 
 ```{r}
-## snake_case  
+# snake_case  
 test_df %>% 
   clean_names()
 
-## lower_camel and upper_camel  
+# lower_camel and upper_camel  
 test_df %>% 
   clean_names(case = "lower_camel")
 test_df %>% 
@@ -76,13 +76,22 @@ test_df %>%
 ```
 
 
-`make_clean_names()` 是 `clean_names()` 的向量版本，它还可以传入 `as_tibble()` 中的 `.name_repair` 参数中：  
+`clean_names()` 只能适用于于数据框 ，而 `make_clean_names()` 适用于向量，这使后者可以作为很多函数的参数，进行有效的 functional programming， 例如以下四种修改列名的方式是等效的：  
 
 ```{r}
-names(test_df) %>% 
-  make_clean_names()
+iris %>% clean_names()
 
-as_tibble(iris, .name_repair  = janitor::make_clean_names)
+iris %>% names() %>% make_clean_names()
+
+iris %>% as_tibble(name_repair = make_clean_names)
+
+iris %>% rename_all(make_clean_names) 
+```
+
+
+
+```{r}
+
 ```
 
 
