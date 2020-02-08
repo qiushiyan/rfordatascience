@@ -89,13 +89,6 @@ iris %>% rename_all(make_clean_names)
 ```
 
 
-
-```{r}
-
-```
-
-
-
 ### `compare_df_cols`  
 
 使用 `dplyr::bind_rows()` 或者 `rbind()`，或者存在子集关系。 `compare_df_cols()` 检查多个数据框或者数据框列表，并检查其各个列是否一致：  
