@@ -8,11 +8,7 @@ knitr::opts_chunk$set(cache=T)
 ```
 
 
-
-
-
-
-## base R 中的数据读取 
+## base R 中的数据读取 {#base-import}
 
 base R中有 3 个最主要的数据导入函数：
 
@@ -54,7 +50,7 @@ head(hotdogs)
 ```
 
 
-## readr 简介
+## readr 简介 {#readr-intro}
 
 ```{r,echo=F}
 knitr::include_graphics("images/6.png")
@@ -215,7 +211,7 @@ read_fwf(fwf_sample,
 ```
 
 
-## 解析向量(Parsing a vector)  
+## 解析向量 {#parse-vector} 
 
 在详细介绍 `readr` 如何从磁盘读取文件之前，我们需要先讨论一下 `parse_*()`函数族。这些函数接受一个字符向量（因为文件中的数据全部是以字符串的形式进入 R 的），并返回一个特定向量，如逻辑、整数或日期向量：  
 ```{r}
@@ -457,7 +453,7 @@ t2 <- "11:15:10.12 PM"
 parse_time(t2,"%I:%M:%OS %p")
 ```
 
-## 解析文件  
+## 解析文件 {#parse-file}
 
 现在我们已经学会了如何用 `parse_*()` 函数族解析单个向量，接下来就能回到本章的最初目标，研究`readr`是如何解析文件的。我们将关注以下两点：  
 
@@ -554,7 +550,7 @@ tail(challenge)
 
 我们再介绍其他几种有注意解析文件的通用技巧：  
 
-* 在前面的示例中，如果比默认方式再多检查一行，我们就能一蹴而就，解析成功：  
+* 在前面的示例中，如果比默认方式再多检查一行，就可以解析成功：  
 ```{r}
 challenge <- read_csv(readr_example("challenge.csv"),
                       guess_max = 1001)

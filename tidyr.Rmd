@@ -1315,7 +1315,7 @@ treatment %>%
   fill(person,.direction = "down")
 ```
 
-## Case Study  
+## Case Study  {#tidyr-case}
 
 To finish off the chapter, let’s pull together everything you’ve learned to tackle a realistic data tidying problem. The `tidyr::who` dataset contains tuberculosis (TB) cases broken down by year, country, age, gender, and diagnosis method. The data comes from the *2014 World Health Organization Global Tuberculosis Report*, available at [http://www.who.int/tb/country/data/download/en/](http://www.who.int/tb/country/data/download/en/).  
 There’s a wealth of epidemiological information in this dataset, but it’s challenging to work with the data in the form that it’s provided:

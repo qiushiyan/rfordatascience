@@ -1,11 +1,11 @@
 
 # forcats
 
-## 简介  
+## 简介  {#forcats-intro}
 
-因子(factor)在 R 中用于处理分类变量。从历史上看，因子远比字符串容易处理。因此，R基础包的很多函数都自动将字符串转换为因子。这意味着因子经常出现在并不真正适合他们的地方。好在我们不用担心`tidyverse`中出现这种问题，可以将注意力集中于真正需要因子类型的地方。 
+因子(factor)在 R 中用于处理分类变量。从历史上看，因子远比字符串容易处理。因此，R 基础包的很多函数都自动将字符串转换为因子。这意味着因子经常出现在并不真正适合他们的地方。好在我们不用担心 tidyverse 中出现这种问题，可以将注意力集中于真正需要因子类型的地方。 
 
-*Roger Peng*的文章["stringsAsFactors: An unauthorized bigraphy](https://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/)和*Thomas Lumley*的文章[stringsAsFactors = sigh ](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh)介绍了有关因子和字符串的一些历史背景。  
+*Roger Peng* 的文章["stringsAsFactors: An unauthorized bigraphy](https://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/)和*Thomas Lumley*的文章[stringsAsFactors = sigh ](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh)介绍了有关因子和字符串的一些历史背景。  
 
 2006 年, `stringsAsFactors` 这一设置的前身 `charToFactor` 被引入了 `data.frame()` 函数中，后来被纳入到 `read.table()` 里。默认情况下，`stringsAsFactors`被设置为`True`，R便会自动把字符串转换为因子型变量。在当时，这种设置是不难理解的。早期R的用户几乎都是统计科班出身的研究者，他们所用数据集里的字符串几乎都代表了一个定性变量，例如`年龄(male/female)`,`国家(US/other)`，`地区(East/West)`。进一步地，由于统计学家们的工作重点几乎都集中在构建各种统计模型上，而像`lm()`和`glm()`的函数只有当一个变量是 `factor` 类型的时候才开始对其编码，在统计模型中构建虚拟变量。  
 
@@ -165,17 +165,17 @@ fct_relevel(reshuffled_income, c("Lt $1000", "$1000 to 2999"), after = 1) %>%
 
 
 
-## 改变水平个数
+## 改变水平个数 {#forcats-levles}
 
 ### 合并水平  
 
-`forcats`包提供了`fct_count()`函数可以很方便地查看因子各水平分布的情况，使用`count()`函数也可以达到同样的效果
+`fct_count()`函数可以很方便地查看因子各水平分布的情况，使用`count()`函数也可以达到同样的效果
 ```{r}
 fct_count(starwars$skin_color, sort = T)
 ```
 
-因子`skin_color`总共有31个水平，但绝大部分的频次都集中在前5、6个水平上，这时候我们可能想把余下的水平合并为一个水平，即创建一个"其他"水平。
-`fct_lump(f,n,prop)`函数用于合并因子中那些低频次的水平，参数`n`和`prop`采用不同的表示方法，指定哪些变量保留下来（被合并）:
+因子`skin_color`总共有 31 个水平，但绝大部分的频次都集中在前 5、6 个水平上，这时候我们可能想把余下的水平合并为一个水平，即创建一个"其他"水平。
+`fct_lump(f, n, prop)` 用于合并因子中那些低频次的水平，参数 `n` 和 `prop` 采用不同的表示方法，指定哪些变量保留下来（或者被合并）:
 
 ```{r}
 ## 留下频次最高的前5个水平，剩下全部水平合并为1个
@@ -189,7 +189,7 @@ starwars %>%
   count(skin_color, sort = TRUE)
 ```
 
-默认情况下，合并生成的新水平被命名为"Other"，可以通过`other_level`参数为其设定一个名字：
+默认情况下，合并生成的新水平被命名为"Other"，可以通过 `other_level` 参数为其设定一个名字：
 ```{r}
 ## 将合并水平命名为“extra”
 starwars %>%
@@ -198,8 +198,8 @@ starwars %>%
   count(skin_color, sort = TRUE)
 ```
 
-
-如果给参数`n`或者`prop`指定一个复数，则频数最多的水平将被合并：  
+ 
+如果给 `n` 或者 `prop` 指定一个负数，则频数最多的一些水平将被合并：  
 
 ```{r}
 ## 留下频次最低的5个水平
@@ -212,7 +212,7 @@ starwars %>%
   count(skin_color, sort = T)
 ```
 
-如果想人为地对水平进行合并，而不考虑频次，可以使用`fct_other(f,keep,drop,other_level = "Other)`函数，`keep`指定保留水平，`drop`指定合并水平：  
+如果想人为地对水平进行合并，而不考虑频次，可以使用`fct_other(f, keep, drop, other_level = "Other)`，`keep` 指定保留水平，`drop` 指定合并水平：  
 
 ```{r}
 x <- factor(rep(LETTERS[1:9], times = c(40, 10, 5, 27, 1, 1, 1, 1, 1)))
@@ -287,7 +287,7 @@ fct_drop(f, only = "c")
 
 
 
-## 编码  
+## 编码  {#forcats-recode}
 
 比修改因子水平顺序、改变水平个数更强大的操作时修改水平的值。修改水平的值不仅可以使图形标签更为美观清晰，以满足出版发行的要求，还可以将水平汇集成更高层次的显示。修改水平最常用、最强大的工具是`fct_recode()`函数，它可以对每个水平进行修改或重新编码。例如，我们来看一下综合社会调查数据中的因子变量`partyid`:  
 ```{r}
@@ -359,9 +359,9 @@ gss_cat_collapse %>%
 ```
 
 
-## 合并因子
-`fct_c()`
-函数用于将因子合并，使用`gapminder::gapminder`数据，首先创建两个子集：
+## 合并因子 {#forcats-combine}
+
+`fct_c()` 用于将因子合并，使用 `gapminder::gapminder` 数据，首先创建两个子集：
 ```{r,warning=F}
 library(gapminder)
 
@@ -372,10 +372,11 @@ df1 <- gapminder %>%
 
 df2 <- gapminder %>%
   filter(country %in% c("France", "Germany"), year > 2000)
-  
 ```
 
-舍弃`country`中频次为 0 的水平：
+舍弃
+`country`
+中频次为 0 的水平：
 ```{r}
 df1$country <- fct_drop(df1$country)
 df2$country <- fct_drop(df2$country)
@@ -384,7 +385,7 @@ levels(df1$country)
 levels(df2$country)
 ```
 
-用`fct_c()`将两个数据集中不同的因子`country`拼接起来
+用 `fct_c()` 将两个数据集中不同的因子`country`拼接起来
 
 ```{r}
 fct_c(df1$country, df2$country)

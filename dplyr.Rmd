@@ -14,13 +14,12 @@ flights
 
 
 专门为`tibble`数据格式编写的函数 `glimpse()`，它的功能和 `str()` 类似，但输出更为整洁，显示的数据也更多一些:
+
 ```{r}
 glimpse(flights)
 str(flights)
 ```
 
-
-## 5个数据转换核心函数
 
 五个 `dplyr` 核心函数能解决数据转换中的绝大多数问题：  
 
@@ -380,7 +379,7 @@ flights %>% arrange(dep_time)
 flights %>% arrange(distance / air_time)
 ```
 
-## 使用`select()`选择列  
+## `select()`
 
 如今，数据集有几百个甚至几千个变量已经司空见惯。这种情况下，如何找出真正感兴趣的变量经常是一个挑战。通过基于变量名的操作，`select()`函数可以让我们快速生成一个有用的变量子集。    
 
@@ -1170,7 +1169,7 @@ df %>%
 ```
 
 
-## 练习   
+## 练习 {#dplyr-exercise}
 
 ```{exercise}
 找到每个日期分组中到达时间延迟最长的10条记录  
@@ -1397,7 +1396,7 @@ flights %>%
   arrange(desc(arr_delay_diff))
 ```
 
-## 作用域  
+## 作用域 {#scoped}
 
 这里的作用域 (scope) 是指 `dplyr` 函数能影响的变量范围。一般而言，`arrange()`、`mutate()`、`summarize()` 作用的变量需要显式指明，而它们的一些变体 (scoped variants) 有更加复杂的作用域规则。  
 
@@ -1506,7 +1505,7 @@ iris %>% mutate_if(is.double, as.integer)
 ```
 
 
-某些情况下，可能希望进行多种数据函数，可以在 `,funs` 中传入一个函数列表，则列表中的每个函数均会作用于所有符合筛选条件的变量。有多个函数时，`mutate` 的 scoped vairiants 生成新列，而非就地修改原来的变量
+某些情况下，可能希望进行多种数据函数，可以在 `.funs` 中传入一个函数列表，则列表中的每个函数均会作用于所有符合筛选条件的变量。有多个函数时，`mutate` 的 scoped vairiants 生成新列，而非就地修改原来的变量
 
 ```{r}
 iris %>% mutate_if(is.numeric, list(scale2, log)) %>%

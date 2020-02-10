@@ -18,7 +18,7 @@ library(janitor)
 ```
 
 
-## cleaning  {#cleaning}
+## cleaning  {#janitor-cleaning}
 
 
 ### `clean_names`  
@@ -124,7 +124,7 @@ compare_df_cols_same(df2, df3)
 ```
 
 
-## Exploring {#tansuo}
+## Exploring {#janitor-explore}
 
   
 ### `tabyl`  

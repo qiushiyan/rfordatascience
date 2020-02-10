@@ -1,7 +1,7 @@
 # tibble
 
 
-tidyverse 的设计理念之一是用 `tibble` 代替传统的 R 数据框(`data.frame`类)。tibble 是一种更简单的数据框，它对传统数据框的功能进行了一些修改，以便更易于使用。多数情况下，我们不再区分 tibble 和数据框这两个词 ； 如果想要强调 R 内置的传统数据框，用 `data. frame` 来表示。除了这里展示的知识以外，使用 `vignette("tibble")` 可以获得更多关于 tibble 的信息。  
+**tidyverse** 的设计理念之一是用 `tibble` 代替传统的 R 数据框(`data.frame`类)。tibble 是一种更简单的数据框，它对传统数据框的功能进行了一些修改，以便更易于使用。多数情况下，我们不再区分 tibble 和数据框这两个词 ； 如果想要强调 R 内置的传统数据框，用 `data. frame` 来表示。除了这里展示的知识以外，使用 `vignette("tibble")` 可以获得更多关于 tibble 的信息。  
 
 ```{r, echo = F}
 knitr::opts_chunk$set(cache=T)
@@ -324,7 +324,7 @@ df %>% .[["x"]]
 
 可以直接根据打印时的显示来判断。  
 
-更一般地，直接使用 `class()` 函数进行判断, 一个传统数据框将返回"`data.frame`" ，而tibble返回`c("tbl_df", "tbl", "data.frame")`   
+更一般地，直接使用 `class()` 函数进行判断, 一个传统数据框将返回"`data.frame`" ，而 tibble 返回`c("tbl_df", "tbl", "data.frame")`   
 ```{r}
 class(mtcars)
 class(ggplot2::diamonds)
@@ -334,7 +334,6 @@ class(nycflights13::flights)
 
 ```{exercise}
 在以下的数据框中练习如何引用不符合语法规则的变量名  
-
 ```
 
 

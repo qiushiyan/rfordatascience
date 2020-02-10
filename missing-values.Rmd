@@ -136,12 +136,13 @@ when missing variable is factor `sjmisc::frq`
 
 
 
-## 处理   
+## Wrangling NA
 
 
 https://jiangjun.link/post/2018/12/r-missing-data  
 
 用中位数或均值填补缺失值:
+
 ```{r}
 df <- tibble(x = c(1, 2, NA, 5, 9, NA),
              y = c(NA, 20, 1, NA, 5, NA),
