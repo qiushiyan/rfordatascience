@@ -283,6 +283,25 @@ iris %>%
 
 ## Other useful tools  
 
+### `imap()`  
+
+`imap_xxx(x, ...)` is short hand for `map2(x, names(x), ...)`if `x` has names, or `map2(x, seq_along(x), ...)` if it does not. This is useful if you need to compute on both the value and the position of an element.  
+
+Note that when using the formula shortcut, `.x` is the value, and the `.y` is the position:  
+
+```{r}
+x <- c("sheldon" = 150, "leonard" = 140, "raj" = 145, "howard" = 140)
+imap(x, str_c)
+imap(x, ~ str_c(.y, .x))
+
+# on a tibble
+imap_chr(mtcars, ~ str_c(.y, "median:", median(.x), sep = " "))
+```
+
+
+
+
+
 ### adverbs 
 
 `partial` wraps a function:  

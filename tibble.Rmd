@@ -22,34 +22,88 @@ class(iris)
 ```
 
 
-相比于 `data.frame()` 函数，`tibble()`函数的功能要少的多：它不能改变输入的类型（例如，不能将字符串转变为因子)、变量的名称,也不能创建行名称。  
+相比于 `data.frame()` ，`tibble()` 创建数据矿的附加操作要少的多：它不能改变输入的类型（例如，不会默认将字符串转变为因子)、变量的名称,也不能创建行名称。  
 
 
-有些比较旧的函数不支持`tibble`，如果遇到这种函数，可以使用`as.data.frame()`转换`到`data.frame`上。  
+有些比较旧的函数不支持`tibble`，如果遇到这种函数，可以使用 `as_data_frame()` 转换到传统的 `data.frame` 上。  
 
+`add_row(.data, ..., .before = NULL, .after = NULL)` s a convenient way to add one or more rows of data to an existing data frame. `...` should be name-value pairs corresponding to column names and its value. By default new row are added after the last row.   
+
+```{r}
+# add_row ---------------------------------
+df <- tibble(x = 1:3, y = 3:1)
+
+add_row(df, x = 4, y = 0)
+
+# You can specify where to add the new rows
+add_row(df, x = 4, y = 0, .before = 2)
+
+
+# You can supply vectors, to add multiple rows (this isn't
+# recommended because it's a bit hard to read)
+add_row(df, x = 4:5, y = 0:-1)
+
+# Absent variables get missing values
+add_row(df, x = 4)
+
+
+```
+
+Yet we cannoto create new variables:  
+
+```{r, error = TRUE}
+add_row(df, z = 0)
+```
+
+
+`enframe()` converts named atomic vectors or lists to one- or two-column data frames . For vectors with more than 2 elements, a list column is created.  
+
+```{r}
+enframe(c(a = 1, b = 2))
+# For unnamed vectors, the natural sequence is used as name column.
+enframe(1:2)
+# vectors with more than 2 elements
+enframe(1:3)
+```
+
+
+For a list, the result will also be a list column.  
+
+```{r}
+enframe(list(one = 1, two = 2:3, three = 4:6, four = "four"))
+```
+
+`deframe()` is the opposite of `enframe()`  
+
+```{r}
+list(one = 1, two = 2:3, three = 4:6, four = "four") %>%
+  enframe() %>% 
+  deframe()
+```
 
 
 ## 对比 tibble 和 data.frame {#tibble-data.frame}
 
-tibble 和传统 data.frame 的机理主要有三处不同：创建、打印和取子集。
+`tibble` 和传统 `data.frame` 的机理主要有三处不同：创建、打印和取子集。
 
 
 
 ### 创建  
 
-`tibble()`函数用于创建现代数据框：`tibble` ：
+`tibble()` 创建一个 `tibble`
 ```{r}
 df <- tibble(
   x = 1:3,
   y = c("a","b","c")
 )
+
 df
 ```
 
-可以发现 `tibble()` 不会自作聪明地更改 `y` 的 `class` 属性，它将原原本本地被当做一个字符向量处理。
+可以发现 `tibble()` 不会默认更改 `y` 类型，它将原原本本地被当做一个字符向量处理。
 
 
-而 `data.frame()` 函数用于创建一个传统数据框：  
+而 `data.frame()` 用于创建一个传统数据框：  
 
 ```{r}
 df <- data.frame(
@@ -75,7 +129,7 @@ str(df)
 ```
 
 
-By the way, 创建`tibble`的另一种方法是使用`tribble()`函数，tribble是 transposed tibble 的缩写。`tribble()`是高度定制化的，就像在 Markdown 中创建表格一样，一个一个填入元素：列标题以波浪线`~`开头，不同列的元素之间以逗号分隔，这样就可以用易读的方式对少量数据创建一个 `tibble` 类型：    
+By the way, 创建 `tibble` 的另一种方法是使用`tribble()`，transposed tibble 的缩写。`tribble()` 是高度定制化的，就像在 Markdown 中创建表格一样，一个一个填入元素：列标题以波浪线 `~` 开头，不同列的元素之间以逗号分隔，这样就可以用易读的方式对少量数据创建一个 `tibble` ：    
 ```{r}
 tribble(
   ~x, ~y, ~z,
@@ -114,10 +168,10 @@ rownames(df)
 出于以下三个原因，我们不应该使用`row.names`这一属性，也不应该考虑在任何场合添加行标签：  
 
 1. 元数据也是数据，所以把行标签从其他变量中抽出来单独对待不是个好主意。否则我们可能要对行标签单独发展出一套操作工具，而不能直接应用我们已经习惯的对变量的操作方法  
-2. 行标签很多时候不能完成唯一标识观测的任务，因为`row.names`要求只能传入数值或者字符串向量。如果我们想要用时间日期型数据标识观测呢？或者需要传入不止一个向量(例如标识位置同时需要经度和纬度)  
+2. 行标签很多时候不能完成唯一标识观测的任务，因为 `row.names` 要求只能传入数值或者字符串向量。如果我们想要用时间日期型数据标识观测呢？或者需要传入不止一个向量(例如标识位置同时需要经度和纬度)  
 3. 行标签中的元素必须是唯一的，但很多场合(比如bootstrapping)中同一个对象也可能有多条记录  
 
-所以，`tibble`的设计思想就是不支持添加行标签，且提供了一套很方便的、处理已有行标签的工具，要么移除它，要么把它直接变成`tibble`中的一列： 
+所以，`tibble` 的设计思想就是不支持添加行标签，且提供了一套很方便的、处理已有行标签的工具，要么移除它，要么把它直接变成`tibble`中的一列： 
 
 **Tools for working with row names**  
 *Description*  
@@ -357,22 +411,5 @@ mutate(annoying,`3`= `2`/`1`)
 ```
 
 
-```{exercise}
-`tibble::enframe()`函数的功能是什么？什么时候可以使用这个函数？
-```
-
-
-`enframe()`接受一个具名向量(named vectors)转换为一个tibble：  
-```{r}
-enframe(c(a = 5, b = 7))
-enframe(c(a = 1:3, b = 2:4, c = 3:5))
-```
-
-`tibble()` 在这种情况下只会识别一个完整的向量
-
-
-```{r}
-tibble(c(a = 1:3, b = 2:4, c = 3:5))
-```
 
 

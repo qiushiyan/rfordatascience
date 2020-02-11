@@ -1,14 +1,11 @@
 
 # tidyr  
 
-```{r, echo = FALSE}
-knitr::opts_chunk$set(message = TRUE, out.width = "90%", cache = TRUE)
-```
-
 
 ```{r, message = FALSE}
 library(tidylog)
 library(lubridate)
+knitr::opts_chunk$set(message = TRUE)
 ```
 
 
@@ -20,15 +17,15 @@ library(lubridate)
 > “Tidy datasets are all alike, but every messy dataset is messy in its own way.” 
 > –– Hadley Wickham
 
-整洁的数据(Tidy data)是进行数据操作和 ggplot2 可视化的基础，所谓数据整理（清洗、清理），就是把 messy data 转换为 tidy data 的过程。在 tidyverse 生态中，**tidyr** 便负责数据的整理和变型：
+整洁的数据(Tidy data)是进行数据操作和 ggplot2 可视化的基础，所谓数据整理（清洗、清理），就是把 messy data 转换为 tidy data 的过程。在 tidyverse 生态中，**tidyr** 负责数据的整理和变型：
 
 
 
 
 如果一个数据集是整洁的，需要满足以下三个要素：  
-1. 每个变量有一个专属列(Each variable must have its own column)  
-2. 每个观测有一个专属行(Each observation must have its own row)  
-3. 每个值必须都有一个专属的存储单元(Each value must its own cell)  
+1. 每个变量有一个专属列 (Each variable must have its own column)  
+2. 每个观测有一个专属行 (Each observation must have its own row)  
+3. 每个值有一个专属的存储单元 (Each value must its own cell)  
 
 ```{r,echo = FALSE}
 knitr::include_graphics("images/11.png")
@@ -727,7 +724,7 @@ gapminder_nest <- gapminder %>%
 gapminder_nest
 ```
 
-Now`gapminder_nest` is a tibble with 142 rows representing 142 countries with their respective time series data from 1952 - 2007 stored in the list column `data`. Then we can combine `mutate()` and `map` to create a new column to fit a linear model for each country:  
+Now `gapminder_nest` is a tibble with 142 rows representing 142 countries with their respective time series data from 1952 - 2007 stored in the list column `data`. Then we can combine `mutate()` and `map` to create a new column to fit a linear model for each country:  
 
 ```{r}
 mod_fit <- function(data) {
@@ -738,7 +735,8 @@ gapminder_model <- gapminder_nest %>%
   mutate(model = map(data, mod_fit))
 gapminder_model
 ```
-Then using `broom` functions to generate "tidy" model summaries:  
+
+Then use `broom` functions to generate "tidy" model summaries:  
 
 ```{r}
 gapminder_summary <- gapminder_model %>% 
