@@ -1,3 +1,293 @@
 
-# Advanced dplyr  
+# Advanced dplyr   
+
+
+
+
+
+## Colwise operations  
+
+`across()` makes it easy to apply the same transformation to multiple columns, allowing you to use `select()` semantics inside in `summarise()` and `mutate()`. `across()` supersedes the family of "scoped variants" like `summarise_at()`, `summarise_if()`, and `summarise_all()`.  
+
+```{r}
+# across() supports both select helpers and predicate function
+iris %>%
+  group_by(Species) %>%
+  summarize(across(starts_with("Petal"), mean))
+
+
+iris %>%
+  as_tibble() %>%
+  mutate(across(is.factor, as.character))
+```
+
+```{r}
+# A purrr-style formula
+iris %>%
+  group_by(Species) %>%
+  summarise(across(starts_with("Sepal"), ~mean(.x, na.rm = TRUE)))
+```
+
+
+```{r}
+# A named list of functions
+iris %>%
+  group_by(Species) %>%
+  summarise(across(starts_with("Sepal"), list(mean = mean, sd = sd)))
+
+# mix function and lambda expression 
+iris %>% 
+  group_by(Species) %>% 
+  summarize(across(starts_with("Sepal"),
+                   list(mean = mean, n_miss = ~ sum(is.na(.x)))))
+```
+
+
+```{r}
+# Use the names argument to control the output names
+iris %>%
+  group_by(Species) %>%
+  summarise(across(starts_with("Sepal"), mean, names = "mean_{col}"))
+
+iris %>%
+  group_by(Species) %>%
+  summarise(across(starts_with("Sepal"), list(mean = mean, sd = sd), 
+                   names = "{col}.{fn}"))
+
+iris %>%
+  group_by(Species) %>%
+  summarise(across(starts_with("Sepal"), list(mean, sd), names = "{col}.fn{fn}"))
+```
+
+
+`filter()` `arrange()`  
+
+```{r}
+iris %>% 
+  as_tibble() %>%
+  filter(across(starts_with("Sepal"), ~ .x %% 3 == 0))
+
+iris %>% 
+  as_tibble() %>% 
+  arrange(across(everything(), desc))
+```
+
+
+```{r}
+# Using distinct() and across() to select variables ----------------------
+distinct(starwars, across(contains("color")), .keep_all = TRUE)
+```
+
+
+## Rowwise operations  
+
+```{r}
+library(slider)
+example <- tibble(
+  x = 1:4,
+  y = letters[1:4]
+)
+
+slide(example$x, ~.x)
+slide(example$x, ~.x, .before = 2)
+```
+
+When applied to the entire example data frame, map() treats it as a list and iterates over the columns. slide(), on the other hand, iterates over rows. This is consistent with the vctrs idea of size, which is the length of an atomic vector, but the number of rows of a data frame or matrix. slide() always returns an object with the same size as its input. Because the number of rows in example is 4, the output size is 4.
+
+
+
+### dance  
+
+`summarize_()` 不能对某些列执行一个action，另一些列执行另一个action，必须同时执行:  
+
+```{r}
+iris %>% 
+  group_by(Species) %>% 
+  summarize_at(vars(Petal.Length, Petal.Width), list(mean = mean, median = median))
+```
+
+```{r}
+# devtools::install_github("romainfrancois/dance")
+# library(dance)
+# iris %>% 
+#   group_by(Species) %>% 
+#   tango(
+#     swing(mean, starts_with("Petal")),
+#     swing(median, starts_with("Sepal"))
+#   )
+```
+
+
+
+## Context dependent expressions
+
+These functions return information about the "current" group or "current" variable, so only work inside specific contexts like `summarise()` and `mutate()`.  
+
+* `n()` gives current group size 
+* `cur_data()` gives the current data for the current group (exclusing grouping variables)  
+* `cur_group()`  gives the group keys, a tibble with one row and one column for each grouping variable.  
+
+```{r}
+iris %>% 
+  group_by(Species) %>% 
+  group_keys()
+```
+
+* `cur_group_id()` gives a unique numeric identifier for the current group.  
+* `cur_column()` gives the current column (in `across()` only).  
+
+```{r}
+set.seed(2017)
+df <- tibble(
+  g = sample(rep(letters[1:3], 1:3)),
+  x = runif(6),
+  y = runif(6)
+)
+
+gf <- df %>% group_by(g)
+
+gf %>% slice(1:n() - 1)
+gf %>% mutate(id = cur_group_id())
+gf %>% summarise(data = cur_group())
+gf %>% summarise(row = cur_group_id())
+gf %>% summarise(row = cur_group_rows())
+
+gf %>% summarise(data = cur_data())
+
+gf %>% mutate(across(everything(), ~ str_c(cur_column(), " = ", round(.x, 2))))
+```
+
+
+## Scoped variants
+
+这里的作用域 (scope) 是指 `dplyr` 函数能影响的变量范围。一般而言，`arrange()`、`mutate()`、`summarize()` 作用的变量需要显式指明，而它们的一些变体 (scoped variants) 有更加复杂的作用域规则。  
+
+**Scoped variants of a function operates on a selection of variables.**    
+
+The variants suffixed with `_if`, `_at` or `_all` apply an expression (sometimes several) to all variables **within a specified subset**. This subset can contain all variables (`_all` variants), a vars() selection (`_at` variants), or variables selected with a predicate (`_if` variants).  
+
+
+
+https://dplyr.tidyverse.org/reference/mutate_all.html  
+
+https://dplyr.tidyverse.org/reference/summarise_all.html  
+
+https://dplyr.tidyverse.org/reference/filter_all.html  
+
+### arrange
+
+
+
+### mutate
+
+
+The **scoped** variants of `mutate()` and `transmute()` make it easy to apply the same transformation to multiple variables. There are three variants:   
+
+
+
+* `_all` affects every variable  
+
+* `_at` affects variables selected with a character vector or `vars()`    
+
+* _if affects variables selected with a predicate function  
+
+
+```r
+mutate_all(.tbl, .funs, ...)
+
+mutate_if(.tbl, .predicate, .funs, ...)
+
+mutate_at(.tbl, .vars, .funs, ..., .cols = NULL)
+
+transmute_all(.tbl, .funs, ...)
+
+transmute_if(.tbl, .predicate, .funs, ...)
+
+transmute_at(.tbl, .vars, .funs, ..., .cols = NULL)
+```
+
+
+**Arguments**  
+
+* `tbl`: A tbl object  
+* `.funs`: a function to transform the selection of variables  
+* `...`: Additional arguments for the function calls in `.funs`  
+* `.predicate`: `_if` 变体进行逻辑判断的函数   
+
+
+___  
+
+
+`_all()` 影响所有变量：  
+
+```{r}
+df <- tibble(x = c(10, 100, NA), y = c(1000, NA, 10000))
+df %>% mutate_all(log10)
+```
+
+
+所有 scoped variants 都可以传入任何函数及其参数：  
+
+```{r}
+scale2 <- function(x, na.rm = FALSE) (x - mean(x, na.rm = na.rm)) / sd(x, na.rm)
+df %>% 
+  mutate_all(scale2, na.rm = T)
+```
+
+`_at` 变体作用于变量的某个子集，可以用一个字符向量指定，也可以使用 [使用`select()`选择列] 中的帮助函数，但这些帮助函数必须包裹在 `vars()` 之内，可以把 `vars()` 看作是 scoped variants 内部的 `select()`  
+
+```{r}
+starwars %>% mutate_at(c("height", "mass"), scale2, na.rm = T)
+
+# You can also supply selection helpers to _at() functions but you have
+# to quote them with vars():
+iris <- as_tibble(iris)
+iris %>% mutate_at(vars(matches("Sepal")), scale2)
+iris %>% mutate_at(vars(contains("Length")), scale2)
+```
+
+`_if` 变体作用于 predicate function 返回的逻辑值为真的变量，注意这个参数的位置：  
+
+```{r}
+# The _if() variants apply a predicate function (a function that
+# returns TRUE or FALSE) to determine the relevant subset of
+# columns. Here we divide all the numeric columns by 100:
+starwars %>% mutate_if(is.numeric, scale2, na.rm = TRUE)
+```
+
+
+当需要转换某些变量的类型时，`mutate_if` 会很方便：  
+
+```{r}
+## 解决 data.frame 的强制转换  
+iris %>% mutate_if(is.factor, as.character)
+
+## 双精度转换为整型 
+iris %>% mutate_if(is.double, as.integer)
+```
+
+
+某些情况下，可能希望进行多种数据函数，可以在 `.funs` 中传入一个函数列表，则列表中的每个函数均会作用于所有符合筛选条件的变量。有多个函数时，`mutate` 的 scoped vairiants 生成新列，而非就地修改原来的变量
+
+```{r}
+iris %>% mutate_if(is.numeric, list(scale2, log)) %>%
+  select(-(1:5))
+```
+
+
+通过具名列表，可以控制生成的新列的名称：  
+
+```{r}
+iris %>% mutate_if(is.numeric, list(scale = scale2, log = log)) %>%
+  select(-(1:5))
+```
+
+若列表中只有一个函数，scoped variants 还是会就地修改原变量，传入具名列表可以避免这一点：  
+
+```{r}
+# When there's only one function in the list, it modifies existing
+# variables in place. Give it a name to instead create new variables:
+iris %>% mutate_if(is.numeric, list(scale2))
+iris %>% mutate_if(is.numeric, list(scale = scale2))
+```
 

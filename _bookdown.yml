@@ -7,6 +7,7 @@ rmd_files: [
   "index.rmd",
   
   "dplyr.Rmd",
+#  "dplyr-adv.Rmd",
   "tibble.Rmd",
   "readr.Rmd",
   "lubridate.Rmd",
@@ -28,11 +29,7 @@ rmd_files: [
   "adv-relational.Rmd",
   "santoku.Rmd",
   "missing-values.Rmd",
-  
-#  "tidymodels.Rmd",
-#  "caret.Rmd",
-#  "vtreat.Rmd",
-#  "performance.Rmd",
+
   
   
   "references.Rmd"
