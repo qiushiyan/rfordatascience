@@ -1062,99 +1062,50 @@ df <- tibble(
   group = rep(c("a", "b", "c"), each = 3)
 )
 
-df %>% 
-  mutate(x_mean = mean(x)) %>%
-  group_by(group) %>%
-  mutate(x_mean_2 = mean(x))
+gf <- df %>% group_by(group)
+
+df %>% mutate(mean(x))
+gf %>% mutate(mean(x))
 ```
 
 ```{r}
 # Arithmetic operators +, -, *, /, ^ are not affected by group_by().
-df <- tibble(
-  x = 1:9,
-  group = rep(c("a", "b", "c"), each = 3)
-) 
-
-df %>% 
-  mutate(y = x + 2) %>%
-  group_by(group) %>%
-  mutate(z = x + 2)
-```
-
-```{r}
-# The modular arithmetic operators %/% and %% are not affected by group_by()
-df <- tibble(
-  x = 1:9,
-  group = rep(c("a", "b", "c"), each = 3)
-) 
-
-df %>% 
-  mutate(y = x %% 2) %>%
-  group_by(group) %>%
-  mutate(z = x %% 2)
+df %>% mutate(y = x + 2)
+gf %>% mutate(z = x + 2)
 ```
 
 
 
 ```{r}
 # The offset functions lead() and lag() respect the groupings in group_by(). The functions lag() and lead() will only return values within each group.
-
-df <- tibble(
-  x = 1:9,
-  group = rep(c("a", "b", "c"), each = 3)
-) 
-
-df %>%
-  mutate(lag_x = lag(x),
-         lead_x = lead(x)) %>%
-  group_by(group) %>%
-  mutate(
-    lag_x_grouped = lag(x),
-    lead_x_grouped = lead(x)
-  )
+df %>% mutate(lag_x = lag(x), lead_x = lead(x))
+gf %>% mutate(lag_x = lag(x), lead_x = lead(x))
 ```
 
 ```{r}
 # The cumulative and rolling aggregate functions cumsum(), cumprod(), cummin(), cummax(), and cummean() calculate values within each group.
-df <- tibble(
-  x = 1:9,
-  group = rep(c("a", "b", "c"), each = 3)
-) 
-
-df %>%
-  mutate(x_cumsum = cumsum(x)) %>%
-  group_by(group) %>%
-  mutate(x_cumsum_2 = cumsum(x))
+df %>% mutate(cumsum(x))
+gf %>% mutate(cumsum(x))
 ```
 
 
 ```{r}
 # Logical comparisons, <, <=, >, >=, !=, and == are not affected by group_by().
-df <- tibble(
-  x = 1:9,
-  y = 9:1,
-  group = rep(c("a", "b", "c"), each = 3)
-) 
-
-df %>%
-  mutate(x_lte_y = x <= y) %>%
-  group_by(group) %>%
-  mutate(x_lte_y_2 = x <= y)
+df %>% mutate(x > 0.5)
+gf %>% mutate(x > 0.5)
 ```
 
 ```{r}
 # Ranking functions like min_rank() work within each group when used with group_by().
-df <- tibble(
-  x = 1:9,
-  group = rep(c("a", "b", "c"), each = 3)
-) 
-
-df %>%
-  mutate(rnk = min_rank(x)) %>%
-  group_by(group) %>%
-  mutate(rnk2 = min_rank(x))
+df %>% mutate(min_rank(x))
+gf %>% mutate(min_rank(x))
 ```
 
+```{r}
+# filter works the similar way
+df %>% filter(min_rank(x) == 1)
+gf %>% filter(min_rank(x) == 1)
+```
 
   
 
