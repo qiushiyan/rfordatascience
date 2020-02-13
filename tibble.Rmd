@@ -73,6 +73,14 @@ For a list, the result will also be a list column.
 enframe(list(one = 1, two = 2:3, three = 4:6, four = "four"))
 ```
 
+
+```{r}
+mtcars %>%
+  group_by(cyl) %>% 
+  summarize(mpg_dist = quantile(mpg, c(0.25, 0.5, 0.75)))
+```
+
+
 `deframe()` is the opposite of `enframe()`  
 
 ```{r}

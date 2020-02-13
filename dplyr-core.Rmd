@@ -1137,7 +1137,7 @@ df %>%
 
 
 ```{r}
-## min_rank自动在分组内排序
+# min_rank自动在分组内排序
 not_cancelled %>% 
   group_by(year,month,day) %>% 
   filter(rank(desc(arr_delay)) <= 10) %>% 
@@ -1150,15 +1150,19 @@ not_cancelled %>%
 
 
 ```{r}
-## n()以分组为基础
 not_cancelled %>% 
   count(dest, sort = T) %>% 
   filter(n > 365)
+
+# another solution 
+not_cancelled %>% 
+  group_by(dest) %>% 
+  filter(n() > 365) %>% 
+  distinct(dest)
 ```
 
 ```{exercise}
-哪一架飞机（用飞机尾号来识别，`tailnum`)具有最差的准点记录：  
-
+哪一架飞机(`tailnum`)具有最差的准点记录：  
 ```
 
 衡量一个飞机的准点情况有很多种可能的选择，这里只提供两个方向：   
