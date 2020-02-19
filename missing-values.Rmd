@@ -139,18 +139,7 @@ when missing variable is factor `sjmisc::frq`
 ## Wrangling
 
 
-https://jiangjun.link/post/2018/12/r-missing-data  
 
-用中位数或均值填补缺失值:
-
-```{r}
-df <- tibble(x = c(1, 2, NA, 5, 9, NA),
-             y = c(NA, 20, 1, NA, 5, NA),
-             z = 5:10)
-
-
-df %>% mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
-```
 
 ### tidyr 
 
@@ -160,6 +149,7 @@ df %>% mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
 
 ```{r}
 # df %>% drop_na(Ozone, Solar.R, Wind, Temp, Month, Day)
+airquality <- airquality %>% as_tibble()
 airquality %>% drop_na() 
 
 airquality %>% drop_na(Solar.R)
@@ -346,3 +336,17 @@ vis_miss(df)
 more advanced:  mice 或 Amelia
 
 
+## Imputation  
+
+https://jiangjun.link/post/2018/12/r-missing-data  
+
+用中位数或均值填补缺失值:
+
+```{r}
+df <- tibble(x = c(1, 2, NA, 5, 9, NA),
+             y = c(NA, 20, 1, NA, 5, NA),
+             z = 5:10)
+
+
+df %>% mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
+```

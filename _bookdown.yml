@@ -6,7 +6,7 @@ new_session: yes
 rmd_files: [
   "index.rmd",
   
-  "dplyr.Rmd",
+  "dplyr-core.Rmd",
 #  "dplyr-adv.Rmd",
   "tibble.Rmd",
   "readr.Rmd",
