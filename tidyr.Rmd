@@ -10,7 +10,7 @@ knitr::opts_chunk$set(message = TRUE)
 
 
 
-## tidy data 简介  {#tidyr-intro}
+## Tidy data {#tidyr-intro}
 
 > “Happy families are all alike; every unhappy family is unhappy in its own way.” 
 > –– Leo Tolstoy    
@@ -80,13 +80,13 @@ ggplot(table1, aes(year, cases)) +
   scale_x_continuous(breaks = c(1999,2000),labels = c("1999","2000"))
 ```
 
-### 练习  
+### Exercise  
 
 ```{exercise}
-用`table2`计算发病率 (rate = cases / population), 需要进行以下四步操作：
+用 `table2` 计算发病率 (`rate` = `cases` / `population`), 需要进行以下四步操作：
   * 得到每个国家每年的`cases`  
   * 得到每个国家每年的`population`  
-  * 计算 `rate = cases / population`  
+  * 计算 `rate` = `cases` / `population`  
   * 把算好的数据存储到正确的位置 
 ```
 
@@ -123,7 +123,7 @@ t2_cases_per_cap %>%
   select(country, year, rate)
 ```
 
-## pivoting  
+## Pivoting  
 
 
 <center>
@@ -606,7 +606,7 @@ multi2 %>%
 ```
 
 
-### 练习  
+### Exercise  
 
 ```{exercise}
 在下面的例子中，研究为什么 `pivot_longer()` 和 `pivot_wider()` 不是完美对称的
@@ -661,9 +661,9 @@ people %>%
   pivot_wider(names_from = key, values_from = value)
 ```
 
-## nesting  
+## Nesting  
 
-Nesting creates **a list-column of data frames**; unnesting flattens it back out into regular columns. Nesting is *implicitly a summarising operation*: you get one row for each group defined by the non-nested columns. This is useful in conjunction with other summaries that work with whole datasets, most notably models.
+Nesting creates **a list-column of data frames**; unnesting flattens it back out into regular columns. Nesting is a *implicitly  summarising operation*: you get one row for each group defined by the non-nested columns. This is useful in conjunction with other summaries that work with whole datasets, most notably models.
 
 Since a nested data frame is no more than a data frame where one (or more) list-columns of data frames. You can create simple nested data frames by hand:  
 
@@ -696,7 +696,13 @@ df2 %>% nest(data = c(x, y))
 
 ```{r}
 # grouped nesting
-df2 %>% group_by(g) %>% nest()
+df2 %>% 
+  group_by(g) %>% 
+  nest()
+
+# equal to 
+df2 %>%
+  group_nest(g)
 ```
 
 **Nesting is easiest to understand in connection to grouped data**: each row in the output corresponds to one group in the input. We’ll see shortly this is particularly convenient when you have other per-group objects.
@@ -707,9 +713,11 @@ The opposite of `nest()` is `unnest()`. You give it the name of a list-column co
 df1 %>% unnest(data)
 ```
 
-顺便附上两个类似的操作：
-- `dplyr::group_nest()` == `group_by() + nest()`  
-- `dplyr::group_split` = `base::split()`
+`dplyr::group_split()` put each nested tibble in a list, similar to `base::split()`:  
+```{r}
+df2 %>% group_split(g)
+```
+
 
 ### Case Study: Managing multiple models
 
@@ -1018,7 +1026,7 @@ discs %>%
 
 
 
-## `separate()` 和 `untie()`  
+## `separate()` and `untie()`  
 
 `separate()` 和 `untie()` 函数则是为了解决以下问题：多个变量挤在了同一列中，或者一个变量分散到了不同列中。  
 
@@ -1032,7 +1040,7 @@ table3
 * `data`: 需要调整的数据框  
 * `col`: 需要进行拆分的列的列名  
 * `into`:  拆分后新生成变量的列名，格式为字符串向量  
-* `sep`: 对如何拆分原变量的描述，其可以是正则表达式，如`_`表示通过下划线拆分，或`[^a-z]`表示通过任意非字符字母拆分，或一个指定位置的整数。默认情况下，`sep`将认定一个非字符字母进行划分  
+* `sep`: 对如何拆分原变量的描述，其可以是正则表达式，如 `_` 表示通过下划线拆分，或 `[^a-z]` 表示通过任意非字符字母拆分，或一个指定位置的整数。默认情况下，`sep`将认定一个非字符字母进行划分  
 ```{r}
 # 这个例子里，sep 不是必需的
 table3 %>%
@@ -1096,7 +1104,7 @@ table6 <- unite(table5,col = year,century,year,sep="")
 table5
 ```
 
-### 练习  
+### Exercise  
 
 ```{exercise}
 `separate()`中的`extra`和`fill`参数的作用是什么？用下面两个数据框进行实验： 
@@ -1159,93 +1167,8 @@ tibble(x = c("X1", "X2", "Y1", "Y2")) %>%
   extract(x, c("variable", "id"), regex = "([A-Z])([0-9])")
 ```
 
-## Miscellanea Functions  
 
-There are several remaining useful functions in `tidyr` than cannot be categorized.  
-
-
-### chop and unchop  
-
-Chopping and unchopping **preserve the width of a data frame, changing its length.** `chop()` makes `df` shorter by converting rows within each group into list-columns. `unchop()` makes `df` longer by expanding list-columns so that each element of the list-column gets its own row in the output.    
-
-**Note that we get one row of output for each unique combination of non-chopped variables**: 
-
-```{r}
-df <- tibble(x = c(1, 1, 1, 2, 2, 3), y = 1:6, z = 6:1)
-df %>% chop(c(y, z))
-```
-
-`chop()` differs from `nest` in \@ref(nest) in that it does not collpase columns, just turns them into a list:  
-```{r}
-df %>% nest(data = c(y, z))
-```
-
-`unchop()`:  
-
-```{r}
-df <- tibble(x = 1:4, y = list(integer(), 1L, 1:2, 1:3))
-df
-
-df %>% unchop(y)
-```
-
-If there's a size-0 element (like `NULL` or an empty data frame), that entire row will be dropped from the output. If you want to preserve all rows, use `keep_empty = TRUE` to replace size-0 elements with a single row of missing values.
-
-```{r}
-# equivalent to df %>% unnest_longer(y)
-df %>% unchop(y, keep_empty = TRUE)
-```
-
-```{r}
-
-# Incompatible types -------------------------------------------------
-# If the list-col contains types that can not be natively
-df <- tibble(x = 1:2, y = list("1", 1:3))
-
-try(df %>% unchop(y))
-
-df %>% unchop(y, ptype = tibble(y = integer()))
-
-df %>% unchop(y, ptype = tibble(y = character()))
-  
-df %>% unchop(y, ptype = tibble(y = list()))
-
-```
-
-**ptype**: Optionally, supply a data frame prototype for the output `cols`, overriding the default that will be guessed from the combination of individual value
-
-
-### uncount  
-
-Performs the opposite operation to `dplyr::count()`, duplicating rows according to a weighting variable (or expression)  
-
-```{r}
-df <- tibble(x = c("a", "b", "c"), n = c(1, 2, 3))
-uncount(df, n)
-```
-
-we can supply a string `.id` to create a new variable which gives a unique identifier for each created row:  
-
-```{r}
-uncount(df, n, .id = "id")
-```
-
-`uncount()` can be helpful in convertnig **frequency form data** to **case form data**, e.g:    
-
-```{r}
-(fiber <- read_csv("data/Fiber.csv"))
-fiber %>% uncount(count)
-```
-
-Other way that can achieve this transformation: `rep()`:  
-```{r}
-fiber[rep(1:nrow(fiber), fiber$count), -3]
-```
-
-
-
-
-## 缺失值 {#tidyr-missing}
+## Handling missing values {#tidyr-missing}
 
 数据整理改变了数据的呈现方式，随之而来的一个话题便是缺失值。通常当我们泛泛地使用"缺失值 (missing value)" 这个名词的时候，其实是指以下两种"缺失"方式中的某一种：  
 
@@ -1288,17 +1211,12 @@ stocks %>%
 ## 现在输出数据框比原来少一行
 stocks %>%
   pivot_wider(names_from = year, values_from = return) %>% 
-  pivot_longer(-qtr, names_to = "year", values_to = "return", values_drop_na = TRUE)
+  pivot_longer(-qtr, names_to = "year", values_to = "return",    
+               values_drop_na = TRUE)
 ```
 
-另一个用于处理确实值的有用工具是 `complete()` 函数，它将生成一个指定列集合里面所有的水平组合，并暴露隐式的缺失值：
 
-```{r}
-stocks %>%
-  complete(year, qtr)
-```
-
-`fill()` 函数专门用来填充缺失值,它接受一些需要填充缺失值的列，并用最近的值调换 `NA`，`.direction` 参数控制用填充的方向：`direction = “up"` 将由下往上填充，`NA` 将被替换为它下面那一列的值；`direction = "donw"` 反之
+`fill()` 专门用来填充缺失值,它接受一些需要填充缺失值的列，并用最近的值调换 `NA`，`.direction` 参数控制用填充的方向：`direction = “up"` 将由下往上填充，`NA` 将被替换为它下面那一列的值；`direction = "donw"` 反之
 ```{r}
 treatment <- tribble(
   ~ person,           ~ treatment, ~response,
@@ -1308,10 +1226,13 @@ treatment <- tribble(
   "Katherine Burke",  1,           4
 )
 treatment %>%
-  fill(person,.direction = "up")
+  fill(person, .direction = "up")
 treatment %>%
-  fill(person,.direction = "down")
+  fill(person, .direction = "down")
 ```
+
+More useful methods dealing with missing values (in `tidyr` and other packages) are discussed in \@ref(dealing-with-missing-values)
+
 
 ## Case Study  {#tidyr-case}
 
@@ -1381,9 +1302,95 @@ who4 <- who3 %>% select(-iso2, -iso3)
 
 Now `who4` is a tidy version of `tidyr::who`!  
 
+## Miscellaneous Functions  
+
+There are several remaining useful functions in `tidyr` that cannot be easily categorized.  
 
 
-### 练习  
+### `chop()` and `unchop()`  
+
+Chopping and unchopping **preserve the width of a data frame, changing its length.** `chop()` makes `df` shorter by converting rows within each group into list-columns. `unchop()` makes `df` longer by expanding list-columns so that each element of the list-column gets its own row in the output.    
+
+**Note that we get one row of output for each unique combination of non-chopped variables**: 
+
+```{r}
+df <- tibble(x = c(1, 1, 1, 2, 2, 3), y = 1:6, z = 6:1)
+df %>% chop(c(y, z))
+```
+
+`chop()` differs from `nest` in \@ref(nest) in that it does not collpase columns, just turns them into a list:  
+```{r}
+df %>% nest(data = c(y, z))
+```
+
+`unchop()`:  
+
+```{r}
+df <- tibble(x = 1:4, y = list(integer(), 1L, 1:2, 1:3))
+
+df %>% unchop(y)
+```
+
+If there's a size-0 element (like `NULL` or an empty data frame), that entire row will be dropped from the output. If you want to preserve all rows, use `keep_empty = TRUE` to replace size-0 elements with a single row of missing values.
+
+```{r}
+# equivalent to df %>% unnest_longer(y)
+df %>% unchop(y, keep_empty = TRUE)
+```
+
+```{r}
+# Incompatible types -------------------------------------------------
+# If the list-col contains types that can not be natively
+df <- tibble(x = 1:2, y = list("1", 1:3))
+
+try(df %>% unchop(y))
+
+df %>% unchop(y, ptype = tibble(y = integer()))
+
+df %>% unchop(y, ptype = tibble(y = character()))
+  
+df %>% unchop(y, ptype = tibble(y = list()))
+```
+
+**ptype**: Optionally, supply a data frame prototype for the output `cols`, overriding the default that will be guessed from the combination of individual value
+
+
+### `uncount()`  
+
+Performs the opposite operation to `dplyr::count()`, duplicating rows according to a weighting variable (or expression)  
+
+```{r}
+df <- tibble(x = c("a", "b", "c"), n = c(1, 2, 3))
+uncount(df, n)
+```
+
+we can supply a string `.id` to create a new variable which gives a unique identifier for each created row:  
+
+```{r}
+uncount(df, n, .id = "id")
+```
+
+`uncount()` can be helpful in convertnig **frequency form data** to **case form data**, e.g:    
+
+```{r}
+fiber <- read_csv("data/Fiber.csv") 
+fiber
+
+fiber %>% uncount(count)
+```
+
+Other way that can achieve this transformation: `rep()`:  
+```{r}
+fiber[rep(1:nrow(fiber), fiber$count), -3]
+```
+
+
+
+
+
+
+
+### Exercise 
 
 ```{exercise redundancy}
 在清理 `who` 数据集时，我们说`iso2`和`iso3`是冗余的，证明这一点
@@ -1410,7 +1417,7 @@ who %>%
   filter(n > 1)
 ```
 
-## 拓展：None-tidy data  {#non-tidy}
+## None-tidy data  {#non-tidy}
 
 Before we continue on to other topics, it’s worth talking briefly about non-tidy data. Earlier in the chapter, I used the pejorative term “messy” to refer to non-tidy data. That’s an oversimplification: there are lots of useful and well-founded data structures that are not tidy data. There are two main reasons to use other data structures:  
 

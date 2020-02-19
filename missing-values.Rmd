@@ -1,6 +1,6 @@
 
 
-# 处理缺失值  {#missing-values}  
+# Dealing with missing values  
 
 ```{r}
 library(tidylog)
@@ -8,7 +8,7 @@ library(tidylog)
 
 
 
-## 探索  {#explore-missing}  
+## Exploring  {#explore-missing}  
 
 ### naniar   
 
@@ -18,11 +18,11 @@ http://naniar.njtierney.com/
 library(naniar)
 ```
 
-#### shadown matrices  
+#### Shadown matrices  
 
-#### summaries
+#### Summaries
 
-#### visualizations     
+#### Visualizations     
 
 http://naniar.njtierney.com/articles/naniar-visualisation.html
 
@@ -51,7 +51,7 @@ gg_miss_upset(riskfactors)
 ```
 
 
-### replace with NA  
+### Replace a value with NA  
 
 It's worth to mention one `dplyr` functions that does the same thing:  
 `dplyr::na_if()`
@@ -136,7 +136,7 @@ when missing variable is factor `sjmisc::frq`
 
 
 
-## Wrangling NA
+## Wrangling
 
 
 https://jiangjun.link/post/2018/12/r-missing-data  
@@ -152,19 +152,49 @@ df <- tibble(x = c(1, 2, NA, 5, 9, NA),
 df %>% mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
 ```
 
-### tidyr   
+### tidyr 
 
-`drop_na()` 根据列去除带有缺失值的观测：  
+`tidyr` provides a handful of tools for converting between implicit (absent rows) and explicit (`NA`) missing values, and for handling explicit `NA`s.
+
+#### `drop_na()` drop rows containing missing values
 
 ```{r}
-airquality %>% drop_na() # df %>% drop_na(Ozone, Solar.R, Wind, Temp, Month, Day)
+# df %>% drop_na(Ozone, Solar.R, Wind, Temp, Month, Day)
+airquality %>% drop_na() 
+
 airquality %>% drop_na(Solar.R)
 ```
 
-`fill()` 
+
+#### `replace_na()` replace missing values
 
 ```{r}
-df <- data.frame(Month = rep(1:12, 2), Year = c(2000, rep(NA, 11), 2001, rep(NA, 11)))
+# NULL are the list-col equivalent of NAs
+df <- tibble(x = c(1, 2, NA), 
+             y = c("a", NA, "b"), 
+             z = list(1:5, NULL, 10:20)) 
+
+
+df %>% mutate(x = replace_na(x, 0))
+
+df %>% replace_na(list(x = 0, y = "unknown"))
+
+df %>% replace_na(list(z = 5))
+
+```
+
+
+
+
+
+
+#### `fill()` fill in missing values with previous or next value
+
+```{r}
+df <- tibble(Month = rep(1:12, 2), 
+             Year = c(2000, rep(NA, 11), 
+                      2001, rep(NA, 11)))
+
 df %>% fill(Year) # .direction = "down"
 df %>% fill(Year, .direction = "up")
 df %>% fill(Year, .direction = "updown")
@@ -173,31 +203,110 @@ df %>% fill(Year, .direction = "downup")
 
 
 
-`replace_na()` replace missing values:  
+
+#### `full_seq()` create the full sequence of values in a vector
+
+This is useful if you want to fill in missing values that should have been observed but weren't. For example, `full_seq(c(1, 2, 4, 6), 1)` will return 1:6.
 
 ```{r}
-df <- tibble(x = c(1, 2, NA), y = c("a", NA, "b"), z = list(1:5, NULL, 10:20))
-df %>% mutate(x = replace_na(x, 0))
-df %>% replace_na(list(x = 0, y = "unknown"))
+# `period` specify step length
+full_seq(c(1, 3, 5, 11, 13), period = 2)
+
+# Works with dates, too!
+y <- lubridate::ymd(c("2020-01-01", "2020-01-03"))
+
+full_seq(y, period = 1)
+```
+
+#### `expand()` expand data frame to include all combinations of values 
+
+`expand()` creates a data frame containing all conbinations of specified columns, often used in conjunction with `left_join()` to convert implicit missing values to explicit missing values, with `anti_join()` to figure out which combinations are missing.  
+
+To find all unique combinations of `x`, `y` and `z`, including those not found in the data, supply each variable as a separate argument. To find only the combinations that occur in the data, use nest: `expand(df, nesting(x, y, z))`.
+
+You can combine the two forms. For example, `expand(df, nesting(school_id, student_id), date)` would produce a row for every student for each date.  
+
+For factors, the full set of levels (not just those that appear in the data) are used. For continuous variables, you may need to fill in values that don't appear in the data: to do so use expressions like `year = 2010:2020`or `year = full_seq(year, 1)`.
+
+```{r}
+# All possible combinations of vs & cyl, even those that aren't
+# present in the data
+expand(mtcars, vs, cyl)
+
+# Only combinations of vs and cyl that appear in the data
+expand(mtcars, nesting(vs, cyl))
 ```
 
 
 ```{r}
-# NULL are the list-col equivalent of NAs
-df %>% replace_na(list(z = list(5)))
+# Implicit missings ---------------------------------------------------------
+df <- tibble(
+  year   = c(2010, 2010, 2010, 2010, 2012, 2012, 2012),
+  qtr    = c(   1,    2,    3,    4,    1,    2,    3),
+  return = rnorm(7)
+)
+df %>% expand(year, qtr)
+df %>% expand(year = 2010:2012, qtr)
+df %>% expand(year = full_seq(year, 1), qtr)
+df %>% complete(year = full_seq(year, 1), qtr)
 ```
+
 
 ```{r}
-df$x %>% replace_na(0)
-df$y %>% replace_na("unknown")
+# Each person was given one of two treatments, repeated three times
+# But some of the replications haven't happened yet, so we have
+# incomplete data:
+experiment <- tibble(
+  name = rep(c("Alex", "Robert", "Sam"), c(3, 2, 1)),
+  trt  = rep(c("a", "b", "a"), c(3, 2, 1)),
+  rep = c(1, 2, 3, 1, 2, 1),
+  measurement_1 = runif(6),
+  measurement_2 = runif(6)
+)
+
+# We can figure out the complete set of data with expand()
+# Each person only gets one treatment, so we nest name and trt together:
+all <- experiment %>% expand(nesting(name, trt), rep)
+all
+
+# use left_join to convert implicit missing values to explicit missing values
+all %>% left_join(experiment)
+# can use anti_join to figure out which observations are missing
+all %>% anti_join(experiment)
+
+
+# And use right_join to add in the appropriate missing values to the
+# original data
+experiment %>% right_join(all)
 ```
 
-
-`full_seq()`，得到完整的序列：  
+`complete()` is a short hand function around `expand() + left_join()`: firt create specified combinations and then left join original data to convert implicit missing values to explicit missing values:  
 
 ```{r}
-full_seq(c(1, 2, 4, 5, 10), 1)
+experiment %>% 
+  complete(nesting(name, trt), rep)
 ```
+
+
+
+	
+
+#### `expand_grid`: create a tibble from all combinations of inputs
+
+`expand_grid()` is analogus to `expand()`. Instead of taking in a data frame, `expand_grid()` use multiple name-value pairs to generate all combinations :  
+
+```{r}
+expand_grid(x = c(3, 2, 1), y = c(10, 5), z = letters[1:3])
+```
+
+`crossing()` is a wrapper around `expand_grid()` that deduplicates and sorts each input. 
+
+```{r}
+crossing(x = c(3, 2, 1), y = c(10, 5), z = letters[1:3])
+```
+
+ 
+
 
 ### janitor
 
