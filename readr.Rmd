@@ -4,11 +4,11 @@
 # readr  
 
 ```{r,echo=F}
-knitr::opts_chunk$set(cache=T)
+knitr::opts_chunk$set(cache = T)
 ```
 
 
-## base R 中的数据读取 {#base-import}
+## Importing data in base R
 
 base R中有 3 个最主要的数据导入函数：
 
@@ -18,10 +18,10 @@ base R中有 3 个最主要的数据导入函数：
 `read.delim()` | 读取以制表符分隔的文件(`sep = "\t", header = T`)
 `read.table()` | 读取其他一般性的文件，默认添加表头(`sep = "", header = F`)。`read.csv()`和`read.delim()`可以看做`read.table()`针对于特定情况的封装。
 
-用于导入数据的函数一般都有大量的参数，上述的三个函数中，比较重要的参数有：
+用于导入的函数一般都有大量的参数，上述的三个函数中，比较重要的参数有：
 
 * `dec`: 指定文件中用于表示小数点的符号，很多文件中可能会用`;`或者`,`当做小数点，这时不仅需要设置`dec`，也要适当调整`sep`。`read.csv2()`和`read.delim2()`是对一些设置的封装。    
-* `col.names`用于在`header = F`时指定列名，默认情况下将被命名为"V1"、"V2"、···
+* `col.names` 用于在 `header = F` 时指定列名，默认情况下将被命名为 "V1"、"V2"、···
 * `row.names`用于设置行名，既可以传入一个向量直接指定，也可以选择数据中的某一列作为列名（用一个数字表明该列是第几列）    
 * `colClasses`:指定列的数据类型。特别是当你希望有些列作为因子，有些列作为字符串，这个参数便很有用。常用的类别有"numeric","factor","logical","character"。如果某列被指定为`"NULL"`，则该列不会被读入。      
 * `skip`指定读取数据前跳过的行数    
@@ -50,12 +50,13 @@ head(hotdogs)
 ```
 
 
-## readr 简介 {#readr-intro}
+## Importing data in `readr`
 
-```{r,echo=F}
+```{r,echo = FALSE}
 knitr::include_graphics("images/6.png")
 ```
 
+### Introduction 
 
 **readr** 是 tidyverse 的核心 R 包之一，作用是将平面数据(flat files)快速读取至 R 中，并转换为易用的 tibble 格式。相对于 base R 中有的数据读取函数，它有以下的优点：  
 
@@ -146,7 +147,7 @@ read_delim("a,b,c
            na = ".")
 ```
 
-### 写入文件  
+### Writing data  
 
 `readr`还提供了两个非常有用的函数，用于将数据写回到磁盘：`write_csv()` 和 `write_tsv()`，这两个函数输出的文件能够顺利读取的概率更高，因为：  
 
@@ -166,18 +167,17 @@ write_csv(x = gapminder, path = "data\\gapminder.csv")
 
 
 
-### 练习  
+### Exercise 
 
 ```{exercise}
 如果一个文件中的域是由"|"分隔的，那么应该使用哪个函数读取这个文件？  
-
 ```
 
 
 应该使用`read_delim(path, delim = "|")`
 
 ```{exercise}
-`read_fwf()`函数中最重要的参数是什么？   
+`read_fwf()` 中最重要的参数是什么？   
 ```
 
 `read_fwf()`用于固定宽度文件(fixed width files)。在固定宽度文件中，每一列的的宽度是固定的（不足的用某种填充符号填充），如第一列总是10个字符长度，第二列 5 个字符长度，第三列8个字符长度，每列内采取统一的对齐方式。`readr`安装时附带了一个固定宽度文件的示例,我们用一个变量存储它的路径：
@@ -211,7 +211,7 @@ read_fwf(fwf_sample,
 ```
 
 
-## 解析向量 {#parse-vector} 
+## Parsing a vector
 
 在详细介绍 `readr` 如何从磁盘读取文件之前，我们需要先讨论一下 `parse_*()`函数族。这些函数接受一个字符向量（因为文件中的数据全部是以字符串的形式进入 R 的），并返回一个特定向量，如逻辑、整数或日期向量：  
 ```{r}
@@ -253,12 +253,12 @@ problems(x)
 * `parse_factor()`函数可以创建因子，R使用这种数据结构表示分类变量，该变量具有固定数目的已知值  
 * `parse_datetime()`、`parse_date()`和`parse_time()`函数可以解析不同类型的日期和时间，它们是最复杂的，因为有太多不同的日期书写形式  
 
-### 数值   
+### Numerical vector   
 
 解析数值似乎是直截了当的，但以下 3 个问题增加了数値解析的复杂性：  
 
 * 世界各地的人们书写数值的方式不尽相同。例如有些国家使用`.`当做小数点，而有些国家使用`,`  
-* 数值周围可能会有其他字符，例如`$1000`、`15℃`  和`10%`  
+* 数值周围可能会有其他字符，例如 `$1000`、`15℃`  和`10%`  
 * 数值经常包含某种形式的分组(grouping)，以便更易读，如`1 000 000`，而且世界各地用来分组的字符也不统一  
 
 为了解决第一个问题，`readr`使用了地区的概念(locale)，使得可以按照不同地区设置解析选项。在解析数值时，最重要的选项就是用来表示小数点的字符，通过设置一个新的地区对象并设定`decimal_mark`参数，可以覆盖`.`的默认值：  
@@ -289,9 +289,9 @@ parse_number("123.456.789", locale = locale(grouping_mark = "."))
 parse_number("123'456'789", locale = locale(grouping_mark = "'"))
 ```
 
-### 字符串  
+### Character vector 
 
-`parse_character()` 似乎真的很简单，只要返回输入值就可以了。问题是同一个字符串有多种表示编码方式。在继续探讨之前，需要厘清一些概念：  
+To better illustrate the challenges of parsing a character vector, we need to have a reasonable understanding of the following questions.    
 
 1. 什么是字符？  
 
@@ -299,7 +299,7 @@ parse_number("123'456'789", locale = locale(grouping_mark = "'"))
 
 2. 什么是字符集？  
 
-> 字符集是多个字符的集合，字符集种类较多，每个字符集包含的字符个数不同，常见字符集有：ASCII字符集、ISO 8859字符集、GB2312字符集、BIG5字符集、GB18030字符集、Unicode字符集等。ASCII可以非常好地表示英文字符，因为它就是美国信息交换标准代码(American Standard Code for Information Interchange)的缩写。Unicode是国际组织制定的可以容纳世界上所有文字和符号的字符编码方案。   
+> 字符集是多个字符的集合，字符集种类较多，每个字符集包含的字符个数不同，常见字符集有：ASCII 字符集、ISO 8859字符集、GB2312 字符集、BIG5字符集、GB18030 字符集、Unicode 字符集等。ASCII 可以非常好地表示英文字符，因为它就是美国信息交换标准代码(American Standard Code for Information Interchange)的缩写。Unicode是国际组织制定的可以容纳世界上所有文字和符号的字符编码方案。   
 
 3. 什么是字符编码？ 
 
@@ -312,7 +312,7 @@ parse_number("123'456'789", locale = locale(grouping_mark = "'"))
 注意：Unicode字符集有多种编码方式，如UTF-8、UTF-16等；ASCII只有一种；大多数MBCS（包括GB2312，GBK）也只有一种。
 
 
-在R中，我们可以使用`charToRaw()`函数获得一个字符串的底层表示（underlying representation）：  
+在 R 中，我们可以使用`charToRaw()`函数获得一个字符串的底层表示（underlying representation）：  
 ```{r}
 char_raw <- charToRaw("Maxine")
 char_raw
@@ -342,7 +342,7 @@ guess_encoding("data\\hotdogs.txt")
 编码问题博大精深，这里只是蜻蜓点水式地介绍一下。如果想要学习更多相关知识，可以阅读[http://kunststube.net/encoding/](http://kunststube.net/encoding/)
 
 
-### 因子  
+### Factor  
 
 因子对应的解析函数是 `parse_factor()` ，其中 `levels` 参数被赋予一个包含所有因子可能水平的向量，如果要解析的列存在 `levels` 中没有的值，就会生成一条警告。
 ```{r,error = T}
@@ -353,9 +353,9 @@ problems(f)
 
 如果有很多问题条目的话，最简单的是它们当做字符串来解析，然后用`forcats`包进行后续处理。  
 
-### 日期时间、日期、时间
+### Date 
 
-根据需要的是日期型数据（从1970-01-01开始的天数）、日期时间型数据（从1970-01-01开始的秒数）还是时间型数据（从午夜开始的描述），我们可以在3中解析函数之间进行选择。在没有使用任何附加参数时调用，具体情况如下：  
+根据需要的是日期型数据（从 1970-01-01 开始的天数）、日期时间型数据（从 1970-01-01 开始的秒数）还是时间型数据（从午夜开始的描述），我们可以在3中解析函数之间进行选择。在没有使用任何附加参数时调用，具体情况如下：  
 
 * `parse_datetime()`期待的是符合 ISO 8601 标准的日期时间。ISO 8601是一种国际标准，其中日期的各个部分按从大到小的顺序排列，即年、月、日、小时、分钟、秒：
 
@@ -399,7 +399,8 @@ parse_date("01/02/15","%y/%m/%d")
 parse_date("Nov/12/1998","%b/%d/%Y")
 ```
 
-### 练习   
+### Exercise   
+
 ```{exercise}
 如果在`locale()`函数中把`decimal_mark`和`grouping_mark`设为同一个字符，会发生什么情况？如果将`decimal_mark`设为逗号，`grouping_mark`的默认值会发生什么变化？如果将`grouping_mark`设置为句点，`decimal_mark`的默认值会发生什么变化？  
 ```
@@ -453,14 +454,14 @@ t2 <- "11:15:10.12 PM"
 parse_time(t2,"%I:%M:%OS %p")
 ```
 
-## 解析文件 {#parse-file}
+## Parsing a file
 
 现在我们已经学会了如何用 `parse_*()` 函数族解析单个向量，接下来就能回到本章的最初目标，研究`readr`是如何解析文件的。我们将关注以下两点：  
 
 * `readr`如何自动猜出文件每列的数据类型  
 * 如何修改默认设置  
 
-### 解析策略(strategies)  
+### Strategies  
 
 `readr` 通过一种启发式过程(heuristic)来确定每列的类型：先读取文件的前1000行，然后使用（相对保守的）某种启发式算法确定每列的类型。`readr` 中的导入函数会先用 `guess_parser()` 函数返回对于所需解析函数最可信的猜测，然后尝试用可能性最大的解析函数解析该列：
 
@@ -490,31 +491,32 @@ guess_parser(c("True", "False"))
 
 如果以上数据不符合上述要求中的任意一个，那么这一列就是一个字符串向量，`readr`将使用`parse_character()`解析它。  
 
-### 可能遇到的问题  
+### Possible challenges   
 
 这些默认设置对更大的文件并不总是有效。以下是两个可能遇到的主要问题：  
 
-* `readr`通过前 1000 行猜测数据类型，但是前 1000 行可能只是一种特殊情况，不足以代表整列。例如，一列双精度数值的前1000行有可能都是整数  
-* 列中可能包含大量缺失值。如果前 1000 行都是`NA`，那么`readr`会认为这是一个字符向量，但你其实想将这一类解析为更具体的值。  
+* `readr` 通过前 1000 行猜测数据类型，但是前 1000 行可能只是一种特殊情况，不足以代表整列。例如，一列双精度数值的前1000行有可能都是整数  
+* 列中可能包含大量缺失值。如果前 1000 行都是 `NA`，那么`readr` 会认为这是一个字符向量，但你其实想将这一类解析为更具体的值。  
 
 `readr`的安装包里包含了一份文件`challenge.csv`，用来说明解析过程中可能遇到的问题。这个csv文件包含两列x，y和2001行观测。x 列的前 1001 行均为整数，但之后的值均为双精度整数。y 列的前 1001 行均为`NA`，后面是日期型数据：
-```{r}
-## readr_example()找到包含在R包中的文件的路径
+```{r, message = TRUE}
+# readr_example() find path for a built-in readr file
 challenge <- read_csv(readr_example("challenge.csv"))
 ```
 
-可以看到，`read_csv()`成功解析了 `x`，但对于 `y` 则无从下手，因为使用了错误的解析函数`col_logical()`。使用 `problems()` 函数明确列出这些失败记录，以便深入探究其中的问题：  
+可以看到，`read_csv()` 成功解析了 `x`，但对于 `y` 则无从下手，因为使用了错误的解析函数`col_logical()`。使用 `problems()` 函数明确列出这些失败记录，以便深入探究其中的问题：  
+
 ```{r}
 problems(challenge)
 ```
 
-可以使用`spec_csv()` 函数来直接查看 `readr` 在默认情况下用那种类型的解析函数解析数据：
+可以使用`spec_csv()` 来直接查看 `readr` 在默认情况下用那种类型的解析函数解析数据：
 ```{r}
 spec_csv(readr_example("challenge.csv"))
 ```
 
 
-为了解决这个问题，我们用`read_csv()`函数中的`col_types`指定每列的解析方法(column specification)，之前我们向`col_types`传入一个字符串说明各列的类别，但这里是要直接指明解析函数了。这样做的指定必须通过`cols()`函数来创建(具体格式和`spec_csv()`或者`read_csv`自动打印的说明是一样的)：  
+为了解决这个问题，我们用`read_csv()`函数中的`col_types`指定每列的解析方法(column specification)，之前我们向`col_types`传入一个字符串说明各列的类别，但这里是要直接指明解析函数了。这样做的指定必须通过`cols()`函数来创建(具体格式和`spec_csv()`或者`read_csv()`自动打印的说明是一样的)：  
 ```{r}
 challenge <- read_csv(readr_example("challenge.csv"),
                       col_types =cols(
@@ -546,7 +548,7 @@ tail(challenge)
 一旦我们指定了正确的解析函数，问题便迎刃而解。  
 
 
-### 其他技巧  
+### Other tips  
 
 我们再介绍其他几种有注意解析文件的通用技巧：  
 
@@ -556,28 +558,131 @@ challenge <- read_csv(readr_example("challenge.csv"),
                       guess_max = 1001)
 ```
 
-* `type_convert()`函数在一个数据框的所有字符列上应用启发式解析过程：  
-```{r}
-df <- tribble(
-  ~x,~y,
-  "1","1.21",
-  "4","2,32",
-  "3","4,56"
+* `type_convert()` re-convert character columns in existing data frame. This is useful if you need to do some manual munging - you can read the columns in as character, clean it up with (e.g.) regular expressions and then let readr take another stab at parsing it. 
+```{r, message = TRUE}
+df <- tibble(
+  x = as.character(runif(10)),
+  y = as.character(sample(10)),
+  z = FALSE
 )
-df
 
-## 注意列类型
-type_convert(df)
+df %>% glimpse()
+# note changes in column types
+df %>% type_convert() %>% glimpse()
 ```
 
-* 如果正在读取一个非常大的文件，那么应该将`n_max`设置为一个较小的数，比如10,000或者100,000，这可以让我们在解决常见问题时加快重复试验的过程。
+* 如果正在读取一个非常大的文件，那么应该将 `n_max` 设置为一个较小的数，比如10,000 或者 100,000，这可以让加速重复试验的过程。 
 
-## readxl
+### Example: Dealing with metadata   
 
-要想将其他类型的数据导入 R 中，可以先从下列的`tidyverse`包开始。对矩形数据来说：  
+https://alison.rbind.io/post/2018-02-23-read-multiple-header-rows/
 
-* `haven`可以读取SPSS、Stata和SAS文件:  
-![](images\5.png)
+This dataset is from an article published in PLOS ONE called “Being Sticker Rich: Numerical Context Influences Children’s Sharing Behavior”. In this study, children (ages 3–11) received a small (12, “sticker poor”) or large (30, “sticker rich”) number of stickers, and were then given the opportunity to share their windfall with either one or multiple anonymous recipients.    
+
+Data in a plain text editor:  
+```{r, echo = FALSE, fig.height = 6, fig.width = 7, out.width = "100%"}
+knitr::include_graphics("images/sticker.png")
+```
+
+
+To read in a `.tab` file, use `read_tsv()`  
+
+```{r}
+# https://dataverse.harvard.edu/api/access/datafile/2712105 
+stickers <- read_tsv("data/sticker.tab")
+
+spec(stickers)
+```
+
+The problem here is that the second row is actually metadata or descriptions about each column header. But this make `read_tsv()` recognize as character type many of our columns. To verify this, see the first and last 6 rows: 
+
+```{r}
+head(stickers) 
+tail(stickers)
+```
+
+To solve this, we will first create a (tidier) character vector of the column names only. Then we’ll read in the actual data and skip the multiple header rows at the top. When we do this, we lose the column names, so we use the character vector of column names we created in the first place instead.
+
+When we set `n_max = 0` and `col_names = TRUE`(the default), ony column headers will be read. Then we could ask `janitor::clean_names()` to produce a tidier set of names:  
+
+```{r}
+sticker_names <- read_tsv("data/sticker.tab", 
+                          n_max = 0) %>% # default: col_names = TRUE
+  rename("stickers_give" =   'absolutenumberofstickersgiven(Conditions1or3:Outof12;Conditions2or4:Outof30)') %>% 
+  janitor::clean_names() %>% 
+  names()
+
+sticker_names
+```
+
+
+```{r}
+sticker_tidy <- read_tsv("data/sticker.tab",
+                         col_names = sticker_names,
+                         skip = 2)
+# or 
+read_tsv("data/sticker.tab",
+          col_names = FALSE,
+          skip = 2) %>% 
+  set_names(sticker_names)
+```
+
+What if we want to include that meta data? Create a variable description column use `pivot_longer()`
+
+```{r}
+sticker_dict <- read_tsv("data/sticker.tab", n_max = 1) %>% 
+  rename(stickersgiven = 'absolutenumberofstickersgiven(Conditions1or3:Outof12;Conditions2or4:Outof30)') %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(everything(), 
+               names_to = "variable_name", 
+               values_to = "variable_description")
+
+sticker_dict
+```
+
+### Example: multi-row headers 
+
+In most cases, a header will only take up one row. And when multi-row headers present itself, `readr` fails to recognize all these rows as header 
+
+```{r, message = TRUE, warning = TRUE}
+# create a small demo csv
+demo_csv <- "SUB1, SUB1, SUB1, SUB1, SUB2, SUB2, SUB2, SUB2
+COND1, COND1, COND2, COND2, COND1, COND1, COND2, COND2
+X, Y, X, Y, X, Y, X, Y
+10, 15, 6, 2, 42, 4, 32, 5
+4, 43, 7, 34, 56, 43, 2, 33
+77, 12, 14, 75, 36, 85, 3, 2"
+
+read_csv(demo_csv)
+```
+
+In `demo_csv`, the first three rows are intended to be an "overall" header. `read_csv()` outputs a message and modifes the first row for a unqiue set of column names, since it assumes this is a one-row header.  
+
+Based on what we have learned in the previous example, the solution should be easy. First set `n_max` to gain rows of interest, then compose a one-row header to set column names.   
+
+```{r}
+demo_names <- read_csv(demo_csv, 
+                       n_max = 3, 
+                       col_names = FALSE) %>% 
+  map_chr(~ str_c(.x, collapse = "")) %>% 
+  unname()
+
+demo_names  
+
+read_csv(demo_csv, col_names = demo_names, skip = 3)
+```
+
+
+
+
+## `readxl`
+
+要想将其他类型的数据导入 R 中，可以先从下列的 `tidyverse` 包开始。对矩形型数据来说：  
+
+* `haven` 可以读取 SPSS、Stata 和 SAS文件:  
+```{r, echo = FALSE}
+knitr::include_graphics("images/5.png")
+```
  
 * 配合专用的数据库后端程序（如 RMySQL，RSQLite，RpostgreSQL等），DBI可以对相应数据库进行SQL查询，并返回一个数据框  
 * `readxl` 专门为读取 Excel 文件打造(.xlsx和xls均可)
@@ -590,49 +695,58 @@ library(readxl)
 `read_excel()` 是 `readxl` 中的核心函数，它的第一个参数`path`接受 `xlsx` 或 `xls` 文件的路径。但由于一个 Excel 文件（工作簿）经常包含多个工作表，所以我们在读取时需要指明某张工作表，`excel_sheets()` 函数返回一个工作簿文件中各个工作表(sheet)的名字：  
 
 ```{r}
-## readxl附带的Excel文件
-readxl_example()
-## read_expample()函数获取路径
 path <- readxl_example("deaths.xlsx")
 excel_sheets(path)
 ```
 
-获悉一个工作簿内部的表结构以后，可以使用`sheets`参数指定要读取的表，可以是一个整数（第几张彪），也可以是字符串（表明）, `read_excel()`默认读取第一张表：  
+获悉一个工作簿内部的表结构以后，可以使用 `sheets` 参数指定要读取的表，可以是一个整数（第几张彪），也可以是字符串（表明）, `read_excel()` 默认读取第一张表：  
 ```{r}
 deaths <- read_excel(path, sheet = "arts")
 ```
 
 
-经常会在读取Excel文件时遇到的一个问题是,有些人喜欢在表格的前面几行或最后几行添加一些无关真正分析内容元数据（metadata），比如在`deaths.xlsx`这个Excel文件中：  
-![](images/9.png)
+经常会在读取 Excel 文件时遇到的一个问题是,有些人喜欢在表格的前面几行或最后几行添加一些元数据（metadata），比如在 `deaths.xlsx` 中： 
+
+```{r, echo = FALSE}
+knitr::include_graphics("images/9.png")
+```
 
 
-默认设置下，`read_excel()`会将这些元数据一并读入： 
+
+默认设置下，`read_excel()` 会将这些元数据一并读入：  
+
 ```{r}
 deaths 
 ```
 
-一个很有用的方法是通过Rstudio的File$\rightarrow$Import Dataset$\rightarrow$From Excel 接口导入数据，我们可以通过预览来观察导入后的数据，还可以对`read_excel()`的导入参数进行设置：
+一个很有用的方法是通过 Sstudio 的 File $\rightarrow$ Import Dataset $\rightarrow$ From Excel 接口导入数据，我们可以通过预览来观察导入后的数据，还可以对`read_excel()`的导入参数进行设置：
 
-![](images\7.png)
+```{r, echo = FALSE}
+knitr::include_graphics("images/7.png")
+```
 
 
-![](images\8.png)
+
+
 
 对于`deaths.xlsx`这个Excel文件，可以结合使用`n_max` 和 `skip` 参数去除不想读取的部分（分别对应图形界面里的Max Rows和Skip：
 ```{r}
 read_excel(path,  skip= 4, n_max = 10)
 ```
 
-`read_excel()`中另一个很有用的参数是`range`，用于指定一块Excel表中要读取的区域：
+`read_excel()` 中另一个很有用的参数是 `range`，用于指定一块 Excel 表中要读取的区域：
 ```{r}
 read_excel(path, sheet = "arts", range = "A5:F15")
 ## 还可以在range中指定列名
 read_excel(path, range = "arts!A5:F15")
 ```
 
-与`range`相关的帮助函数`cell_rows()`、`cell_cols()`和`cell_limits()`可以为区域选择提供更大的自由度，下面的示例中使用文件`geometry.xls`，读取预览：  
-![](images\10.png)
+与 `range` 相关的帮助函数`cell_rows()`、`cell_cols()`和`cell_limits()`可以为区域选择提供更大的自由度，下面的示例中使用文件`geometry.xls`，读取预览：  
+
+```{r, echo = FALSE}
+knitr::include_graphics("images/10.png")
+```
+
 
 ```{r}
 path <- readxl_example("geometry.xls")
