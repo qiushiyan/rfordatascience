@@ -1,5 +1,5 @@
 
-# tidyr  
+# tidyr: Tidy data 
 
 
 ```{r, message = FALSE}
@@ -80,7 +80,7 @@ ggplot(table1, aes(year, cases)) +
   scale_x_continuous(breaks = c(1999,2000),labels = c("1999","2000"))
 ```
 
-### Exercise  
+### Exercises  
 
 ```{exercise}
 用 `table2` 计算发病率 (`rate` = `cases` / `population`), 需要进行以下四步操作：
@@ -606,7 +606,7 @@ multi2 %>%
 ```
 
 
-### Exercise  
+### Exercises  
 
 ```{exercise}
 在下面的例子中，研究为什么 `pivot_longer()` 和 `pivot_wider()` 不是完美对称的
@@ -719,7 +719,7 @@ df2 %>% group_split(g)
 ```
 
 
-### Case Study: Managing multiple models
+### Example: Managing multiple models
 
 Nested data is a great fit for problems where you have one of something for each group. A common place this arises is when you’re **fitting multiple models**.  
 
@@ -775,7 +775,7 @@ gapminder_summary %>%
 
 A similar case can be found at \@ref(viz-many-models)
 
-### Case Study:  Multicple hoice data  {#multi-choice}
+### Example: Multicple hoice data  {#multi-choice}
 
 ```{r}
 multiple_choice <- tibble(method = c(
@@ -1104,7 +1104,7 @@ table6 <- unite(table5,col = year,century,year,sep="")
 table5
 ```
 
-### Exercise  
+### Exercises  
 
 ```{exercise}
 `separate()`中的`extra`和`fill`参数的作用是什么？用下面两个数据框进行实验： 
@@ -1294,7 +1294,7 @@ who3 <- who2 %>%
 who3
 ```
 
-Then, let’s also drop `iso2` and `iso3` since they’re redundant (see Exercise \@ref(exr:redundancy) below for proof).  
+Then, let’s also drop `iso2` and `iso3` since they’re redundant (see Exercise \@ref(ex:redundancy) below for proof).  
 
 ```{r}
 who4 <- who3 %>% select(-iso2, -iso3)
@@ -1390,7 +1390,7 @@ fiber[rep(1:nrow(fiber), fiber$count), -3]
 
 
 
-### Exercise 
+### Exercises 
 
 ```{exercise redundancy}
 在清理 `who` 数据集时，我们说`iso2`和`iso3`是冗余的，证明这一点

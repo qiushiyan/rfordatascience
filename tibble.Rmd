@@ -1,4 +1,4 @@
-# tibble
+# tibble: Modern data frames
 
 
 **tidyverse** 的设计理念之一是用 `tibble` 代替传统的 R 数据框(`data.frame`类)。tibble 是一种更简单的数据框，它对传统数据框的功能进行了一些修改，以便更易于使用。多数情况下，我们不再区分 tibble 和数据框这两个词 ； 如果想要强调 R 内置的传统数据框，用 `data. frame` 来表示。 `vignette("tibble")` 可以获得更多关于 tibble 的信息。  
@@ -538,7 +538,7 @@ issues$VarClassDiffs %>% unnest(CLASS.BASE) %>% unnest(CLASS.COMP)
 ```
 
 
-## Exercise  {#tibble-exercise}
+## Exercises  {#tibble-exercise}
 
 ```{exercise}
 如何识别一个数据框是否为 `tibble`？

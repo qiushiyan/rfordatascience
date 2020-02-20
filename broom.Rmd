@@ -1,6 +1,6 @@
 
 
-# broom  
+# broom: Tidy representation of models
 
 ```{r}
 library(broom)

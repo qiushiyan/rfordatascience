@@ -1,10 +1,14 @@
 
 
 
-# readr  
+# readr: Data import   
 
 ```{r,echo=F}
 knitr::opts_chunk$set(cache = T)
+```
+
+```{r}
+library(readr)
 ```
 
 
@@ -167,7 +171,7 @@ write_csv(x = gapminder, path = "data\\gapminder.csv")
 
 
 
-### Exercise 
+### Exercises 
 
 ```{exercise}
 如果一个文件中的域是由"|"分隔的，那么应该使用哪个函数读取这个文件？  
@@ -399,15 +403,15 @@ parse_date("01/02/15","%y/%m/%d")
 parse_date("Nov/12/1998","%b/%d/%Y")
 ```
 
-### Exercise   
+### Exercises   
 
 ```{exercise}
 如果在`locale()`函数中把`decimal_mark`和`grouping_mark`设为同一个字符，会发生什么情况？如果将`decimal_mark`设为逗号，`grouping_mark`的默认值会发生什么变化？如果将`grouping_mark`设置为句点，`decimal_mark`的默认值会发生什么变化？  
 ```
 
 
-不能将`decimal_mark` 和 `group_mark`设为同一个字符：
-```{r,error=T}
+不能将`decimal_mark` 和 `group_mark` 设为同一个字符：
+```{r, error = TRUE}
 locale(decimal_mark = ".",grouping_mark = ".")
 ```
 
@@ -580,7 +584,7 @@ https://alison.rbind.io/post/2018-02-23-read-multiple-header-rows/
 This dataset is from an article published in PLOS ONE called “Being Sticker Rich: Numerical Context Influences Children’s Sharing Behavior”. In this study, children (ages 3–11) received a small (12, “sticker poor”) or large (30, “sticker rich”) number of stickers, and were then given the opportunity to share their windfall with either one or multiple anonymous recipients.    
 
 Data in a plain text editor:  
-```{r, echo = FALSE, fig.height = 6, fig.width = 7, out.width = "100%"}
+```{r, echo = FALSE}
 knitr::include_graphics("images/sticker.png")
 ```
 
@@ -641,6 +645,8 @@ sticker_dict
 ```
 
 ### Example: multi-row headers 
+
+https://debruine.github.io/posts/multi-row-headers/
 
 In most cases, a header will only take up one row. And when multi-row headers present itself, `readr` fails to recognize all these rows as header 
 
@@ -770,7 +776,37 @@ read_excel(path, range = cell_limits(c(4, NA), c(NA, 4)))
 
 
 
+### Multi-row headers in Excel  
 
+https://debruine.github.io/posts/multi-row-headers/
 
+In \@ref(example-multi-row-headers) (Example: multi-row headers) we learn how to tackle with multi-row-headers in a text File. In Excel this is trickier. But the ultimate goal is always firrst extracting header rows (more than 1), composing **one** formatted row header and then set it to `col_names` when importing, and `skip` the some rows in the original data.   
+
+```{r, echo = FALSE}
+knitr::include_graphics("images/multi_row_header_excel.png")
+```
+
+Extracting head rows
+
+```{r, message = TRUE}
+data_head <- read_excel("data/3headers_demo.xlsx", 
+                        col_names = FALSE,
+                        n_max = 3)
+
+data_head %>% slider::slide(~ as.vector(fill(.x, .direction = "down")))
+```
+
+Currently I have come up with no ways of dealing with `data_hand` in this given form without resorting to the weird `t()`. So I followed the [blog](https://debruine.github.io/posts/multi-row-headers/) and transpose it to take advantage of `tidyr::fill()`. Yet I feel that there is some function in the `slider` package could solve this. I will look into this and may update the solution.  
+
+```{r}
+names <- data_head %>% 
+  t() %>% 
+  as_tibble() %>% 
+  fill(1:3, .direction = "down") %>%  # from tidyr
+  mutate(names = str_c(V1, V2, V3, sep = "_")) %>% 
+  pull(names)
+
+read_excel("data/3headers_demo.xlsx", col_names = names, skip = 3)
+```
 
 

@@ -1,27 +1,7 @@
-```{r include=FALSE, cache=FALSE}
-set.seed(1112)
-options(digits = 3)
 
-
-
-knitr::opts_chunk$set(
-  comment = "#>",
-  collapse = TRUE,
-  out.width = "80%",
-  fig.width = 6,
-  fig.asp = 0.618,  # 1 / phi
-  fig.align = "center",
-  message = F,
-  warning = F
-)
-
-library(tidyverse)
-
-options(dplyr.print_min = 6, dplyr.print_max = 6)
-```
 # (PART) R for data science {-}
 
-# dplyr core functions 
+# dplyr: Data transformation
 
  
 
@@ -72,7 +52,8 @@ flights %>%
 
 
 
-### 运算符
+### Operators
+
 为了有效地进行筛选，R 提供了一套标准的运算符，包括比较运算符和逻辑运算符。  
 
 **比较运算符**： `==、！= 、 > 、 >= 、 < 、 <= `
@@ -136,7 +117,7 @@ flights %>% filter(between(month, 11, 12))
 & and && indicate logical AND and | and || indicate logical OR. The shorter form performs elementwise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.
 ```
 
-### 缺失值
+### Missing values
 NA (not available)表示未知的值、缺失值，缺失值一个很重要的特点是它是“可传染的”。如果运算中包含了缺失值，那么运算结果一般来说也会是缺失值。
 ```{r}
 NA > 5
@@ -170,7 +151,9 @@ df <- tibble(x = c(1, NA, 3))
 df %>% filter(is.na(x) | x > 1)
 ```
 
-### 练习
+For more topics on missing values, see \@ref(tidyr-missing) and \@ref(dealing-with-missing-values). 
+
+### Exercises
 
 ```{exercise}
 找出满足以下条件的所有航班: 
@@ -365,7 +348,7 @@ flights %>% arrange(desc(arr_delay + dep_delay))
 
 
 
-### 练习  
+### Exercises  
 
 ```{exercise}
 如何使用 `arrange()` 将缺失值排在最前面？（提示：使用`is.na()`)  
@@ -716,7 +699,7 @@ ntile(x,n=2)
 ntile(x,n=3)
 ```
 
-### 练习  
+### Exercises  
 
 ```{exercise}
 虽然现在的`dep_time`和`sched_dep_time`变量方便阅读，但不适合计算，因为它们实际上并不是连续型数值。将它们转换为一种更方便的表示形式，即从 0 点开始的分钟数
@@ -798,8 +781,9 @@ aggregate(dep_delay~year+month+day,
 
 比较这两个结果，我们可以发现`group_by()`中越靠后的参数是越基本的单位，`group_by(year,month,day)`将按照 day, month, year 的顺序开始循环 ； 而 `aggregate()` 函数则正好相反     
 
-### 缺失值  
-在按照日期计算平均出发延误时间的例子中，使用`mean()`时设置了参数`na.rm =  T`，如果没有这样做，很多日期的平均延误时间将是缺失值：  
+### Missing values in `summarize()`
+
+在按照日期计算平均出发延误时间的例子中，使用 `mean()` 时设置了参数`na.rm =  T`，如果没有这样做，很多日期的平均延误时间将是缺失值：  
 ```{r}
 flights %>% 
   group_by(year,month,day) %>% 
@@ -1065,7 +1049,7 @@ daily %>%
 
 在循序渐进地进行摘要分析的时候，需要小心：使用求和与计数操作是没有问题的，但如果想要使用加权平均和方差的话，就要仔细考虑一下，任何基于秩的统计数据（如中位数，分为差）都不支持这样的操作。换句话说，对分组结果再求和就是对整体求和，但各分组中的中位数的中位数可不是整体的中位数。  
 
-## `group_by()` 结合其他函数  
+## `group_by()` combined with other functions  
 
 
 虽然与 `summarize()` 结合起来使用是最常见的，但分组也可以和 `mutate()` , `filter()` 和 `arrange()` 结合使用,以完成非常便捷的操作。
@@ -1151,7 +1135,7 @@ df %>%
 
 
 
-## 练习 {#dplyr-exercise}
+## Exercises {#dplyr-exercise}
 
 ```{exercise}
 找到每个日期分组中到达时间延迟最长的10条记录  

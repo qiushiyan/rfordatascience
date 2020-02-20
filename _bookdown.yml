@@ -13,9 +13,9 @@ rmd_files: [
   "lubridate.Rmd",
   "forcats.Rmd",
   "tidyr.Rmd",
+  "purrr.Rmd",
   "relational.Rmd",
   "broom.Rmd",
-  "purrr.Rmd",
 
   "vroom.Rmd",
   "apis.Rmd",
