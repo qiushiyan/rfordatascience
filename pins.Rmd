@@ -1,2 +1,82 @@
 
 # pins
+
+```{r}
+library(pins)
+```
+
+
+## Discovering 
+
+You can discover datasets with `pin_find()`, which by default will search for data inside CRAN packages. The places where pins can find or store resources are referred to as ‘boards’. There are multiple boards available but they require you to configure them so we will leave those for later on.
+
+As a quick example, let’s search for resources that may contain ‘boston housing’:  
+
+```{r}
+pin_find("boston housing")
+```
+
+We’ve found out that the A3 package contains a Housing dataset, you can then retrieve this dataset using `pin_get()` using `name` column as follows: 
+
+```{r}
+pin_get("A3/housing")
+```
+
+Most datasets in CRAN contain rectangular data, which pins knows to load as a data frame. Other boards might contain non-rectangular datasets which `pin_get()` also supports. More on this later on, but first, lets introduce caching.  
+
+## Caching
+
+Let’s suppose that the ‘home prices’ dataset is not exactly what we are looking for, we can try to search online for ‘home prices’ and find out that [catalog.data.gov](https://catalog.data.gov/dataset) contains a more suitable [FHFA House Price Indexes](https://catalog.data.gov/dataset/fhfa-house-price-indexes-hpis) dataset. Instead of giving users explicit instructions to download the CSV file, we can instead use `pin()` to cache this dataset locally:  
+
+```{r}
+path <- pin("http://www.fhfa.gov/DataTools/Downloads/Documents/HPI/HPI_master.csv")
+path
+```
+
+Notice that the `pin()` downloads the data and (invisibly) returns a path to the local CSV file.  
+
+```{r}
+house_price <- vroom::vroom(path)
+house_price
+```
+
+The pins package tries to be smart about downloading files only when the file has changed, you can skip the details on how this works but you should know you can set `download = TRUE` to force pins to download the file again even if we think it has not changed. The specific mechanisms pins uses are based on HTTP headers like cache-control and ETag to avoid downloading files when they have not changed or when the cache has not expired.  
+
+Notice that `pin()` assigned a name automatically, HPI_master for the previous example; however, you can choose your own `name` and be explicit about retrieving a pin with `pin_get()` (setting a new name will entail a new download):  
+
+
+```{r}
+pin("http://www.fhfa.gov/DataTools/Downloads/Documents/HPI/HPI_master.csv",
+    name = "home_price_indexes")
+
+pin_get("home_price_indexes") %>%
+  read_csv(col_types = cols())
+```
+
+## Sharing  
+
+After performing a data analysis, you might want to share your dataset with others, which you can achieve using `pin(data, board = "<board-name>")`.
+
+```{r}
+board_list() 
+```
+
+There are multiple boards available, one of them is the “local” board which pins uses by default. A “local” board can help you share pins with other R sessions and tools using a well-known cache folder in your local computer defined in the rappdirs package. Notice that this board is available by default:
+
+You can also name your boards using the ‘name’ parameter, when a name is not specified, the pins package will simply name your board with the kind of board you are using, ‘local’ in the previous example.
+
+The following example stores a simple data analysis over home prices as ‘home_price_analysis’ in the ‘local’ board.  
+
+```{r}
+pin_get("home_price_indexes") %>%
+  read_csv(col_types = cols()) %>%
+  dplyr::group_by(yr) %>%
+  dplyr::count() %>%
+  pin("home_price_analysis")
+```
+
+
+```{r}
+pin_get("home_price_analysis") # board = TRUE
+```
+
