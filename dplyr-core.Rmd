@@ -151,7 +151,7 @@ df <- tibble(x = c(1, NA, 3))
 df %>% filter(is.na(x) | x > 1)
 ```
 
-For more topics on missing values, see \@ref(tidyr-missing) and \@ref(dealing-with-missing-values). 
+For more topics on missing values, see section \@ref(tidyr-missing) and Chapter \@ref(dealing-with-missing-values). 
 
 ### Exercises
 

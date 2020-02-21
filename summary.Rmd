@@ -1,4 +1,4 @@
-
+# (PART) Exploring and Wrangling {-} 
 
 # Data Summary
 
@@ -70,16 +70,16 @@ opts_chunk$set(comment = NA,
 
 ### `freq`
 
-```{r,collpase = FALSE, result = "asis", comment = NA, prompt = FALSE}
+```{r, results = "asis"}
 freq(iris$Species, plain.ascii = FALSE, style = "rmarkdown", headings = FALSE)
 ```
 
 
-```{r}
+```{r, results = 'asis'}
 freq(iris$Species, report.nas = FALSE, headings = FALSE)
 ```
 
-```{r}
+```{r, results = 'asis'}
 freq(iris$Species, report.nas = FALSE, totals = FALSE,
      cumul = FALSE, style = "rmarkdown", headings = FALSE)
 ```

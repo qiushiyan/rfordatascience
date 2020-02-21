@@ -1,5 +1,79 @@
 
-# santoku    
+# Categorical data (facotr)
+
+## Frequency and contingency table
+
+
+
+###  `frq()` and `flat_table()`   
+
+
+sjmisc
+
+https://strengejacke.github.io/sjmisc/articles/exploringdatasets.html  
+
+```{r}
+library(sjmisc)
+```
+
+```{r}
+data(efc)
+(efc <- efc %>% as_tibble())
+```
+
+```{r}
+efc %>%
+  frq(c161sex)
+```
+```{r}
+efc %>% 
+  group_by(e42dep) %>% 
+  frq(c161sex)
+```
+
+
+
+```{r}
+flat_table(efc, e42dep, c161sex)
+```
+
+
+```{r}
+flat_table(efc, e42dep, c161sex, margin = "col")
+```
+
+
+```{r}
+library(janitor)
+efc %>% tabyl(e42dep, c161sex, show_na = FALSE)
+```
+
+## Coding
+
+
+###  `rec()`
+
+sjmisc
+
+https://strengejacke.github.io/sjmisc/articles/recodingvariables.html
+
+```{r}
+efc$burden <- rec(
+  efc$neg_c_7,
+  rec = c("min:9=1 [low]; 10:12=2 [moderate]; 13:max=3 [high]; else=NA"),
+  var.label = "Subjective burden",
+  as.num = FALSE # we want a factor
+)
+# print frequencies
+frq(efc$burden)
+```
+
+## Cutting
+
+
+### `chop()` 
+
+santoku
 
 https://hughjonesd.github.io/santoku/tutorials/00-visualintroduction.html
 
@@ -59,4 +133,6 @@ To quickly produce a table of chopped data, use `tab()`:
 ```{r}
 tab(x, breaks = -3:3)
 ```
+
+
 

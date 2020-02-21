@@ -257,7 +257,7 @@ problems(x)
 * `parse_factor()`函数可以创建因子，R使用这种数据结构表示分类变量，该变量具有固定数目的已知值  
 * `parse_datetime()`、`parse_date()`和`parse_time()`函数可以解析不同类型的日期和时间，它们是最复杂的，因为有太多不同的日期书写形式  
 
-### Numerical vector   
+### Numeric
 
 解析数值似乎是直截了当的，但以下 3 个问题增加了数値解析的复杂性：  
 
@@ -293,7 +293,7 @@ parse_number("123.456.789", locale = locale(grouping_mark = "."))
 parse_number("123'456'789", locale = locale(grouping_mark = "'"))
 ```
 
-### Character vector 
+### Character
 
 To better illustrate the challenges of parsing a character vector, we need to have a reasonable understanding of the following questions.    
 
@@ -357,7 +357,7 @@ problems(f)
 
 如果有很多问题条目的话，最简单的是它们当做字符串来解析，然后用`forcats`包进行后续处理。  
 
-### Date 
+### Date and time 
 
 根据需要的是日期型数据（从 1970-01-01 开始的天数）、日期时间型数据（从 1970-01-01 开始的秒数）还是时间型数据（从午夜开始的描述），我们可以在3中解析函数之间进行选择。在没有使用任何附加参数时调用，具体情况如下：  
 
@@ -679,6 +679,7 @@ read_csv(demo_csv, col_names = demo_names, skip = 3)
 ```
 
 
+For reading multi-row headers in Excel, check section \@ref(multi-row-headers-in-excel)
 
 
 ## `readxl`
@@ -780,7 +781,7 @@ read_excel(path, range = cell_limits(c(4, NA), c(NA, 4)))
 
 https://debruine.github.io/posts/multi-row-headers/
 
-In \@ref(example-multi-row-headers) (Example: multi-row headers) we learn how to tackle with multi-row-headers in a text File. In Excel this is trickier. But the ultimate goal is always firrst extracting header rows (more than 1), composing **one** formatted row header and then set it to `col_names` when importing, and `skip` the some rows in the original data.   
+In section \@ref(example-multi-row-headers) (Example: multi-row headers) we learn how to tackle with multi-row-headers in a text File. In Excel this is trickier. But the ultimate goal is always firrst extracting header rows (more than 1), composing **one** formatted row header and then set it to `col_names` when importing, and `skip` the some rows in the original data.   
 
 ```{r, echo = FALSE}
 knitr::include_graphics("images/multi_row_header_excel.png")

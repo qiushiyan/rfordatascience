@@ -18,16 +18,19 @@ rmd_files: [
   "broom.Rmd",
 
   "vroom.Rmd",
+#  "pins.Rmd",
   "apis.Rmd",
   
-  "data-table.Rmd",
-  "rowwise.Rmd",
-  "sjmisc.Rmd",
-  "summary.Rmd",
   
+  "summary.Rmd",
   "janitor.Rmd",
-  "adv-relational.Rmd",
-  "santoku.Rmd",
+  "data-table.Rmd",
+  
+
+  
+
+  "relational-adv.Rmd",
+  "categorical.Rmd",
   "missing-values.Rmd",
 
   

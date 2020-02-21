@@ -3,8 +3,11 @@
 
 
 ```{r, message = FALSE}
-library(tidylog)
+library(tidylog) # Tidylog provides feedback about dplyr and tidyr operations.
 library(lubridate)
+```
+
+```{r, echo = FALSE}
 knitr::opts_chunk$set(message = TRUE)
 ```
 
@@ -661,7 +664,7 @@ people %>%
   pivot_wider(names_from = key, values_from = value)
 ```
 
-## Nesting  
+## Nesting
 
 Nesting creates **a list-column of data frames**; unnesting flattens it back out into regular columns. Nesting is a *implicitly  summarising operation*: you get one row for each group defined by the non-nested columns. This is useful in conjunction with other summaries that work with whole datasets, most notably models.
 
@@ -1294,7 +1297,7 @@ who3 <- who2 %>%
 who3
 ```
 
-Then, let’s also drop `iso2` and `iso3` since they’re redundant (see Exercise \@ref(ex:redundancy) below for proof).  
+Then, let’s also drop `iso2` and `iso3` since they’re redundant (see Exercise \@ref(exr:redundancy) below for proof).  
 
 ```{r}
 who4 <- who3 %>% select(-iso2, -iso3)
@@ -1313,15 +1316,19 @@ Chopping and unchopping **preserve the width of a data frame, changing its lengt
 
 **Note that we get one row of output for each unique combination of non-chopped variables**: 
 
-```{r}
-df <- tibble(x = c(1, 1, 1, 2, 2, 3), y = 1:6, z = 6:1)
-df %>% chop(c(y, z))
-```
+`chop()` differs from `nest()` in section \@ref(nesting) in that it does not collpase columns into a tibble, but into a list:   
 
-`chop()` differs from `nest` in \@ref(nest) in that it does not collpase columns, just turns them into a list:  
 ```{r}
+df <- tibble(x = c(1, 1, 1, 2, 2, 3), 
+             y = 1:6, 
+             z = 6:1)
+
+df %>% chop(cols = c(y, z))
+
 df %>% nest(data = c(y, z))
 ```
+
+
 
 `unchop()`:  
 

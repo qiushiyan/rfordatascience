@@ -291,3 +291,25 @@ iris %>% mutate_if(is.numeric, list(scale2))
 iris %>% mutate_if(is.numeric, list(scale = scale2))
 ```
 
+## rap
+
+see https://github.com/romainfrancois/rap
+```{r}
+# devtools::install_github("romainfrancois/rap")
+```
+
+```{r}
+library(rap)
+```
+
+
+```{r}
+tbl <- tibble(cyl_threshold = c(4, 6, 8), mpg_threshold = c(30, 25, 20)) 
+tbl
+```
+
+```{r}
+tbl %>% 
+  rap(x = ~ filter(mtcars, cyl == cyl_threshold, mpg < mpg_threshold))
+```
+
