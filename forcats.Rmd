@@ -92,7 +92,8 @@ nlevels(f1)
 
 ## Sorting  
 
-### 按照水平的频次排序
+### Sorting by frequency
+
 `fct_infreq()` 函数根据在数据集中出现的频次对因子的不同水平进行排序。  
 
 `starwars`数据集是对剧中角色信息的一些整理，假设我们想知道全部角色中最常见的发色是什么，可能会做出类似如下的条形图：  
@@ -114,7 +115,8 @@ ggplot(starwars,aes(fct_infreq(hair_color))) +
 如果返回`starwars`数据集，你会发现`hair_color`其实是字符串变量，但是完全适用于`fct_infreq()`的操作。  
 
 
-### 按照其他变量排序
+### Sorting by another variable  
+
 `fct_reorder()` 其实就是 `reorder()` 在 `forcats` 中的实现，它根据因子在其他变量上的统计量（中位数、平均数、···）的值对个水平进行排序，当绘制非频次条形图(`stat = "identity"`)时它便很有用。
 我们可以通过 `fun` 设定统计函数（默认为 `median()`），`desc = T` 设定降序排列（默认升序）：
 
@@ -133,11 +135,11 @@ ggplot(avg_height,aes(fct_reorder(hair_color, avg_height), avg_height))+
 ```
 
 
-### 人工指定顺序  
+### Sorting manually 
 
-`fct_infreq()`和`fct_reorder()`排序的依据是明确的，但我们有时也需要人工指定、修改排序结果。`fct_relevel()`接受一个向量调整因子水平的排序。  
+`fct_infreq()` 和 `fct_reorder()`排序的依据是明确的，但我们有时也需要人工指定、修改排序结果。`fct_relevel()`接受一个向量调整因子水平的排序。  
 
-这个例子中使用`forcats::gss_cat`数据集，该数据集是综合社会调查（General Social Survey）的一份抽样。综合社会调查是美国芝加哥大学的独立研究组织 NORC 进行的一项长期美国社会调查。`gss_cat`数据挑选了一些变量：
+这个例子中使用`forcats::gss_cat`数据集，该数据集是综合社会调查（General Social Survey）的一份抽样。综合社会调查是美国芝加哥大学的独立研究组织 NORC 进行的一项长期美国社会调查。`gss_cat` 数据挑选了一些变量：
 ```{r}
 gss_cat
 
@@ -164,35 +166,51 @@ fct_relevel(reshuffled_income, c("Lt $1000", "$1000 to 2999"), after = 1) %>%
 
 
 
-## Chaning number of levels
+## Chaninge number of levels
 
-### 合并水平  
+### Collpasing levels
 
-`fct_count()`函数可以很方便地查看因子各水平分布的情况，使用`count()`函数也可以达到同样的效果
+To demonstrate how to collpase multiple levels of a factor, we will start with `fct_count()` to count factor levels. It's basically a variant of `dplyr::count()`, taking a factor (factor) as its first argument instead of a data frame, which makes it a nice function in `mutate()`. 
+
 ```{r}
-fct_count(starwars$skin_color, sort = T)
+fct_count(starwars$skin_color, 
+          sort = TRUE,  # sort descendantly
+          prop = TRUE)  # compute the fraction of marginal table
 ```
 
-因子`skin_color`总共有 31 个水平，但绝大部分的频次都集中在前 5、6 个水平上，这时候我们可能想把余下的水平合并为一个水平，即创建一个"其他"水平。
-`fct_lump(f, n, prop)` 用于合并因子中那些低频次的水平，参数 `n` 和 `prop` 采用不同的表示方法，指定哪些变量保留下来（或者被合并）:
+`skin_color` has 31 levels overall, and the top 5 to 6 levels occupy more than 50% percent of occurence. In fact, there are 24 levels whose frequency is less than 3%. 
 
 ```{r}
-## 留下频次最高的前5个水平，剩下全部水平合并为1个
+fct_count(starwars$skin_color, prop = TRUE) %>%
+  filter(p < 0.03)
+```
+
+In this case, We may want to collpase some of the less frequent levels into one, say, a level called "other". 
+
+`fct_lump(f, n, prop)` lumps together least / most common factor levels into a new level "other". If both `n` and `prop` are missing, `fct_lump()` lumps together the least frequent levels into "other", while ensuring that "other" is still the smallest level. It's particularly useful in conjunction with `fct_inorder()`.
+
+Positive `n` preserves the most common `n` values. Negative `n` preserves the least common -n values. It there are ties, you will get at least `abs(n)` values.  
+
+```{r}
+# preserve 5 most common levels
 starwars %>%
   mutate(skin_color = fct_lump(skin_color, n = 5)) %>%
   count(skin_color, sort = TRUE)
 
-## 频次不足样本数10%的被合并
+# preserve 5 least common levels
 starwars %>%
-  mutate(skin_color = fct_lump(skin_color, prop = 0.1)) %>%
+  mutate(skin_color = fct_lump(skin_color, n = -5)) %>%
   count(skin_color, sort = TRUE)
 ```
 
-默认情况下，合并生成的新水平被命名为"Other"，可以通过 `other_level` 参数为其设定一个名字：
+
+Similarly, positive `prop` preserves values that appear at least `prop` of the time. Negative `prop` preserves values that appear at most `-prop` of the time.
+
+
+Use argument `other_level` to change default name "other" 
 ```{r}
-## 将合并水平命名为“extra”
 starwars %>%
-  mutate(skin_color = fct_lump(skin_color, prop=0.1, 
+  mutate(skin_color = fct_lump(skin_color, prop = 0.1, 
                                other_level = "extra")) %>%
   count(skin_color, sort = TRUE)
 ```
@@ -229,7 +247,7 @@ fct_other(x, drop = c("A", "B"))
 
 
 
-### 增加水平  
+### Adding levels  
 
 
 `fct_expand()`函数用于对因子添加水平：
@@ -247,7 +265,7 @@ fct_count(f)
 ```
 
 
-### 舍弃水平(Dropping unused levels)  
+### Dropping levels  
 
 有时候我们希望在数据中取出一个子集，这可能导致在子集中，因子在某些水平上的频次为0，但R并不会自动舍弃舍弃频次为0的水平：
 
@@ -293,7 +311,7 @@ fct_drop(f, only = "c")
 fct_count(gss_cat$partyid)
 ```
 
-在这个因子中，对水平的描述太过简单，而且不一致，我们用`fct_recode()`将其修改为较为详细的排比结构，格式为`fct_recode(f,level_new = level_old)`:
+在这个因子中，对水平的描述太过简单，而且不一致，我们用 `fct_recode()` 将其修改为较为详细的排比结构，格式为`fct_recode(f,level_new = level_old)`:
 ```{r}
 gss_cat %>%
   mutate(partyid = fct_recode(partyid, 
@@ -359,7 +377,7 @@ gss_cat_collapse %>%
 ```
 
 
-## 合并因子 {#forcats-combine}
+## Combining factors {#forcats-combine}
 
 `fct_c()` 用于将因子合并，使用 `gapminder::gapminder` 数据，首先创建两个子集：
 ```{r,warning=F}

@@ -97,7 +97,7 @@ blog: https://hookedondata.org/introducing-the-funneljoin-package/
 video: https://www.youtube.com/watch?v=-n4XaYHDlG8  
 
 
-## `after_joni()`  
+### `after_join()`  
 
 ```{r}
 library(funneljoin)
