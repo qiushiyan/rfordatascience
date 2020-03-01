@@ -302,7 +302,7 @@ fct_drop(f, only = "c")
 
 ### Transforming NA levels  
 
-When a factor has missing values, these `NA`s will not be listed as a valid level. Though in some cases `NA` in a factor could be meaningful:  
+When a factor has missing values, these `NA`s will not be listed as a valid level. Though in some cases `NA` in a factor could be meaningful. As such we can replace `factor()` with `fct_explicit_na()` if necessary  
  
 ```{r}
 f <- factor(c("a", "a", NA, NA, "a", "b", NA, "c", "a", "c", "b"))
