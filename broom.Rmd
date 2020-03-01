@@ -26,3 +26,11 @@ gapminder %>%
                     y = continent))
 ```
 
+
+
+## broomExtra 
+
+```{r}
+# install.packages("broomExtra")
+```
+

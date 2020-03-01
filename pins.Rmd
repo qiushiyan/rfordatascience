@@ -33,7 +33,26 @@ path <- pin("http://www.fhfa.gov/DataTools/Downloads/Documents/HPI/HPI_master.cs
 path
 ```
 
-Notice that the `pin()` downloads the data and (invisibly) returns a path to the local CSV file.  
+Notice that the `pin()` downloads the data and (invisibly) returns a path to the local CSV file.    
+
+We can explore this local storage by creating a pin and then enumerating the board’s storage folder:
+
+```{r}
+tibble::tibble(dir(board_local_storage(), full.names = TRUE))
+```
+
+As you can see, each pin is stored inside the `rappdirs::user_cache_dir()` folder and a list of resources is tracked on a `data.txt` file. The function `pin()` and `pin_get()` store and retrieve data from this well-known location, while `pin_find()` makes use of the index file to search for resources and track other properties like cache expiration information.   
+
+Inside `data.txt`:   
+
+```{r, echo = FALSE}
+knitr::include_graphics("images/pin_local_cache.png")
+```
+
+
+
+
+`pin_get()` to retrieve data:  
 
 ```{r}
 house_price <- vroom::vroom(path)
@@ -79,4 +98,80 @@ pin_get("home_price_indexes") %>%
 ```{r}
 pin_get("home_price_analysis") # board = TRUE
 ```
+
+## Using boards  
+
+## Github    
+
+### Registering
+
+First check `nchar(Sys.getenv("GITHUB_PAT")) > 0`, if it is `FALSE`. Run `usethis::browse_github_pat()` and follow the instructions.   
+
+```{r}
+nchar(Sys.getenv("GITHUB_PAT")) > 0
+```
+
+
+If the above statement is TRUE, this means GitHub is already configured, which means you can register an existing GitHub board as follows. However, when using a new repo, first manually create an empty repo from [github.com/new](github.com/new).  
+
+```{r, eval = FALSE}
+board_register_github(repo = "enixam/pins")
+```
+
+### Pinning
+Let’s start by creating to pins for `iris` and `mtcars` under the GitHub board
+```{r, eval = FALSE}
+pin(iris, description = "The iris data set", board = "github")
+pin(mtcars, description = "The motor trend cars data set", board = "github")
+```
+
+Notice then the structure in the GitHub repo. Similar to the folder structure in the local board, a folder is created for each pin and a `data.txt` index added to the repo.
+
+```{r, echo = FALSE}
+knitr::include_graphics("images/pin_github.png")
+```
+You can also retrieve pins back from this repo using the now familiar `pin_get()` function,
+
+```{r}
+pin_get("iris", board = "github")
+```
+
+### Discovering  
+
+You can then search pins in your repo using `pin_find()`, which by default search all boards but you can also explicitly request to use this particular GitHub board:  
+
+```{r}
+pin_find("mtcars")
+
+pin_find("mtcars", board = "github")
+```
+
+GitHub boards contain extended fields that go beyond the fields pins requires, to retrieve all the additional fields use `extended = TRUE`:  
+
+```{r}
+pin_find("mtcars", board = "github", extended = TRUE)
+```
+
+Or `pin_info()` to retrieve all the information associated with a particular pin:  
+
+```{r}
+pin_info("mtcars", board = "github")
+```
+
+A GitHub repo only supports files under 25MB in size (100MB in theory but there is additional overhead when using the GitHub API). To store large files, GitHub recommends storing them using GitHub Releases which support up to 2GB files.
+
+Therefore, to support large files, pins makes use of GitHub release files. When you upload a file over , pins will create a new GitHub release file for that particular pin. Everything else works as expected, you can still retrieve the large resource with `pin_get()` and find it with `pin_find()`. The only noticeable change is new releases being created in your repo:
+
+## Rstudio Connect  
+
+### Registering  
+
+In order to use RStudio Connect as a board, you need to authenticate first. When using RStudio, you can authenticate launching Tools - Global Options - Publishing - Connect, and follow the instructions from that wizard:
+
+Once an RStudio Connect account is registered in RStudio, you can simply run:
+
+```{r}
+board_register_rsconnect()
+```
+
 

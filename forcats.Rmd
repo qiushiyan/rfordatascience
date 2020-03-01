@@ -289,7 +289,7 @@ starwars_sub$hair_color %>%
   nlevels()
 ```
 
-还可以通过给`only`参数指定一个向量指定想要丢弃的水平，只有频次为0且包含在该向量中的水平才会被丢弃：
+还可以通过给 `only` 参数指定一个向量指定想要丢弃的水平，只有频次为0且包含在该向量中的水平才会被丢弃：
 ```{r}
 f <- factor(c("a", "b"), levels = c("a", "b", "c"))
 fct_drop(f)
@@ -300,6 +300,24 @@ fct_drop(f, only = "c")
 ```
 
 
+### Transforming NA levels  
+
+When a factor has missing values, these `NA`s will not be listed as a valid level. Though in some cases `NA` in a factor could be meaningful:  
+ 
+```{r}
+f <- factor(c("a", "a", NA, NA, "a", "b", NA, "c", "a", "c", "b"))
+
+levels(f)
+nlevels(f)
+```
+
+`fct_explicit_na()`  gives a explicit factor level `na_level` to the `NA`:  
+
+```{r}
+fct_explicit_na(f)
+
+fct_explicit_na(f, na_level = "Unknown")
+```
 
 
 
