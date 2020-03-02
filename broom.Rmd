@@ -27,6 +27,47 @@ gapminder %>%
 ```
 
 
+## Examples 
+
+### PCA  
+
+An excellent answer on tidyverse solutions to PCA: https://community.rstudio.com/t/tidyverse-solutions-for-factor-analysis-principal-component-analysis/4504
+
+```{r}
+library(ggfortify) # for plotting pca
+
+iris_pca <- iris %>% 
+  nest() %>% 
+  mutate(pca = map(data, ~ prcomp(.x %>% select(-Species), 
+                                  center = TRUE, 
+                                  scale = TRUE)), 
+         pca_tidy = map2(pca, data, ~ broom::augment(.x, data = .y)))
+
+iris_pca
+```
+
+```{r}
+iris_pca %>%
+  unnest(pca_tidy) %>% 
+  summarize_at(.vars = vars(contains(".fittedPC")), list(variance = var)) %>% 
+  pivot_longer(everything(), names_to = "pc", values_to = "variance") %>% 
+  mutate(var_explained = variance / sum(variance))
+```
+
+```{r}
+iris_pca %>% 
+  mutate(
+    pca_graph = map2(
+      pca, 
+      data,
+      ~ autoplot(.x, loadings = TRUE, loadings.label = TRUE, 
+                 data = .y, colour = "Species")
+    )
+  ) %>% 
+  pull(pca_graph)
+```
+
+
 
 ## broomExtra 
 
