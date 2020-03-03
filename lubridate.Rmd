@@ -1,3 +1,24 @@
+```{r include=FALSE, cache=FALSE}
+set.seed(1112)
+options(digits = 3)
+
+
+
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  out.width = "80%",
+  fig.width = 6,
+  fig.asp = 0.618,  # 1 / phi
+  fig.align = "center",
+  message = F,
+  warning = F
+)
+
+library(tidyverse)
+
+options(dplyr.print_min = 6, dplyr.print_max = 6)
+```
 
 
 # lubridate: Dates and times
@@ -11,6 +32,7 @@ knitr::opts_chunk$set(cache = T)
 # lubridate has to be manually loaded
 library(lubridate)
 library(nycflights13)
+library(patchwork)
 ```
 
 ## Creating dates and times
@@ -531,7 +553,7 @@ years(1) / days(1)
 interval(ymd(20090201), ymd(20090101))
 ```
 
-一种更简单的创建区间的方式是使用操作符`%--%`
+一种更简单的创建区间的方式是使用操作符 `%--%`
 ```{r}
 next_year <- today() + years(1)
 today() %--% next_year 
@@ -615,5 +637,190 @@ as_hms("12:34:56")
 round_hms(as_hms("12:34:56"), sec = 5)
 round_hms(as_hms("12:34:56"), sec = 60)
 trunc_hms(as_hms("12:34:56"), 60)
+```
+
+## dint 
+
+While `lubridate` can handle date & time data in an effective manner, currently it requires the largest unit of a date to be days. This means it does not cover functionality for working with year-quarter, year-month and year-isoweek dates.  
+
+In contrast, `dint` provides a toolkit for these 3 types of date. It stores them in an easily human readable integer format, e.q `20141` for the first quarter of 2014 and so forth. Additionally, it goes hand in hand with `lubridate` in more ways than one. `dint` is implemented in base R and comes with zero external dependencies. Even if you don’t work with such special dates directly, dint can still help you at formatting dates, labelling plot axes, or getting first / last days of calendar periods (quarters, months, isoweeks).   
+
+`dint` provides 4 different S3 classes that inherit from `date_xx` (a superclass for package development purpose).
+
+- `date_yq()` for year-quarter dates  
+
+- `date_ym` for year-month dates 
+
+- `date_yw` for year-isoweek dates  
+
+- `date_y()` for storing years. This is for development purpose, and does not provide notable advantage over storing year as integers.    
+
+```{r}
+library(dint)
+```
+
+
+### Creation  
+
+`date_xx` vectors can be created using explicit constructors  
+
+```{r}
+date_yq(2015, 1)
+# vectorized 
+date_ym(c(2015, 2016), c(1, 2))
+date_yw(c(2008, 2009), 1)
+```
+
+It is worth mentioning that `tsibble` also provides similar functions like `yearquarter()`, `yearmonth()` and `yearweek()`. But I think they are generally not flexible in this use case. 
+
+`as_date_xx` coerce other classes (mainly `Date`,  `POSIXct`(time) and `integer`) into `date_xx` objects  
+
+```{r}
+as_date_yq(Sys.time())
+as_date_yq(20141)
+as_date_ym(201412) 
+as_date_yw("2018-01-01")  # anything else that can be parsed by as.Date() works
+```
+
+### Arithmetic and Sequences
+
+All `date_xx` support addition, subtraction and sequence generation.  
+
+```{r}
+q <- date_yq(2014, 4)
+q + 1
+q - 1
+seq(q - 2, q + 2)
+```
+
+
+### Accessors  
+
+We can access components of `date_xx` (e.g the quarter of a `date_yq`) with accessor functions. You can also use these functions to convert between `date_xx` vectors.
+
+```{r}
+q <- date_yq(2014, 4)
+get_year(q)
+get_month(q)
+get_isoweek(q)
+```
+
+Accessor functions in `dint` are compatible with `Date`, `POSIXct` classes, so are `year()`, `month()` and `day()` in `lubridate` with `date_xx` classes.  
+
+```{r}
+# dint accessor functions on other classes
+get_quarter(Sys.Date())
+get_month(ymd(20200303))
+get_isoweek(Sys.time())
+
+# lubridate accessor functions on date_xx classes 
+year(q)
+quarter(q) # default to first month in 4th quarter
+month(q)
+day(q) # default to 1st day in that month
+```
+
+`first_of_xx`, `last_of_xx` are 2 helper functions to access the first or last **day** within a specifit span from a `date_xx`, `Date` and `POSIX` object.  
+
+```{r}
+q <- date_yq(2015, 1)
+
+ # the same as as.Date(q), but more explicit
+first_of_quarter(q) 
+
+last_of_quarter(q) 
+
+d <- ymd("20200303")
+# first locate the date in a isoweek, then find the first day in that isoweek
+first_of_isoweek(d) 
+
+last_of_month(d)
+```
+
+```{r}
+# Alternativeley you can use these:
+first_of_yq(2012, 2)
+last_of_ym(2012, 2)
+last_of_yw(2012, 2)
+```
+
+### Formatting  
+
+Formatting date_xx vectors is easy and uses a subset of the placeholders of `base::strptime()`(plus `%q` for quarters)  
+
+```{r}
+q <- date_yq(2014, 4)
+
+format(q, "%Y Q%q")
+format(q, "%Y.%q")
+format(q, "%y.%q")
+
+m <- date_ym(2014, 12)
+format(m, "%Y-M%m")
+
+w <- date_yw(2014, 1)
+format(w, "%Y-W%V")
+
+```
+
+There are some shorthands functions for formatting 
+
+```{r}
+format_yq(Sys.Date())
+format_yq_short(Sys.Date())
+format_yq_shorter(Sys.Date())
+
+format_ym(Sys.Date())
+format_ym_short(Sys.Date())
+format_ym_shorter(Sys.Date())
+```
+
+
+### Labelling functions in ggplot2  
+
+There are two ways of making use of `dint` functionality when working with date axis in `ggplot2`  
+
+- use scale `scale_date_**()`, this is implemented by default 
+- pass shorthand `format_**` functions to argument `labels` in any scale, this is also applicable to `Date` axes.  
+
+
+```{r}
+q <- tibble(
+  time  = seq(date_yq(2016, 1), date_yq(2016, 4)),
+  value = rnorm(4)
+)
+
+ggplot(q) + 
+  geom_line(aes(time, value)) +
+  scale_x_date_ym() + 
+  ggtitle("scale_x_yq() by default") -> p1
+
+ggplot(q) + 
+  geom_line(aes(time, value)) +
+  scale_x_date_ym(labels = format_ym_iso) + 
+  ggtitle("labels = format_ym_iso") -> p2
+
+p1 + p2
+```
+
+Use `format_**` in `Date` axes   
+
+```{r, fig.align = "default", fig.show = "hold", out.width = "50%"}
+x <- data.frame(
+  time  = seq(as.Date("2016-01-01"), as.Date("2016-08-08"), by = "day"),
+  value = rnorm(221)
+)
+
+p <- ggplot(
+  x,
+  aes(
+    x = time, 
+    y = value)
+  ) + geom_point()
+
+p + ggtitle("default")
+p + scale_x_date(labels = format_yq_iso) + ggtitle("date_yq_iso")
+p + scale_x_date(labels = format_ym_short) + ggtitle("date_ym_short")
+p + scale_x_date(labels = format_yw_shorter) + ggtitle("date_yw_shorter")
 ```
 
