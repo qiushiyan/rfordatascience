@@ -6,7 +6,7 @@
 
 *Roger Peng* 的文章["stringsAsFactors: An unauthorized bigraphy](https://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/)和*Thomas Lumley*的文章[stringsAsFactors = sigh ](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh)介绍了有关因子和字符串的一些历史背景。  
 
-2006 年, `stringsAsFactors` 这一设置的前身 `charToFactor` 被引入了 `data.frame()` 函数中，后来被纳入到 `read.table()` 里。默认情况下，`stringsAsFactors`被设置为`True`，R便会自动把字符串转换为因子型变量。在当时，这种设置是不难理解的。早期R的用户几乎都是统计科班出身的研究者，他们所用数据集里的字符串几乎都代表了一个定性变量，例如`年龄(male/female)`,`国家(US/other)`，`地区(East/West)`。进一步地，由于统计学家们的工作重点几乎都集中在构建各种统计模型上，而像`lm()`和`glm()`的函数只有当一个变量是 `factor` 类型的时候才开始对其编码，在统计模型中构建虚拟变量。  
+2006 年, `stringsAsFactors` 这一设置的前身 `charToFactor` 被引入了 `data.frame()` 函数中，后来被纳入到 `read.table()` 里。默认情况下，`stringsAsFactors`被设置为`True`，R便会自动把字符串转换为因子型变量。在当时，这种设置是不难理解的。早期R的用户几乎都是统计科班出身的研究者，他们所用数据集里的字符串几乎都代表了一个定性变量，例如`年龄(male/female)`, `国家(US/other)`, `地区(East/West)`。进一步地，由于统计学家们的工作重点几乎都集中在构建各种统计模型上，而像`lm()`和`glm()`的函数只有当一个变量是 `factor` 类型的时候才开始对其编码，在统计模型中构建虚拟变量。  
 
 另一个原因更隐秘一些。在内部的存储机制中，因子变量经过一些编码后用数值存储，使得因子比字符串在占用内存空间上更加划算。2007 年后，R 引入了一种“CHARSXP”的方法，使得字符串也被映射为数值存储，`stringsAsFactors = T`在这点上的优势便不复存在了。  
 
@@ -36,7 +36,7 @@ x1 <- c("Dec", "Apr", "Jan", "Mar")
 
 使用字符串来记录月份有两个问题：   
 
-1. 理论上，月份只有12个取值。但使用字符串时，我们没有办法告诉 R 什么样的值才是合法的，即使输入错误，代码也不会有什么反应。  
+1. 理论上，月份只有 12 个取值。但使用字符串时，我们没有办法告诉 R 什么样的值才是合法的，即使输入错误，代码也不会有什么反应。  
 ```{r}
 x2 <- c("Dec", "Apr", "Jam", "Mar")
 ```
@@ -59,13 +59,14 @@ y1 <- factor(x1, levels = month_levels)
 y1
 ```
 
-使用因子类型后，不在有效水平向量内的的所有值都会自动转换 为NA：
+使用因子类型后，不在有效水平向量内的的所有值都会自动转换为 `NA`：
 ```{r}
 y2 <- factor(x2, levels = month_levels)
 y2
 ```
 
-如果要显示错误信息，可以用`readr::parse_factor()`函数代替 R 基础包中的`factor()`,当向量x的中的某些元素不在有效水平列表时返回错误信息：
+如果要显示错误信息，可以用`readr::parse_factor()`函数代替 `factor()`,当 `x` 的中的某些元素不在有效水平列表时返回错误信息：
+
 ```{r,error=T}
 y2 <- parse_factor(x2, levels = month_levels)
 ```
@@ -92,75 +93,103 @@ nlevels(f1)
 
 ## Sorting  
 
-### Sorting by frequency
+### Sorting by frequency, appearance, or numeric order
 
-`fct_infreq()` 函数根据在数据集中出现的频次对因子的不同水平进行排序。  
+`fct_infreq()` reorder factor levels by frequency of each level, `NA` levels come last regardless of frequency. 
 
-`starwars`数据集是对剧中角色信息的一些整理，假设我们想知道全部角色中最常见的发色是什么，可能会做出类似如下的条形图：  
 ```{r}
-starwars
-
-ggplot(starwars, aes(hair_color)) +
-  geom_bar()+
-  coord_flip()
+# What's the most frequent hair color in starwars ?
+ggplot(starwars) +
+  geom_bar(aes(fct_infreq(hair_color)))
 ```
 
-对于这种条形图的常见调整是让因子的水平按照其在数据中出现的频次排列，`fct_infreq()`函数可以很轻松地完成这一任务(缺失值总会被排在最后)：
+`fct_inorder()`: sort a factor by the order in which they first appear. This can be useful when dealing with time series data.  
 ```{r}
-ggplot(starwars,aes(fct_infreq(hair_color))) +
-  geom_bar()+
-  coord_flip()
+f <- factor(c("b", "b", "a", "c", "c", "c"))
+levels(f) # alphabetic order
+
+fct_inorder(f)
 ```
 
-如果返回`starwars`数据集，你会发现`hair_color`其实是字符串变量，但是完全适用于`fct_infreq()`的操作。  
+`fct_inseq()`: sort a factor by numeric value of a level. This is only applicable when at least one existing level can be coercible to numeric  
+
+```{r}
+f <- factor(1:3, levels = c("3", "2", "1"))
+fct_inseq(f)
+```
+
+
+
 
 
 ### Sorting by another variable  
 
-`fct_reorder()` 其实就是 `reorder()` 在 `forcats` 中的实现，它根据因子在其他变量上的统计量（中位数、平均数、···）的值对个水平进行排序，当绘制非频次条形图(`stat = "identity"`)时它便很有用。
-我们可以通过 `fun` 设定统计函数（默认为 `median()`），`desc = T` 设定降序排列（默认升序）：
+`fct_reorder()` 其实就是 `base::reorder()` 在 `forcats` 中的实现，它根据因子在其他变量上的统计量（中位数、平均数、···）的值对各个水平排序，当绘制非频次条形图时很有用。
 
-```{r,out.width="50%",fig.show="hold"}
-## 对发色分组，计算身高的中位数
-(avg_height <- starwars %>% group_by(hair_color) %>%
-  summarize(avg_height = mean(height)))
+Use `.fun` to set a summarizing function (defaults to `median()`), `.desc = TRUE` to sort the factor in descending order, `NA` levels always come the last regardless of the corresponding variable, `fct_explicit_na()` in Section \@ref(transforming-na-levels) fix this.
 
-ggplot(avg_height,aes(x=hair_color,y=avg_height))+
-  geom_bar(aes(hair_color, avg_height), stat="identity")
+```{r}
+# reorder hair_color by median of height, then summarize
+med_height <- starwars %>% 
+  mutate(hair_color = fct_reorder(hair_color, height)) %>% 
+  group_by(hair_color) %>%
+  summarize(med_height = median(height, na.rm = TRUE))  
 
-ggplot(avg_height,aes(fct_reorder(hair_color, avg_height), avg_height))+
-  geom_bar(stat="identity")
+med_height %>% 
+  ggplot(aes(hair_color, med_height)) + 
+  geom_col()
+```
+
+Sometimes a factor is mapped to a non-position aesthetic, `fct_reorder2(.f, .x, .y, .fun = last2)` is designed for this kind of 2d displays of a factor.  `last2()` and `first2()`  are helpers for `fct_reorder2()`; `last2()` finds the last value of `.y` when sorted by `.x`; `first2()` finds the first value.
 
 
+```{r}
+chks <- ChickWeight %>% 
+  as_tibble() %>% 
+  filter(as.integer(Chick) < 10) %>% 
+  mutate(Chick = fct_shuffle(Chick))  # random order
+
+ggplot(chks, aes(Time, weight, color = Chick)) +
+  geom_point() +
+  geom_line()
+
+# change the order of weight, 
+# so that points with largest Weight, last time are assigned the first color
+# Note that lines match order in legend
+ggplot(chks, aes(Time, weight, color = fct_reorder2(Chick, Time, weight))) +
+  geom_point() +
+  geom_line() +
+  labs(colour = "Chick")
 ```
 
 
 ### Sorting manually 
 
-`fct_infreq()` 和 `fct_reorder()`排序的依据是明确的，但我们有时也需要人工指定、修改排序结果。`fct_relevel()`接受一个向量调整因子水平的排序。  
+`fct_infreq()` 和 `fct_reorder()` 排序的依据是明确的，但我们有时也需要人工指定、修改排序结果。`fct_relevel()`接受一个向量调整因子水平的排序。  
 
-这个例子中使用`forcats::gss_cat`数据集，该数据集是综合社会调查（General Social Survey）的一份抽样。综合社会调查是美国芝加哥大学的独立研究组织 NORC 进行的一项长期美国社会调查。`gss_cat` 数据挑选了一些变量：
+这个例子中使用`forcats::gss_cat`，该数据集是综合社会调查（General Social Survey）的一份抽样。综合社会调查是美国芝加哥大学的独立研究组织 NORC 进行的一项长期美国社会调查
 ```{r}
 gss_cat
-
 levels(gss_cat$rincome)
 ```
 
-在这个数据集中，因子`rincome`个水平的顺序排列是正确的。为了演示`fct_relevel()`的用法，先用`fct_shuffle()`打乱该因子的水平顺序：
+在这个数据集中，因子 `rincome` 个水平的顺序排列是正确的。为了演示`fct_relevel()`的用法，先用 `fct_shuffle()` 打乱该因子的水平顺序：
 ```{r}
 reshuffled_income <- fct_shuffle(gss_cat$rincome)
 ## reordering the levels of rincome randomly with fct_shuffle():
 levels(reshuffled_income)
 ```
 
-在`fct_relevel()` 中，通过一个包含水平名称的向量调整排序。默认情况下，向量中的第一个水平被调整到第一个位置上，第二个水平被调整到第二个位置上，以此类推，你只需要指定那些需要调整的水平。可以通过`after`参数人工指定向量中各水平被调整到什么地方, `after = -Inf` 时第一个水平将被调整到排序的最后一位：
+在 `fct_relevel()` 中，通过一个包含水平名称的向量调整排序。默认情况下，向量中的第一个水平被调整到第一个位置上，第二个水平被调整到第二个位置上，以此类推，你只需要指定那些需要调整的水平。可以通过 `after` 指定向量中各水平被调整到什么地方, `after = -Inf` 时第一个水平将被调整到排序的最后一位：
 ```{r}
 ## move Lt $1000 and $1000 to 2999 to the front
-fct_relevel(reshuffled_income, c("Lt $1000", "$1000 to 2999")) %>%
+fct_relevel(reshuffled_income, 
+            c("Lt $1000", "$1000 to 2999")) %>%
   levels()
 
 ## move Lt $1000 and $1000 to 2999 to the second and third place
-fct_relevel(reshuffled_income, c("Lt $1000", "$1000 to 2999"), after = 1) %>%
+fct_relevel(reshuffled_income, 
+            c("Lt $1000", "$1000 to 2999"), after = 1) %>%
   levels()
 ```
 
@@ -168,9 +197,9 @@ fct_relevel(reshuffled_income, c("Lt $1000", "$1000 to 2999"), after = 1) %>%
 
 ## Chaninge number of levels
 
-### Collpasing levels
+### Lumping levels
 
-To demonstrate how to collpase multiple levels of a factor, we will start with `fct_count()` to count factor levels. It's basically a variant of `dplyr::count()`, taking a factor (factor) as its first argument instead of a data frame, which makes it a nice function in `mutate()`. 
+To demonstrate how to lump multiple levels of a factor, we will start with `fct_count()` to count factor levels. It's basically a variant of `dplyr::count()`, taking a factor (factor) as its first argument instead of a data frame, which makes it a nice function in `mutate()`. 
 
 ```{r}
 fct_count(starwars$skin_color, 
@@ -187,14 +216,25 @@ fct_count(starwars$skin_color, prop = TRUE) %>%
 
 In this case, We may want to collpase some of the less frequent levels into one, say, a level called "other". 
 
-`fct_lump(f, n, prop)` lumps together least / most common factor levels into a new level "other". If both `n` and `prop` are missing, `fct_lump()` lumps together the least frequent levels into "other", while ensuring that "other" is still the smallest level. It's particularly useful in conjunction with `fct_inorder()`.
+`forcats` provides a family of functions that lumps together factor levels that meet some criteria into a new level "other".   
 
-Positive `n` preserves the most common `n` values. Negative `n` preserves the least common -n values. It there are ties, you will get at least `abs(n)` values.  
+- `fct_lump_min()`: lumps levels that appear fewer than `min` times  
+
+- `fct_lump_prop()`: lumps levels that appear fewer than `prop * n` times  
+
+- `fct_lump_n()`: lumps all levels except for the n most frequent (or least frequent if n < 0)  
+
+- `fct_lump_lowfreq()` lumps together the least frequent levels, ensuring that "other" is still the smallest level.
 
 ```{r}
+# lump levels that appear fewer than 5 times into "other"
+starwars %>% 
+  mutate(skin_color = fct_lump_min(skin_color, min = 5)) %>% 
+  count(skin_color, sort = TRUE)
+
 # preserve 5 most common levels
 starwars %>%
-  mutate(skin_color = fct_lump(skin_color, n = 5)) %>%
+  mutate(skin_color = fct_lump_n(skin_color, n = 5)) %>%
   count(skin_color, sort = TRUE)
 
 # preserve 5 least common levels
@@ -204,70 +244,75 @@ starwars %>%
 ```
 
 
-Similarly, positive `prop` preserves values that appear at least `prop` of the time. Negative `prop` preserves values that appear at most `-prop` of the time.
+Similarly, positive `prop` preserves values that appear at least `prop` of the time. Negative `prop` preserves values that appear at most `-prop` of the time.  
 
 
 Use argument `other_level` to change default name "other" 
 ```{r}
 starwars %>%
-  mutate(skin_color = fct_lump(skin_color, prop = 0.1, 
-                               other_level = "extra")) %>%
+  mutate(skin_color = fct_lump_prop(skin_color, 
+                                     prop = 0.1, 
+                                     other_level = "extra")) %>%
   count(skin_color, sort = TRUE)
 ```
 
  
-如果给 `n` 或者 `prop` 指定一个负数，则频数最多的一些水平将被合并：  
 
-```{r}
-## 留下频次最低的5个水平
-starwars %>%
-  mutate(skin_color = fct_lump(skin_color, n = -5)) %>%
-  count(skin_color, sort = T)
-## 占据频数超过90%的水平被合并为other
-starwars %>%
-  mutate(skin_color = fct_lump(skin_color, prop = -0.1)) %>%
-  count(skin_color, sort = T)
-```
 
-如果想人为地对水平进行合并，而不考虑频次，可以使用`fct_other(f, keep, drop, other_level = "Other)`，`keep` 指定保留水平，`drop` 指定合并水平：  
+`fct_other(f, keep, drop, other_level)` provides a way of manually replacing values with "other".  Pcik one of `keep` and `drop`:  
+
+- `keep` will preserve listed levels, replacing all others with `other_level`
+- `drop` will replace listed levels with `other_level`, keeping all as is.
 
 ```{r}
 x <- factor(rep(LETTERS[1:9], times = c(40, 10, 5, 27, 1, 1, 1, 1, 1)))
-fct_count(x,sort=T)
 
-fct_other(x, keep = c("A", "B"))
-fct_other(x, drop = c("A", "B"))
+fct_other(x, 
+          keep = c("A", "B"), 
+          other_level = "I don't care") %>% 
+  fct_count()
 ```
 
 
 
+### Expanding levels  
 
 
-
-
-
-
-### Adding levels  
-
-
-`fct_expand()`函数用于对因子添加水平：
+`fct_expand()` add additional levels to a factor
 
 ```{r}
-## 在abc三个字母中，放回抽样20次
 f <- factor(sample(letters[1:3], 20 , replace = T))
 fct_count(f)
 
-## 添加三个水平
+# add 3 values
 f <- fct_expand(f, "d", "e", "f")
-## 新添加的水平频次为0
+levels(f)
+# additional levels are assigned with zero frequncy
 fct_count(f)
-
 ```
+
+`fct_cross()` combines levels of multiple input factors in a **parallel** manner: 
+
+```{r}
+fruit <- factor(c("apple", "kiwi", "apple", "apple"))
+color <- factor(c("green", "green", "red", "green"))
+
+fct_cross(fruit, color)
+# change deliminator
+fct_cross(fruit, color, sep = "|")
+```
+
+By default, `fct_cross()` does not regard combinations with no observations as valid levels, so `kiwi:red` didn't appear in the output. Use `keep_empty = TRUE` so that `fct_croos()` keep combinations with no observations as levels
+
+```{r}
+fct_cross(fruit, color, keep_empty = TRUE)
+```
+
 
 
 ### Dropping levels  
 
-有时候我们希望在数据中取出一个子集，这可能导致在子集中，因子在某些水平上的频次为0，但R并不会自动舍弃舍弃频次为0的水平：
+有时候我们希望在数据中取出一个子集，这可能导致在子集中，因子在某些水平上的频次为 0，但 R 并不会自动舍弃舍弃频次为 0 的水平：
 
 ```{r}
 ## 在原始数据汇总，hair_color共有12个水平
@@ -342,9 +387,9 @@ gss_cat %>%
   count(partyid)
 ```
 
-`fct_recode()`函数会让没有明确提及的水平保持原样，如果不小心修改了一个不存在的水平，那么它也会给出警告。  
+`fct_recode()` 函数会让没有明确提及的水平保持原样，如果不小心修改了一个不存在的水平，那么它也会给出警告。  
 
-可以将多个原水平赋给同一个新水平，这样就可以合并原来的分类，有点类似于人工指定该合并哪些水平的`fct_lump()`函数：  
+可以将多个原水平赋给同一个新水平，这样就可以合并原来的分类: 
 ```{r}
 ## 将"no answer"、"Don't know"和"Other party"合并为"Other"
 gss_cat %>% mutate(partyid_recode = fct_recode( partyid,
@@ -362,7 +407,7 @@ gss_cat %>% mutate(partyid_recode = fct_recode( partyid,
 
 ```
 
-如果想要合并多个水平，那么可以使用`fct_recode()`函数的变体`fct_collapse()`函数。对于每个新水平，你都可以提供一个包含原水平的向量：  
+As a variant of `fct_recode()`, `fct_collapse()` collapses factor levels into manually defined groups
 ```{r}
 gss_cat %>%
   mutate(partyid = fct_collapse(partyid,
@@ -373,10 +418,23 @@ gss_cat %>%
   count(partyid)
 ```
 
+Unmentioned levels stay as is. To collapse this levels, specify `other_level`, this is always placed at the end of levels. 
+```{r}
+# collapse two republican levels into "rep", and others into "I don't care"
+gss_cat %>%
+  mutate(partyid = fct_collapse(partyid,
+                                rep = c("Strong republican","Not str republican"),
+                                other_level = "I don't care")) %>%
+  count(partyid)
+```
+
 
 ### Exercises 
 
+```{exercise}
 美国民主党，共和党和中间派的人数是如何随时间变化的？
+```
+
 ```{r}
 gss_cat_collapse <- gss_cat %>%
   mutate(partyid = fct_collapse(partyid,
@@ -394,38 +452,6 @@ gss_cat_collapse %>%
   geom_point(size = 2, shape= 1)
 ```
 
-
-## Combining factors {#forcats-combine}
-
-`fct_c()` 用于将因子合并，使用 `gapminder::gapminder` 数据，首先创建两个子集：
-```{r,warning=F}
-library(gapminder)
-
-gapminder
-
-df1 <- gapminder %>%
-  filter(country %in% c("United States", "Mexico"), year > 2000)
-
-df2 <- gapminder %>%
-  filter(country %in% c("France", "Germany"), year > 2000)
-```
-
-舍弃
-`country`
-中频次为 0 的水平：
-```{r}
-df1$country <- fct_drop(df1$country)
-df2$country <- fct_drop(df2$country)
-
-levels(df1$country)
-levels(df2$country)
-```
-
-用 `fct_c()` 将两个数据集中不同的因子`country`拼接起来
-
-```{r}
-fct_c(df1$country, df2$country)
-```
 
 
 

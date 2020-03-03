@@ -75,3 +75,10 @@ iris_pca %>%
 # install.packages("broomExtra")
 ```
 
+## ggfortify  
+
+```{r}
+lm(Petal.Width ~ Petal.Length, data = iris) %>% 
+  autoplot(label.size = 3)
+```
+
