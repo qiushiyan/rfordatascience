@@ -235,10 +235,12 @@ df <- tibble(
   qtr    = c(   1,    2,    3,    4,    1,    2,    3),
   return = rnorm(7)
 )
+
 df %>% expand(year, qtr)
+
 df %>% expand(year = 2010:2012, qtr)
+
 df %>% expand(year = full_seq(year, 1), qtr)
-df %>% complete(year = full_seq(year, 1), qtr)
 ```
 
 
@@ -274,7 +276,7 @@ experiment %>% right_join(all)
 
 ```{r}
 experiment %>% 
-  complete(nesting(name, trt), rep)
+  complete(rep, nesting(name, trt))
 ```
 
 
@@ -283,7 +285,7 @@ experiment %>%
 
 #### `expand_grid`: create a tibble from all combinations of inputs
 
-`expand_grid()` is analogus to `expand()`. Instead of taking in a data frame, `expand_grid()` use multiple name-value pairs to generate all combinations :  
+`expand_grid()` is analogus to a (atomic) vector version if `expand()`. Instead of taking in a data frame, `expand_grid()` use multiple name-value pairs to generate all combinations :  
 
 ```{r}
 expand_grid(x = c(3, 2, 1), y = c(10, 5), z = letters[1:3])
