@@ -335,7 +335,7 @@ vis_miss(df)
 
 
 
-more advanced:  mice 或 Amelia
+Advanced:  `mice`, `Amelia`
 
 
 ## Imputation  
@@ -352,3 +352,12 @@ df <- tibble(x = c(1, 2, NA, 5, 9, NA),
 
 df %>% mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
 ```
+
+
+`simputation`
+
+```{r}
+# install.packages("simputation", dependencies = TRUE)
+
+```
+
