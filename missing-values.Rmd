@@ -353,11 +353,13 @@ df <- tibble(x = c(1, 2, NA, 5, 9, NA),
 df %>% mutate_all( ~ ifelse(is.na(.x), median(.x, na.rm = T), .))
 ```
 
+`rlang::%|%`
+
 
 `simputation`
 
 ```{r}
 # install.packages("simputation", dependencies = TRUE)
-
 ```
 
+https://edwinth.github.io/padr/

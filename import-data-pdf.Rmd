@@ -1,0 +1,84 @@
+
+# Reading in data from pdfs and other files    
+
+https://www.brodrigues.co/blog/2018-06-10-scraping_pdfs/  
+
+It is often the case that data is trapped inside pdfs, but thankfully there are ways to extract it from the pdfs. A very nice package for this task is [`pdftools`](https://github.com/ropensci/pdftools).  
+
+## pdftools  
+
+```{r}
+library(pdftools)
+```
+
+```{r, eval = FALSE}
+download.file("http://arxiv.org/pdf/1403.2805.pdf", "data/1403.2805.pdf", mode = "wb")
+```
+
+
+Each string in the vector contains a plain text version of the text on that page.
+
+```{r}
+txt <- pdf_text("data/1403.2805.pdf")
+
+# first page text
+cat(txt[1])
+
+# second page text
+cat(txt[2])
+```
+
+The package has some utilities to extract other data from the PDF file. 
+
+```{r}
+pdf_toc("data/1403.2805.pdf") %>% str(max.level = 3)
+pdf_info("data/1403.2805.pdf")
+pdf_fonts("data/1403.2805.pdf")
+```
+
+
+### Scraping pdf data
+
+As one can imagine, scraping pdf data is just a matter of text process after loading in pdf documents with `pdf_text()`.  We start by downloading multiple pdf documents, then extracting and cleaning data stored in a table 
+
+```{r, echo = FALSE, out.width = "120%"}
+# what we want:
+# the "prevalentce of diabetes and related risk factors" table
+knitr::include_graphics("images/scrape_pdf.png")
+```
+
+```{r}
+library(glue)
+country <- c("chn", "usa", "gbr", "jpn")
+url <- "http://www.who.int/diabetes/country-profiles/{country}_en.pdf?ua=1"
+
+urls <- glue(url)
+pdf_names <- glue(here::here("data/report_{country}.pdf"))
+```
+
+```{r, eval = FALSE}
+# download pdfs
+walk2(urls, pdf_names, download.file, mode = "wb")
+```
+
+```{r}
+raw_text <- map(pdf_names, pdf_text)
+```
+
+Because each pdf document only contain one page, `raw_data` has a simple 2-level structure:
+
+```{r}
+str(raw_text)
+raw_text[[1]]
+```
+
+
+
+
+## Office documents  
+
+## Google sheet  
+
+## Images  
+
+https://cran.r-project.org/web/packages/tesseract/vignettes/intro.html#read_from_pdf_files
