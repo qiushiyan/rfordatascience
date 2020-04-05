@@ -1,11 +1,11 @@
 
-# Reading in data from pdfs and other files    
+# Reading in data from other formats    
 
-https://www.brodrigues.co/blog/2018-06-10-scraping_pdfs/  
+Either of `readr` or `vroom` aimed at reading at reading in flat, deliminated files. This chapter is a introduction on how to extract and read into R data that comes as other formats or sources, such as pdfs, office documents, google sheets and images.  
 
-It is often the case that data is trapped inside pdfs, but thankfully there are ways to extract it from the pdfs. A very nice package for this task is [`pdftools`](https://github.com/ropensci/pdftools).  
+## PDF  
 
-## pdftools  
+It is often the case that data is trapped inside pdfs, but thankfully there are ways to extract it from the pdfs. A very nice package for this task is [`pdftools`](https://github.com/ropensci/pdftools). 
 
 ```{r}
 library(pdftools)
@@ -37,7 +37,9 @@ pdf_fonts("data/1403.2805.pdf")
 ```
 
 
-### Scraping pdf data
+### Scraping pdf data  
+
+https://www.brodrigues.co/blog/2018-06-10-scraping_pdfs/  
 
 As one can imagine, scraping pdf data is just a matter of text process after loading in pdf documents with `pdf_text()`.  We start by downloading multiple pdf documents, then extracting and cleaning data stored in a table 
 
@@ -65,13 +67,58 @@ walk2(urls, pdf_names, download.file, mode = "wb")
 raw_text <- map(pdf_names, pdf_text)
 ```
 
-Because each pdf document only contain one page, `raw_data` has a simple 2-level structure:
+Because each pdf document only contain one page, `raw_data` has a simple 2-level structure, with each element being one report of a country:
 
 ```{r}
 str(raw_text)
 raw_text[[1]]
 ```
 
+
+Note that the table we want starts with "Prevalence of diabetes and related risk factors", and ends with "National response to diabetes". We define a function for extracting the table when looping over all 4 pdf documents.  
+
+```{r}
+get_table <- function(text) {
+  # split the text into a one raw text matrix
+  text_matrix <- text %>% str_split("\\n", simplify = TRUE)
+  
+  # extract country name
+  country_name <- text_matrix[1, 1] %>% 
+    str_squish() %>% 
+    str_extract(".+(?= Total population)")
+  
+  # locate the start and end of the table
+  table_start <- text_matrix %>% 
+    str_which("Prevalence of diabetes and related risk factors")
+  table_end <- text_matrix %>% 
+    str_which("National response to diabetes")
+  
+  # extract table text, replace space with "|"
+  table_raw <- text_matrix[1, (table_start + 1):(table_end - 1)] %>%
+    str_replace_all("\\s{2,}", "|")
+  
+  # creat text connection so that the text can be read back with read.csv()
+  table <- table_raw %>% 
+    textConnection() %>% 
+    read.csv(sep = "|", 
+             col.names = c("condition", "males", "females", "total")) %>%
+    as_tibble() %>% 
+    mutate(country = country_name)
+  
+  table
+}
+
+df <- map_dfr(raw_text, get_table)
+
+df
+```
+
+There is one problem left, we need to convert percentage (recoginized as character) back to numeric:  
+
+```{r}
+df %>% 
+  mutate_at(vars(males, females, total), ~ parse_number(.x) / 100)
+```
 
 
 

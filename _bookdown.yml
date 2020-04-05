@@ -18,7 +18,7 @@ rmd_files: [
   "broom.Rmd",
 
   "vroom.Rmd",
-#  "import-data-pdf.Rmd",
+  "import-data-pdf.Rmd",
 #  "pins.Rmd",
   "apis.Rmd",
   
