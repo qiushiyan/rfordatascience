@@ -6,8 +6,7 @@ options(digits = 3)
 knitr::opts_chunk$set(
   comment = "#>",
   collapse = TRUE,
-  out.width = "80%",
-  fig.width = 6,
+  fig.width = 8,
   fig.asp = 0.618,  # 1 / phi
   fig.align = "center",
   message = F,

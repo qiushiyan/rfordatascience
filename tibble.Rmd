@@ -1,7 +1,7 @@
 # tibble: Modern data frames
 
 
-**tidyverse** 的设计理念之一是用 `tibble` 代替传统的 R 数据框(`data.frame`类)。tibble 是一种更简单的数据框，它对传统数据框的功能进行了一些修改，以便更易于使用。多数情况下，我们不再区分 tibble 和数据框这两个词 ； 如果想要强调 R 内置的传统数据框，用 `data. frame` 来表示。 `vignette("tibble")` 可以获得更多关于 tibble 的信息。  
+Tibbles are a modern reimagining of the trandition `data.frame`, keeping what time has shown to be effective, and throwing out what is not (`stringasFactors = TRUE`), with nicer display when obseravtions exceeds 20 rows. The usage of tibble also underlyies one of the principles of the whole tidyverse universe. In most places, I’ll use the term tibble and data frame interchangeably; when I want to draw particular attention to R’s built-in data frame, I’ll call them `data.frame`s.  
 
 ```{r, echo = F}
 knitr::opts_chunk$set(cache = T)
@@ -10,15 +10,13 @@ knitr::opts_chunk$set(cache = T)
 
 ## Introduction  {#tibble-intro}
 
-
-
-tidyverse 作用于数据框的函数几乎都将返回一个 `tibble`, `filter()`, `arrange()`, `select()`, `mutate()` 呵 `summarize()`等函数最后的结果都是一个 `tibble`，因为它是`tidyverse`最底层的功能之一。由于多数其他 R 包使用的是标准数据框，因此经常需要将 `data.frame` 转换为 `tibble`，可以使用 `as_tibble()` 函数来完成转换：  
+Almost all of the functions that you’ll use in the tidyverse produce tibbles. To coerce a `data.frame` into tibble, we can use `as_tibble()`:  
 
 ```{r}
-## iris 数据集是一个data.frame
 class(iris)
 ## 转换为 tibble
-(iris_tibble <- as_tibble(iris))
+iris_tibble <- as_tibble(iris)
+iris_tibble
 ```
 
 
@@ -534,29 +532,17 @@ issues$ExtColsComp
 
 issues <- diffdf(df, df_class)
 issues$VarModeDiffs
-issues$VarClassDiffs %>% unnest(CLASS.BASE) %>% unnest(CLASS.COMP)
+issues$VarClassDiffs %>% 
+  unnest(CLASS.BASE) %>% 
+  unnest(CLASS.COMP)
 ```
 
 
 ## Exercises  {#tibble-exercise}
 
-```{exercise}
-如何识别一个数据框是否为 `tibble`？
-```
-
-
-可以直接根据打印时的显示来判断。  
-
-更一般地，直接使用 `class()` 函数进行判断, 一个传统数据框将返回"`data.frame`" ，而 tibble 返回`c("tbl_df", "tbl", "data.frame")`   
-```{r}
-class(mtcars)
-class(ggplot2::diamonds)
-class(nycflights13::flights)
-```
-
 
 ```{exercise}
-在以下的数据框中练习如何引用不符合语法规则的变量名  
+Practice referring to non-syntactic names in the following data frame  
 ```
 
 
@@ -564,18 +550,21 @@ class(nycflights13::flights)
 ```{r}
 annoying <- tibble(
   `1` = 1:10,
-  `2` = `1`*2 + rnorm(length(`1`))
+  `2` = `1` * 2 + rnorm(length(`1`))
 )
 
-## 提取名称为1的变量（不可以用annoying[[`1`]]）
+# extracting the variable called 1
 annoying$`1`
-## 绘制表示变量1和变量2关系的散点图
+
+# Plotting a scatterplot of `1` vs `2`
 ggplot(annoying,mapping = aes(x = `1`, y = `2`)) + 
   geom_point() + 
-  geom_smooth(method = "lm",se = F)
-## 创建一个名称为3的新列，其值为列2除以列1
+  geom_smooth(method = "lm", se = FALSE)
+
+# Creating a new column called 3 which is `2` divided by `1`
 mutate(annoying,`3`= `2`/`1`)
-## 将前两列重新命名为one、two
+
+# Renaming the columns to `one`, `two` and `three`
 (annoying <- rename(annoying,one = `1`, two = `2`))
 ```
 
