@@ -34,20 +34,21 @@ base R中有 3 个最主要的数据导入函数：
 我们使用本地数据集`hotdogs.txt`简要说明这些函数的用法，它没有列名，且用空格分隔：
 ```{r}
 ## 分别使用三个函数
-hotdogs1 <- read.table("data/hotdogs.txt",sep = "\t")
+hotdogs1 <- read.table("data/hotdogs.txt", sep = "\t")
 head(hotdogs1)
 
-hotdogs2 <- read.csv("data/hotdogs.txt",sep = "\t",header = F)
+hotdogs2 <- read.csv("data/hotdogs.txt", sep = "\t", header = F)
 head(hotdogs2)
 
-hotdogs2 <- read.delim("data/hotdogs.txt",header = F)
+hotdogs2 <- read.delim("data/hotdogs.txt", header = F)
 head(hotdogs2)
 ```
 
 
 设定 `col.names` 和 `colClasses`：
 ```{r}
-hotdogs <- read.delim("data\\hotdogs.txt", header = FALSE, 
+hotdogs <- read.delim("data\\hotdogs.txt", 
+                      header = FALSE, 
                        col.names = c("type", "calories", "sodium"),
                        colClasses = c("factor", "NULL", "numeric"))
 head(hotdogs)
@@ -64,8 +65,8 @@ knitr::include_graphics("images/6.png")
 
 **readr** 是 tidyverse 的核心 R 包之一，作用是将平面数据(flat files)快速读取至 R 中，并转换为易用的 tibble 格式。相对于 base R 中有的数据读取函数，它有以下的优点：  
 
-* 一般来说，它们比基础模块中的函数速度更快（约快 10 倍）。如果只考虑读取速度的话，还可以尝试使用第 \@ref(data-table) 章中的 `fread()` 或第 \@ref(vroom) 章中的 `vroom()`  
-* 它们可以生成 `tibble`，而且不会将字符串向量转换为因子，不使用行名称，也不会随意改动列名称。这些都是使用 base R 时比较烦人的事情  
+* 一般来说，它们比基础模块中的函数速度更快（约快 10 倍）。第 \@ref(introduction-to-data-table) 章中的 `fread()` 和第 \@ref(vroom-fast-reading-of-delimited-files) 章中的 `vroom()` 提供了更快速的数据读取  
+* 它们可以生成 `tibble`，而且不会将字符串向量转换为因子，不使用行名称，也不会随意改动列名称，这些都是 Base R 读取的痛点
 * 它们更容易重复使用。base R 中的函数会继承操作系统的功能，并依赖环境变量，因此，可以在你的计算机上正常运行的代码未必适用于他人的计算机  
 
 **主要函数有**：  

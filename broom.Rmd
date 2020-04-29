@@ -2,6 +2,11 @@
 
 # broom: Tidy representation of models
 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+
 ```{r}
 library(broom)
 ```

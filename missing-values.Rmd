@@ -2,10 +2,11 @@
 
 # Dealing with missing values  
 
-```{r}
-library(tidylog)
-```
 
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
 
 
 ## Exploring  {#explore-missing}  

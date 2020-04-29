@@ -1,6 +1,9 @@
 
 # Categorical data (facotr)
 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
 ## Frequency and contingency table
 
 

@@ -3,6 +3,10 @@
 
 Either of `readr` or `vroom` aimed at reading at reading in flat, deliminated files. This chapter is a introduction on how to extract and read into R data that comes as other formats or sources, such as pdfs, office documents, google sheets and images.  
 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
 ## PDF  
 
 It is often the case that data is trapped inside pdfs, but thankfully there are ways to extract it from the pdfs. A very nice package for this task is [`pdftools`](https://github.com/ropensci/pdftools). 

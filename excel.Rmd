@@ -1,6 +1,10 @@
 
 # Excel Data  
 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
 tidyxl https://github.com/nacnudus/tidyxl
 unpivotr https://github.com/nacnudus/unpivotr  
 

@@ -8,7 +8,7 @@ library(lubridate)
 ```
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(message = TRUE)
+knitr::opts_chunk$set(message = TRUE, cache = TRUE)
 ```
 
 
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(message = TRUE)
 > “Tidy datasets are all alike, but every messy dataset is messy in its own way.” 
 > –– Hadley Wickham
 
-整洁的数据(Tidy data)是进行数据操作和 ggplot2 可视化的基础，所谓数据整理（清洗、清理），就是把 messy data 转换为 tidy data 的过程。在 tidyverse 生态中，**tidyr** 负责数据的整理和变型：
+整洁数据 (Tidy data) 是进行数据操作和 ggplot2 可视化的基础，所谓数据整理（清洗、清理），就是把 messy data 转换为 tidy data 的过程。在 tidyverse 生态中，**tidyr** 负责数据的整理和变型：
 
 
 
@@ -130,8 +130,8 @@ t2_cases_per_cap %>%
 
 
 <center>
-```{r, fig.cap="More images at https://www.garrickadenbuie.com/project/tidyexplain/#spread-and-gather", echo = FALSE}
-knitr::include_graphics("images/12.jpg")
+```{r, fig.cap="Taken from https://www.garrickadenbuie.com/project/tidyexplain/#spread-and-gather", echo = FALSE}
+knitr::include_graphics("images/12.png")
 ```
 </center>
 
