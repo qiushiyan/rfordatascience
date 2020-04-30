@@ -1,5 +1,5 @@
 
-# More on `data.table`
+# More on data.table
 
 ## dtplyr  
 

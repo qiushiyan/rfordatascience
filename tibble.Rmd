@@ -23,7 +23,7 @@ iris_tibble
 相比于 `data.frame()` ，`tibble()` 创建数据矿的附加操作要少的多：它不能改变输入的类型（例如，不会默认将字符串转变为因子)、变量的名称,也不能创建行名称。  
 
 
-有些比较旧的函数不支持`tibble`，如果遇到这种函数，可以使用 `as_data_frame()` 转换到传统的 `data.frame` 上。  
+有些比较旧的函数不支持 `tibble`，如果遇到这种函数，可以使用 `as_data_frame()` 转换到传统的 `data.frame` 上。  
 
 `add_row(.data, ..., .before = NULL, .after = NULL)` s a convenient way to add one or more rows of data to an existing data frame. `...` should be name-value pairs corresponding to column names and its value. By default new row are added after the last row.   
 
@@ -47,7 +47,7 @@ add_row(df, x = 4)
 
 ```
 
-Yet we cannoto create new variables:  
+Yet we cannot create new variables with `add_row`:  
 
 ```{r, error = TRUE}
 add_row(df, z = 0)
@@ -299,11 +299,11 @@ nycflights13::flights %>%
 ### Subsetting  
 
 
-取子集(Subsetting)时的行为又是区分`data.frame`和`tibble`很重要的一个特性。简单来讲，R中有两种取子集的系统。一种是用`[`在原子向量、列表、矩阵、数组和数据框中提取**任意数量**的元素，一种是用`[[`或者`$`在以上对象中提取**单个元素**。  
+取子集(Subsetting)时的行为又是区分 `data.frame` 和 `tibble` 很重要的一个特性。简单来讲，R中有两种取子集的系统。一种是用`[`在原子向量、列表、矩阵、数组和数据框中提取**任意数量**的元素，一种是用 `[[` 或者 `$` 在以上对象中提取**单个元素**。  
 
-对于传统的数据框`data.frame`在这两种方式上均有缺陷：  
+传统的数据框 `data.frame` 在这两种方式上均有缺陷：  
 
-* 当想用`df[, vars]`在`data.frame`中提取变量时，如果`vars`包含多个变量，则返回一个数据框；如果`vars`只包含一个变量，则返回一个向量(因为`[`不要求必须提取多于一个元素)。这种不一致性有时这会导致很多bug，因为很多函数不能作用于向量。  
+* 当想用`df[, vars]` 在 `data.frame` 中提取列时，如果`vars`包含多个变量，则返回一个数据框；如果`vars`只包含一个变量，则返回一个向量(因为`[`不要求必须提取多于一个元素)。这种不一致性有时这会导致很多bug，因为很多函数不能作用于向量。  
 
 ```{r}
 df <- data.frame(

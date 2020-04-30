@@ -3,13 +3,11 @@
 
 
 
-# Introduction to `data.table`
+# Introduction to data.table
 
-https://m-clark.github.io/data-processing-and-visualization/data_table.html   
+[`data.table`](https://rdatatable.gitlab.io/data.table/) [@R-data.table] provides a high-performance version of base R's data.frame with syntax and feature enhancements for ease of use, convenience and programming speed. Find more tutorials and articles on the website.  
 
-[`data.table`](https://rdatatable.gitlab.io/data.table/) [@R-data.table] provides a high-performance version of base R's data.frame with syntax and feature enhancements for ease of use, convenience and programming speed.   
-
-But why bother learning another data wrangling package/syntax, if we already have `dplyr` centered way of doing the same thing? Well, creators of `data.table` may provide several motivations.    
+But why bother learning another data wrangling package/syntax, if we already have the `dplyr` centered way of doing the same thing? Well, creators of `data.table` may provide several motivations.    
 
 ___
 **Concise syntax**  
@@ -40,7 +38,8 @@ Syntax in `data.table` has grown organically based on data.frame extract method.
 
 > "Like a data.frame but i and j may be expressions evaluated within the frame. i is then like base::with and j like select in base::subset. When i is itself a data.table, a join is invoked similar to base::merge."
 
-Basically plugs base R `with` and `subset` into `[.data.frame`, plus extra `merge`. Over the years it added tons of other features.
+Basically plugs base R `with` and `subset` into `[.data.frame`, plus extra `merge`. Over the years it added tons of other features.  
+
 ___
 **`data.table` is amazingly fast**
 h2o.ai has a benmark comparing various database-like tools at https://h2oai.github.io/db-benchmark/, including dplyr, pandas, spark, etc. 
@@ -66,13 +65,290 @@ As we will see, the `data.table` package itself is equipped with rich features p
 
 
 
-## Basics
+## Create a data.table
+
+There are 3 ways to create a data.table obejct:  
+
+- `data.table(x = 1, y = 2)`  
+- `as.data.table(df)` convert other data frame like objects to data.tables.  
+- `setDT(df)` convert data.frame like obejects to data.tables by reference. This menas that `df` is modified in place and we do not have to assign the results to a variable. `setDT` may have a advantage over the other two functions when you have big datasets and want to make no copy. In `data.table` parlance, all `set*` functions change their input by reference. 
+
+```{r}
+dt = data.table(
+  id = c("b","b","b","a","a","c"),
+  a = 1:6,
+  b = 7:12,
+  c = 13:18
+)
+
+dt
+class(dt)
+```
+
+When creating a `data.table` object: 
+
+- Unlike data.frames, columns of character type are never converted to factors by default.  
+- Row numbers are printed with a : in order to visually separate the row number from the first column.  
+- When the number of rows to print exceeds the global option `datatable.print.nrows` (default = 100, I changed to 30 in this book), it automatically prints only the top 5 and bottom 5 rows 
+- data.table doesn’t set or use row names  
+
+### Data I/O in `data.table`
+
+There is actually another way of creating data.table, and that's directly reading in your data as one with `fread()`. `fread` is faster and more convenient than its base R counterpart `read.table` \@ref(importing-data-in-base-R) for delimited files. All controls such as `sep`, `colClasses` and `nrows` are automatically detected. 
+
+
+```{r}
+# Reads text input directly :
+fread("A,B\n1,2\n3,4")
+
+# Reads pasted input directly :
+fread("A,B
+1,2
+3,4
+")
+
+# Finds the first data line automatically :
+fread("
+This is perhaps a banner line or two or ten.
+A,B
+1,2
+3,4
+")
+
+# Detects whether column names are present automatically :
+fread("
+1,2
+3,4
+")
+```
+
+There are some limitations to `fread()`, though. Dates are read as character currently. But they can be converted afterwards anyway.
+
+```{r}
+class(fread("date, value\n, 2020-4-29, 1")$date)
+```
+
+Similarly, `fwrite` is a much faster csv writer than `write.csv`. 
+
+
+
+## Filter rows in i
+
+`i`, `j`, `by` are 3 key positions to manipulate a data.table. 
+```{r}
+dt[i, j, by]
+
+##   R:                 i                 j        by
+## SQL:  where | order by   select | update  group by
+```
+
+`i` is similar to `dplyr::filter()`, expecting a boolean expression  
+
+```{r}
+# https://raw.githubusercontent.com/Rdatatable/data.table/master/vignettes/flights14.csv
+flights <- fread("../data/flights.csv")
+flights
+
+
+# all the flights with “JFK” as the origin airport in the month of June  
+ans <- flights[origin == "JFK" & month == 6]
+head(ans)
+```
+
+When there is no condition, row indices are used to subset corresponding columns 
+
+```{r}
+ans[1:10]
+```
+
+There is a major difference between how `data.table` and regular data frames treat this kind of index, `df[1:3]` will return a 3-**column** subset `df`, not the first 3 rows.  
+
+The same function for `dplyr::arrange` is also achieved by `i`:  
+
+```{r}
+# sort  first by column origin in ascending order, and then by dest in descending order:
+flights[order(origin, -dest)]
+```
+
+
+
+### Helpers for filtering
+
+- `%chin%`: look for if a character is in an vector, faster than `%in%`  
+- `%between%`: if belongs to a range, `x %between% c(a, b)` is equivalent to `dplyr::between(x, a, b)`   
+- `%like%`: use regualr expression to detect patterns, `x %like% pattern` is equivalent to `stringr::str_detect(x, pattern)` or `grepl(x, pattern)`  
+
+These operators are optimized to run in parallel whereever possible.  
+
+## Select columns and compute in j
+
+```{r}
+flights[, arr_delay]
+```
+
+You may recall from Section \@ref(subsetting) that whenever you are trying to select colulmns inside a `tibble`, it always returns a `tibble` regardless of the number of rows. **This is not the case for `data.table`**.  We wrap the variables (column names) within `list()`, which ensures that a `data.table` is returned. In case of a single column name, not wrapping with `list()` returns a vector instead, as seen in `flights[, arr_delay]`. `.()` is a concise alias to `list()`  
+
+```{r}
+flights[, .(arr_delay, dep_delay)]
+```
+
+I prefer `list()` in most cases to `.()` bacause of its notability. If you prefer using quoted strings for column selection, that's also supported:  
+
+```{r}
+flights[, c("arr_delay", "dep_delay")]
+```
+
+
+One can select columns in a character using the `..` prefix, much like the `!!` operator for `dplyr::select`
+
+```{r}
+select_cols <- c("arr_delay", "dep_delay")
+flights[, ..select_cols]
+# this also works
+flights[, select_cols, with = FALSE]
+```
+
+
+
+`j` can be also used for renaming  
+
+```{r}
+flights[, list(delay_arr = arr_delay, delay_dep = dep_delay)]
+```
+
+
+`data.table`’s `j`can handle more than just selecting columns - it can handle expressions, i.e., computing on columns as `dplyr::mutate()` and `dplyr::summarize()` does. `data.table` do not make a distinct between element-wise function or summary function. In the latter case, a scalar (or a 1-element vector if you prefer) is returned
+```{r}
+# how many flights did not delay? 
+flights[, sum(arr_delay + dep_delay < 0)]
+```
+
+To retain `data.table`, use `list()`  
+
+```{r}
+flights[, list(num_no_delay = sum(arr_delay + dep_delay < 0))]
+```
+
+
+Thre is an alternative :
+```{r}
+flights[arr_delay + dep_delay < 0, list(.N)]
+```
+
+
+`.N` is a special built-in variable that holds the number of observations in the current group, with defualt column name `N`. It is particularly useful when combined with by as we’ll see in the next section. In the absence of group by operations, it simply returns the number of rows in the subset.  Compared to `nrow()`, `.N` is more efficient and fast.  
+
+## Group by `by` and aggregation
+
+We know `.N` is a special variable that holds the number of rows in the current group. Grouping by origin obtains the number of rows, `.N`, for each group specied in `by`.  
+
+```{r}
+flights[, list(carrier_count = .N), by = list(carrier)]
+```
+
+
+`by` also accepts a character vector of column names. This is particularly useful for coding programmatically. When there’s only one column or expression to refer to in j and by, we can drop the `list()` or `.()` notation.  We could instead do:
+
+
+```{r}
+flights[, list(carrier_count = .N), by = carrier]
+```
+
+Answer the following questions combinig `i`, `j`and `by`. 
+
+```{exercise}
+How can we get the total number of trips for each origin, dest pair for carrier code "AA"?
+```
+
+
+```{r}
+flights[carrier == "AA", list(num_trips = .N), by = origin]
+```
+
+```{exercise}
+How can we get the average arrival and departure delay for each orig, dest pair for each month for carrier code "AA"?
+```
+
+
+```{r}
+# be mindful of group order 
+flights[carrier == "AA", 
+        list(mean_arr_delay = mean(arr_delay, na.rm = TRUE), 
+             mean_dep_delay = mean(dep_delay, na.rm = TRUE)),
+        by = list(origin, dest, month)]
+```
+
+`by` can accept expressions. As an example, if we would like to find out how many flights started late but arrived early (or on time), started and arrived late etc…  
+
+```{r}
+flights[, list(.N), by = list(arr_delay > 0, dep_delay > 0)]
+```
+
+
+`by` has a variant `keyby` that order the `data.table` automatically with the grouping variable. In fact, due to the internal implementation of by first requiring a sort before recovering the original table’s order, `keyby` is typically faster than `by` because it doesn’t require this second step.   
+
+```{r}
+flights[carrier == "AA",
+        list(mean(arr_delay), mean(dep_delay)),
+        keyby = list(origin, dest, month)]
+```
+
+### Chaining  
+
+
+Chaining allows us to use multiple brackes `[]` sequentially, without resorting to intermidiate variables. Recall the exmaple where we count records per `orgin` and per `dest`. What if we want the resulting `data.table` to be ordered by the count? `flights[order(-N), .N, by = .(origin, dest)]` will not work, because `N` is not created during the evaluation of `i`. We can do one better and avoid intermediate assignment to a temporary variable altogether by chaining expressions.
+```{r}
+flights[, .N, by = .(origin, dest)][order(-N)]
+```
+
+We can tack expressions one after another, forming a chain of operations, i.e., `DT[ ... ][ ... ][ ... ]`. Or you can also chain them vertically:
+```{r, eval = FALSE}
+dt[...
+   ][...
+   ][...
+     ][...
+       ]
+```
+
+### Multiple columns in `j`: `.SD`
+
+`dplyr` 1.0.0 provides `across()` to easily perform calculations on multiple columns. But this is possible in `data.table` long time ago. The special variable `.SD` contains all the columns except the grouping columns by default, as if `.SD` is sub data frame of the left columns.
+
+```{r}
+# mean of all columns except the grouping variable
+dt[, map(.SD, mean), keyby = id]
+```
+
+`.SD` holds the rows corresponding to columns a, b and c for that group. We compute the `mean()` on each of these columns using the `purrr::map()`, which returns a list. As noted before, `data.table` has no dependency. But this does not mean that it can not partner with existing tools. If you prefer base R, you can use 
+
+```{r}
+dt[, lapply(.SD, mean), by = id]
+```
+
+We can even print out `.SD`  
+
+```{r}
+dt[, print(.SD), by = id]
+```
+
+
+
+The argument `.SDcols` allows for further control over what columns are in `.SD`.  
+
+```{r}
+dt[, map(.SD, mean), by = id, .SDcols = a:b]
+dt[, map(.SD, mean), by = id, .SDcols = !(a:b)]
+```
 
 
 
 
+```{exercise}
+How can we return the first two rows for each month in flights?
+```
 
 
-
-
+```{r}
+flights[, head(.SD, 2), by = month]
+```
 
