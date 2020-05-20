@@ -1,8 +1,4 @@
 
-   
-
-
-
 # Introduction to data.table
 
 [`data.table`](https://rdatatable.gitlab.io/data.table/) [@R-data.table] provides a high-performance version of base R's data.frame with syntax and feature enhancements for ease of use, convenience and programming speed. Find more tutorials and articles on the website.  
@@ -15,10 +11,10 @@ ___
 `dplyr`'s design philosophy is to provide Enlgish-like verbs that do one thing at a time and to it well, so it is very user-friendly to new R users or non-programmers. But this requires more steps and code. The following chunks do the same thing in `dplyr` and `data.table` respectively
 
 ```{r}
-library(dplyr)
 library(data.table)
 
 
+starwars <- dplyr::starwars
 starwars %>% 
   filter(species == "Human") %>% 
   group_by(homeworld) %>% 
@@ -26,7 +22,7 @@ starwars %>%
 
 
 starwars_dt <- as.data.table(starwars)
-starwars_dt[species == "Human", .(mean_height = mean(height)), by = homeworld]
+starwars_dt[species == "Human", list(mean_height = mean(height)), by = homeworld]
 ```
 
 When using `data.table` for data.manipulation, think in terms of 
@@ -38,7 +34,6 @@ Syntax in `data.table` has grown organically based on data.frame extract method.
 
 > "Like a data.frame but i and j may be expressions evaluated within the frame. i is then like base::with and j like select in base::subset. When i is itself a data.table, a join is invoked similar to base::merge."
 
-Basically plugs base R `with` and `subset` into `[.data.frame`, plus extra `merge`. Over the years it added tons of other features.  
 
 ___
 **`data.table` is amazingly fast**
@@ -135,7 +130,7 @@ Similarly, `fwrite` is a much faster csv writer than `write.csv`.
 ## Filter rows in i
 
 `i`, `j`, `by` are 3 key positions to manipulate a data.table. 
-```{r}
+```{r, eval = FALSE}
 dt[i, j, by]
 
 ##   R:                 i                 j        by
