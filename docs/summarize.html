@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>1.4 summarize() | R for data science: tidyverse and beyond</title>
+  <meta name="description" content="1.4 summarize() | R for data science: tidyverse and beyond" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="1.4 summarize() | R for data science: tidyverse and beyond" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="enixam/rfordatascience" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="1.4 summarize() | R for data science: tidyverse and beyond" />
+  
+  
+  
+
+<meta name="author" content="Maxine" />
+
+
+<meta name="date" content="2020-05-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="select.html"/>
+<link rel="next" href="group-by-combined-with-other-functions.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/jsoneditor-5.25.6/jsoneditor.min.css" rel="stylesheet" />
+<script src="libs/jsoneditor-5.25.6/jsoneditor.min.js"></script>
+<script src="libs/jsonedit-binding-3.0.0/jsonedit.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R4DS: tidyverse and beyond</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a></li>
+<li class="part"><span><b>I R for data science</b></span></li>
+<li class="chapter" data-level="1" data-path="dplyr-data-transformation.html"><a href="dplyr-data-transformation.html"><i class="fa fa-check"></i><b>1</b> dplyr: Data transformation</a><ul>
+<li class="chapter" data-level="1.1" data-path="filter.html"><a href="filter.html"><i class="fa fa-check"></i><b>1.1</b> <code>filter()</code></a><ul>
+<li class="chapter" data-level="1.1.1" data-path="filter.html"><a href="filter.html#operators"><i class="fa fa-check"></i><b>1.1.1</b> Operators</a></li>
+<li class="chapter" data-level="1.1.2" data-path="filter.html"><a href="filter.html#missing-values"><i class="fa fa-check"></i><b>1.1.2</b> Missing values</a></li>
+<li class="chapter" data-level="1.1.3" data-path="filter.html"><a href="filter.html#exercises"><i class="fa fa-check"></i><b>1.1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.1.4" data-path="filter.html"><a href="filter.html#slice"><i class="fa fa-check"></i><b>1.1.4</b> <code>slice()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="arrange.html"><a href="arrange.html"><i class="fa fa-check"></i><b>1.2</b> <code>arrange()</code></a><ul>
+<li class="chapter" data-level="1.2.1" data-path="arrange.html"><a href="arrange.html#exercises-1"><i class="fa fa-check"></i><b>1.2.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="select.html"><a href="select.html"><i class="fa fa-check"></i><b>1.3</b> <code>select()</code></a><ul>
+<li class="chapter" data-level="1.3.1" data-path="select.html"><a href="select.html#练习"><i class="fa fa-check"></i><b>1.3.1</b> 练习</a></li>
+<li class="chapter" data-level="1.3.2" data-path="select.html"><a href="select.html#常用创建函数"><i class="fa fa-check"></i><b>1.3.2</b> 常用创建函数</a></li>
+<li class="chapter" data-level="1.3.3" data-path="select.html"><a href="select.html#exercises-2"><i class="fa fa-check"></i><b>1.3.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="summarize.html"><a href="summarize.html"><i class="fa fa-check"></i><b>1.4</b> <code>summarize()</code></a><ul>
+<li class="chapter" data-level="1.4.1" data-path="summarize.html"><a href="summarize.html#missing-values-in-summarize"><i class="fa fa-check"></i><b>1.4.1</b> Missing values in <code>summarize()</code></a></li>
+<li class="chapter" data-level="1.4.2" data-path="summarize.html"><a href="summarize.html#计数函数"><i class="fa fa-check"></i><b>1.4.2</b> 计数函数</a></li>
+<li class="chapter" data-level="1.4.3" data-path="summarize.html"><a href="summarize.html#逻辑值的计数和比例sumx-10-和-meany-0"><i class="fa fa-check"></i><b>1.4.3</b> 逻辑值的计数和比例:<code>sum(x &gt; 10) 和 mean(y == 0)</code></a></li>
+<li class="chapter" data-level="1.4.4" data-path="summarize.html"><a href="summarize.html#其他常用的摘要函数"><i class="fa fa-check"></i><b>1.4.4</b> 其他常用的摘要函数</a></li>
+<li class="chapter" data-level="1.4.5" data-path="summarize.html"><a href="summarize.html#多个分组变量的消耗"><i class="fa fa-check"></i><b>1.4.5</b> 多个分组变量的消耗</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="group-by-combined-with-other-functions.html"><a href="group-by-combined-with-other-functions.html"><i class="fa fa-check"></i><b>1.5</b> <code>group_by()</code> combined with other functions</a></li>
+<li class="chapter" data-level="1.6" data-path="dplyr-exercise.html"><a href="dplyr-exercise.html"><i class="fa fa-check"></i><b>1.6</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="tibble-modern-data-frames.html"><a href="tibble-modern-data-frames.html"><i class="fa fa-check"></i><b>2</b> tibble: Modern data frames</a><ul>
+<li class="chapter" data-level="2.1" data-path="tibble-intro.html"><a href="tibble-intro.html"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html"><i class="fa fa-check"></i><b>2.2</b> Comparing tibble and data.frame</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#creating"><i class="fa fa-check"></i><b>2.2.1</b> Creating</a></li>
+<li class="chapter" data-level="2.2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#printing"><i class="fa fa-check"></i><b>2.2.2</b> Printing</a></li>
+<li class="chapter" data-level="2.2.3" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#subsetting"><i class="fa fa-check"></i><b>2.2.3</b> Subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html"><i class="fa fa-check"></i><b>2.3</b> Comparing two data frames (tibbles)</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#dplyrall_equal"><i class="fa fa-check"></i><b>2.3.1</b> <code>dplyr::all_equal()</code></a></li>
+<li class="chapter" data-level="2.3.2" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#janitorcompare_df_cols"><i class="fa fa-check"></i><b>2.3.2</b> <code>janitor::compare_df_cols()</code></a></li>
+<li class="chapter" data-level="2.3.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#vetralike"><i class="fa fa-check"></i><b>2.3.3</b> <code>vetr::alike()</code></a></li>
+<li class="chapter" data-level="2.3.4" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#diffdfdiffdf"><i class="fa fa-check"></i><b>2.3.4</b> <code>diffdf::diffdf()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="tibble-exercise.html"><a href="tibble-exercise.html"><i class="fa fa-check"></i><b>2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="readr-data-import.html"><a href="readr-data-import.html"><i class="fa fa-check"></i><b>3</b> readr: Data import</a><ul>
+<li class="chapter" data-level="3.1" data-path="importing-data-in-base-r.html"><a href="importing-data-in-base-r.html"><i class="fa fa-check"></i><b>3.1</b> Importing data in base R</a></li>
+<li class="chapter" data-level="3.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html"><i class="fa fa-check"></i><b>3.2</b> Importing data in <code>readr</code></a><ul>
+<li class="chapter" data-level="3.2.1" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#introduction"><i class="fa fa-check"></i><b>3.2.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#writing-data"><i class="fa fa-check"></i><b>3.2.2</b> Writing data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#exercises-3"><i class="fa fa-check"></i><b>3.2.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html"><i class="fa fa-check"></i><b>3.3</b> Parsing a vector</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#numeric"><i class="fa fa-check"></i><b>3.3.1</b> Numeric</a></li>
+<li class="chapter" data-level="3.3.2" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#character"><i class="fa fa-check"></i><b>3.3.2</b> Character</a></li>
+<li class="chapter" data-level="3.3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#factor"><i class="fa fa-check"></i><b>3.3.3</b> Factor</a></li>
+<li class="chapter" data-level="3.3.4" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#date-and-time"><i class="fa fa-check"></i><b>3.3.4</b> Date and time</a></li>
+<li class="chapter" data-level="3.3.5" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#exercises-4"><i class="fa fa-check"></i><b>3.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html"><i class="fa fa-check"></i><b>3.4</b> Parsing a file</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parsing-a-file.html"><a href="parsing-a-file.html#strategies"><i class="fa fa-check"></i><b>3.4.1</b> Strategies</a></li>
+<li class="chapter" data-level="3.4.2" data-path="parsing-a-file.html"><a href="parsing-a-file.html#possible-challenges"><i class="fa fa-check"></i><b>3.4.2</b> Possible challenges</a></li>
+<li class="chapter" data-level="3.4.3" data-path="parsing-a-file.html"><a href="parsing-a-file.html#other-tips"><i class="fa fa-check"></i><b>3.4.3</b> Other tips</a></li>
+<li class="chapter" data-level="3.4.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-dealing-with-metadata"><i class="fa fa-check"></i><b>3.4.4</b> Example: Dealing with metadata</a></li>
+<li class="chapter" data-level="3.4.5" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-multi-row-headers"><i class="fa fa-check"></i><b>3.4.5</b> Example: multi-row headers</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="readxl.html"><a href="readxl.html"><i class="fa fa-check"></i><b>3.5</b> <code>readxl</code></a><ul>
+<li class="chapter" data-level="3.5.1" data-path="readxl.html"><a href="readxl.html#multi-row-headers-in-excel"><i class="fa fa-check"></i><b>3.5.1</b> Multi-row headers in Excel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="lubridate-dates-and-times.html"><a href="lubridate-dates-and-times.html"><i class="fa fa-check"></i><b>4</b> lubridate: Dates and times</a><ul>
+<li class="chapter" data-level="4.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html"><i class="fa fa-check"></i><b>4.1</b> Creating dates and times</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-strings"><i class="fa fa-check"></i><b>4.1.1</b> From strings</a></li>
+<li class="chapter" data-level="4.1.2" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-individual-components"><i class="fa fa-check"></i><b>4.1.2</b> From individual components</a></li>
+<li class="chapter" data-level="4.1.3" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-other-times"><i class="fa fa-check"></i><b>4.1.3</b> From other times</a></li>
+<li class="chapter" data-level="4.1.4" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#exercises-5"><i class="fa fa-check"></i><b>4.1.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="date-time-components.html"><a href="date-time-components.html"><i class="fa fa-check"></i><b>4.2</b> Date-time components</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="date-time-components.html"><a href="date-time-components.html#accessing-components"><i class="fa fa-check"></i><b>4.2.1</b> Accessing components</a></li>
+<li class="chapter" data-level="4.2.2" data-path="date-time-components.html"><a href="date-time-components.html#rounding"><i class="fa fa-check"></i><b>4.2.2</b> Rounding</a></li>
+<li class="chapter" data-level="4.2.3" data-path="date-time-components.html"><a href="date-time-components.html#setting-components"><i class="fa fa-check"></i><b>4.2.3</b> Setting components</a></li>
+<li class="chapter" data-level="4.2.4" data-path="date-time-components.html"><a href="date-time-components.html#exercises-6"><i class="fa fa-check"></i><b>4.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="time-span.html"><a href="time-span.html"><i class="fa fa-check"></i><b>4.3</b> Time span</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="time-span.html"><a href="time-span.html#时期-durations"><i class="fa fa-check"></i><b>4.3.1</b> 时期 Durations</a></li>
+<li class="chapter" data-level="4.3.2" data-path="time-span.html"><a href="time-span.html#阶段-periods"><i class="fa fa-check"></i><b>4.3.2</b> 阶段 Periods</a></li>
+<li class="chapter" data-level="4.3.3" data-path="time-span.html"><a href="time-span.html#区间-intervals"><i class="fa fa-check"></i><b>4.3.3</b> 区间 Intervals</a></li>
+<li class="chapter" data-level="4.3.4" data-path="time-span.html"><a href="time-span.html#conclusion"><i class="fa fa-check"></i><b>4.3.4</b> Conclusion</a></li>
+<li class="chapter" data-level="4.3.5" data-path="time-span.html"><a href="time-span.html#exercises-7"><i class="fa fa-check"></i><b>4.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="hms.html"><a href="hms.html"><i class="fa fa-check"></i><b>4.4</b> hms</a></li>
+<li class="chapter" data-level="4.5" data-path="dint.html"><a href="dint.html"><i class="fa fa-check"></i><b>4.5</b> dint</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="dint.html"><a href="dint.html#creation"><i class="fa fa-check"></i><b>4.5.1</b> Creation</a></li>
+<li class="chapter" data-level="4.5.2" data-path="dint.html"><a href="dint.html#arithmetic-and-sequences"><i class="fa fa-check"></i><b>4.5.2</b> Arithmetic and Sequences</a></li>
+<li class="chapter" data-level="4.5.3" data-path="dint.html"><a href="dint.html#accessors"><i class="fa fa-check"></i><b>4.5.3</b> Accessors</a></li>
+<li class="chapter" data-level="4.5.4" data-path="dint.html"><a href="dint.html#formatting"><i class="fa fa-check"></i><b>4.5.4</b> Formatting</a></li>
+<li class="chapter" data-level="4.5.5" data-path="dint.html"><a href="dint.html#labelling-functions-in-ggplot2"><i class="fa fa-check"></i><b>4.5.5</b> Labelling functions in ggplot2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="forcats-factor.html"><a href="forcats-factor.html"><i class="fa fa-check"></i><b>5</b> forcats: factor</a><ul>
+<li class="chapter" data-level="5.1" data-path="factor-basics.html"><a href="factor-basics.html"><i class="fa fa-check"></i><b>5.1</b> Factor basics</a></li>
+<li class="chapter" data-level="5.2" data-path="sorting.html"><a href="sorting.html"><i class="fa fa-check"></i><b>5.2</b> Sorting</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="sorting.html"><a href="sorting.html#sorting-by-frequency-appearance-or-numeric-order"><i class="fa fa-check"></i><b>5.2.1</b> Sorting by frequency, appearance, or numeric order</a></li>
+<li class="chapter" data-level="5.2.2" data-path="sorting.html"><a href="sorting.html#sorting-by-another-variable"><i class="fa fa-check"></i><b>5.2.2</b> Sorting by another variable</a></li>
+<li class="chapter" data-level="5.2.3" data-path="sorting.html"><a href="sorting.html#sorting-manually"><i class="fa fa-check"></i><b>5.2.3</b> Sorting manually</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html"><i class="fa fa-check"></i><b>5.3</b> Chaninge number of levels</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#lumping-levels"><i class="fa fa-check"></i><b>5.3.1</b> Lumping levels</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#expanding-levels"><i class="fa fa-check"></i><b>5.3.2</b> Expanding levels</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#dropping-levels"><i class="fa fa-check"></i><b>5.3.3</b> Dropping levels</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#transforming-na-levels"><i class="fa fa-check"></i><b>5.3.4</b> Transforming NA levels</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="recoding.html"><a href="recoding.html"><i class="fa fa-check"></i><b>5.4</b> Recoding</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="recoding.html"><a href="recoding.html#exercises-8"><i class="fa fa-check"></i><b>5.4.1</b> Exercises</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="tidyr-tidy-data.html"><a href="tidyr-tidy-data.html"><i class="fa fa-check"></i><b>6</b> tidyr: Tidy data</a><ul>
+<li class="chapter" data-level="6.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html"><i class="fa fa-check"></i><b>6.1</b> Tidy data</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html#exercises-9"><i class="fa fa-check"></i><b>6.1.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pivoting.html"><a href="pivoting.html"><i class="fa fa-check"></i><b>6.2</b> Pivoting</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="pivoting.html"><a href="pivoting.html#pivot_longer"><i class="fa fa-check"></i><b>6.2.1</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="pivoting.html"><a href="pivoting.html#pivot_wider"><i class="fa fa-check"></i><b>6.2.2</b> <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.3" data-path="pivoting.html"><a href="pivoting.html#combining-pivot_longer-and-pivot_wider"><i class="fa fa-check"></i><b>6.2.3</b> Combining <code>pivot_longer()</code> and <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.4" data-path="pivoting.html"><a href="pivoting.html#exercises-10"><i class="fa fa-check"></i><b>6.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="nesting.html"><a href="nesting.html"><i class="fa fa-check"></i><b>6.3</b> Nesting</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="nesting.html"><a href="nesting.html#example-managing-multiple-models"><i class="fa fa-check"></i><b>6.3.1</b> Example: Managing multiple models</a></li>
+<li class="chapter" data-level="6.3.2" data-path="nesting.html"><a href="nesting.html#multi-choice"><i class="fa fa-check"></i><b>6.3.2</b> Example: Multicple hoice data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="rectangling.html"><a href="rectangling.html"><i class="fa fa-check"></i><b>6.4</b> Rectangling</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="rectangling.html"><a href="rectangling.html#github-users"><i class="fa fa-check"></i><b>6.4.1</b> Github users</a></li>
+<li class="chapter" data-level="6.4.2" data-path="rectangling.html"><a href="rectangling.html#github-repos"><i class="fa fa-check"></i><b>6.4.2</b> Github repos</a></li>
+<li class="chapter" data-level="6.4.3" data-path="rectangling.html"><a href="rectangling.html#game-of-throne-characters"><i class="fa fa-check"></i><b>6.4.3</b> Game of Throne characters</a></li>
+<li class="chapter" data-level="6.4.4" data-path="rectangling.html"><a href="rectangling.html#sharla-gelfands-discography"><i class="fa fa-check"></i><b>6.4.4</b> Sharla Gelfand’s discography</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="separate-and-untie.html"><a href="separate-and-untie.html"><i class="fa fa-check"></i><b>6.5</b> <code>separate()</code> and <code>untie()</code></a><ul>
+<li class="chapter" data-level="6.5.1" data-path="separate-and-untie.html"><a href="separate-and-untie.html#separate"><i class="fa fa-check"></i><b>6.5.1</b> <code>separate()</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="separate-and-untie.html"><a href="separate-and-untie.html#unite"><i class="fa fa-check"></i><b>6.5.2</b> <code>unite()</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="separate-and-untie.html"><a href="separate-and-untie.html#exercises-11"><i class="fa fa-check"></i><b>6.5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="tidyr-missing.html"><a href="tidyr-missing.html"><i class="fa fa-check"></i><b>6.6</b> Handling missing values</a></li>
+<li class="chapter" data-level="6.7" data-path="tidyr-case.html"><a href="tidyr-case.html"><i class="fa fa-check"></i><b>6.7</b> Case Study</a></li>
+<li class="chapter" data-level="6.8" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html"><i class="fa fa-check"></i><b>6.8</b> Miscellaneous Functions</a><ul>
+<li class="chapter" data-level="6.8.1" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#chop-and-unchop"><i class="fa fa-check"></i><b>6.8.1</b> <code>chop()</code> and <code>unchop()</code></a></li>
+<li class="chapter" data-level="6.8.2" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#uncount"><i class="fa fa-check"></i><b>6.8.2</b> <code>uncount()</code></a></li>
+<li class="chapter" data-level="6.8.3" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#exercises-12"><i class="fa fa-check"></i><b>6.8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="non-tidy.html"><a href="non-tidy.html"><i class="fa fa-check"></i><b>6.9</b> None-tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="purrr-functional-programming.html"><a href="purrr-functional-programming.html"><i class="fa fa-check"></i><b>7</b> purrr: Functional programming</a><ul>
+<li class="chapter" data-level="7.1" data-path="map-family.html"><a href="map-family.html"><i class="fa fa-check"></i><b>7.1</b> <code>map()</code> family</a></li>
+<li class="chapter" data-level="7.2" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html"><i class="fa fa-check"></i><b>7.2</b> Producing atomic vectors</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html#purrr-style-anonymous-functions"><i class="fa fa-check"></i><b>7.2.1</b> purrr-style anonymous functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="predicate-functions.html"><a href="predicate-functions.html"><i class="fa fa-check"></i><b>7.3</b> Predicate functions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="predicate-functions.html"><a href="predicate-functions.html#basics"><i class="fa fa-check"></i><b>7.3.1</b> Basics</a></li>
+<li class="chapter" data-level="7.3.2" data-path="predicate-functions.html"><a href="predicate-functions.html#map-variants"><i class="fa fa-check"></i><b>7.3.2</b> Map variants</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="group-functions.html"><a href="group-functions.html"><i class="fa fa-check"></i><b>7.4</b> group functions</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="group-functions.html"><a href="group-functions.html#group_mapgroup_modify"><i class="fa fa-check"></i><b>7.4.1</b> group_map、group_modify</a></li>
+<li class="chapter" data-level="7.4.2" data-path="group-functions.html"><a href="group-functions.html#group_nestgroup_splitgroup_keysgroup_data"><i class="fa fa-check"></i><b>7.4.2</b> group_nest、group_split、group_keys、group_data</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="other-useful-tools.html"><a href="other-useful-tools.html"><i class="fa fa-check"></i><b>7.5</b> Other useful tools</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="other-useful-tools.html"><a href="other-useful-tools.html#imap"><i class="fa fa-check"></i><b>7.5.1</b> <code>imap()</code></a></li>
+<li class="chapter" data-level="7.5.2" data-path="other-useful-tools.html"><a href="other-useful-tools.html#adverbs"><i class="fa fa-check"></i><b>7.5.2</b> adverbs</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="relational-data.html"><a href="relational-data.html"><i class="fa fa-check"></i><b>8</b> Relational data</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="mutating-joins.html"><a href="mutating-joins.html"><i class="fa fa-check"></i><b>8.2</b> Mutating joins</a></li>
+<li class="chapter" data-level="8.3" data-path="filtering-join.html"><a href="filtering-join.html"><i class="fa fa-check"></i><b>8.3</b> Filtering join</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="broom-tidy-representation-of-models.html"><a href="broom-tidy-representation-of-models.html"><i class="fa fa-check"></i><b>9</b> broom: Tidy representation of models</a><ul>
+<li class="chapter" data-level="9.1" data-path="viz-many-models.html"><a href="viz-many-models.html"><i class="fa fa-check"></i><b>9.1</b> Visualizing many models</a></li>
+<li class="chapter" data-level="9.2" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9.2</b> Examples</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="examples.html"><a href="examples.html#pca"><i class="fa fa-check"></i><b>9.2.1</b> PCA</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="broomextra.html"><a href="broomextra.html"><i class="fa fa-check"></i><b>9.3</b> broomExtra</a></li>
+<li class="chapter" data-level="9.4" data-path="ggfortify.html"><a href="ggfortify.html"><i class="fa fa-check"></i><b>9.4</b> ggfortify</a></li>
+</ul></li>
+<li class="part"><span><b>II Importing</b></span></li>
+<li class="chapter" data-level="10" data-path="vroom-fast-reading-of-delimited-files.html"><a href="vroom-fast-reading-of-delimited-files.html"><i class="fa fa-check"></i><b>10</b> vroom: Fast reading of delimited files</a></li>
+<li class="chapter" data-level="11" data-path="reading-in-data-from-other-formats.html"><a href="reading-in-data-from-other-formats.html"><i class="fa fa-check"></i><b>11</b> Reading in data from other formats</a><ul>
+<li class="chapter" data-level="11.1" data-path="pdf.html"><a href="pdf.html"><i class="fa fa-check"></i><b>11.1</b> PDF</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="pdf.html"><a href="pdf.html#scraping-pdf-data"><i class="fa fa-check"></i><b>11.1.1</b> Scraping pdf data</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="office-documents.html"><a href="office-documents.html"><i class="fa fa-check"></i><b>11.2</b> Office documents</a></li>
+<li class="chapter" data-level="11.3" data-path="google-sheet.html"><a href="google-sheet.html"><i class="fa fa-check"></i><b>11.3</b> Google sheet</a></li>
+<li class="chapter" data-level="11.4" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i><b>11.4</b> Images</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="useful-apis.html"><a href="useful-apis.html"><i class="fa fa-check"></i><b>12</b> Useful APIs</a><ul>
+<li class="chapter" data-level="12.1" data-path="wdi.html"><a href="wdi.html"><i class="fa fa-check"></i><b>12.1</b> WDI</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="wdi.html"><a href="wdi.html#wdisearch"><i class="fa fa-check"></i><b>12.1.1</b> <code>WDIsearch()</code></a></li>
+<li class="chapter" data-level="12.1.2" data-path="wdi.html"><a href="wdi.html#wdi-1"><i class="fa fa-check"></i><b>12.1.2</b> <code>WDI</code></a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="ipumsr.html"><a href="ipumsr.html"><i class="fa fa-check"></i><b>12.2</b> ipumsr</a></li>
+</ul></li>
+<li class="part"><span><b>III Exploring and Wrangling</b></span></li>
+<li class="chapter" data-level="13" data-path="data-summary.html"><a href="data-summary.html"><i class="fa fa-check"></i><b>13</b> Data summary</a><ul>
+<li class="chapter" data-level="13.1" data-path="skimr.html"><a href="skimr.html"><i class="fa fa-check"></i><b>13.1</b> skimr</a></li>
+<li class="chapter" data-level="13.2" data-path="visdat.html"><a href="visdat.html"><i class="fa fa-check"></i><b>13.2</b> visdat</a></li>
+<li class="chapter" data-level="13.3" data-path="summarytools.html"><a href="summarytools.html"><i class="fa fa-check"></i><b>13.3</b> summarytools</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="summarytools.html"><a href="summarytools.html#freq"><i class="fa fa-check"></i><b>13.3.1</b> <code>freq</code></a></li>
+<li class="chapter" data-level="13.3.2" data-path="summarytools.html"><a href="summarytools.html#descr"><i class="fa fa-check"></i><b>13.3.2</b> <code>descr()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="gt-and-gtsummary.html"><a href="gt-and-gtsummary.html"><i class="fa fa-check"></i><b>13.4</b> gt and gtsummary</a></li>
+<li class="chapter" data-level="13.5" data-path="naniar.html"><a href="naniar.html"><i class="fa fa-check"></i><b>13.5</b> naniar</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="janitor.html"><a href="janitor.html"><i class="fa fa-check"></i><b>14</b> Janitor</a><ul>
+<li class="chapter" data-level="14.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html"><i class="fa fa-check"></i><b>14.1</b> cleaning</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html#clean_names"><i class="fa fa-check"></i><b>14.1.1</b> <code>clean_names</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="janitor-explore.html"><a href="janitor-explore.html"><i class="fa fa-check"></i><b>14.2</b> Exploring</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="janitor-explore.html"><a href="janitor-explore.html#tabyl"><i class="fa fa-check"></i><b>14.2.1</b> <code>tabyl</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="janitor-explore.html"><a href="janitor-explore.html#get_dupes"><i class="fa fa-check"></i><b>14.2.2</b> <code>get_dupes</code></a></li>
+<li class="chapter" data-level="14.2.3" data-path="janitor-explore.html"><a href="janitor-explore.html#remove_"><i class="fa fa-check"></i><b>14.2.3</b> <code>remove_</code></a></li>
+<li class="chapter" data-level="14.2.4" data-path="janitor-explore.html"><a href="janitor-explore.html#round_half_up"><i class="fa fa-check"></i><b>14.2.4</b> <code>round_half_up</code></a></li>
+<li class="chapter" data-level="14.2.5" data-path="janitor-explore.html"><a href="janitor-explore.html#excel_numeric_to_date"><i class="fa fa-check"></i><b>14.2.5</b> <code>excel_numeric_to_date</code></a></li>
+<li class="chapter" data-level="14.2.6" data-path="janitor-explore.html"><a href="janitor-explore.html#top_levels"><i class="fa fa-check"></i><b>14.2.6</b> <code>top_levels</code></a></li>
+<li class="chapter" data-level="14.2.7" data-path="janitor-explore.html"><a href="janitor-explore.html#row_to_names"><i class="fa fa-check"></i><b>14.2.7</b> <code>row_to_names</code></a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Miscellaneous tools</b></span></li>
+<li class="chapter" data-level="15" data-path="advanced-relational-data.html"><a href="advanced-relational-data.html"><i class="fa fa-check"></i><b>15</b> Advanced relational data</a><ul>
+<li class="chapter" data-level="15.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html"><i class="fa fa-check"></i><b>15.1</b> fuzzyjoin</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#inexact-matching"><i class="fa fa-check"></i><b>15.1.1</b> inexact matching</a></li>
+<li class="chapter" data-level="15.1.2" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#stringdist"><i class="fa fa-check"></i><b>15.1.2</b> stringdist</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="funneljoin.html"><a href="funneljoin.html"><i class="fa fa-check"></i><b>15.2</b> funneljoin</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="funneljoin.html"><a href="funneljoin.html#after_join"><i class="fa fa-check"></i><b>15.2.1</b> <code>after_join()</code></a></li>
+<li class="chapter" data-level="15.2.2" data-path="funneljoin.html"><a href="funneljoin.html#funnel-in-one-table"><i class="fa fa-check"></i><b>15.2.2</b> funnel in one table</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="dm.html"><a href="dm.html"><i class="fa fa-check"></i><b>15.3</b> dm</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="categorical-data-facotr.html"><a href="categorical-data-facotr.html"><i class="fa fa-check"></i><b>16</b> Categorical data (facotr)</a><ul>
+<li class="chapter" data-level="16.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html"><i class="fa fa-check"></i><b>16.1</b> Frequency and contingency table</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html#frq-and-flat_table"><i class="fa fa-check"></i><b>16.1.1</b> <code>frq()</code> and <code>flat_table()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="coding.html"><a href="coding.html"><i class="fa fa-check"></i><b>16.2</b> Coding</a><ul>
+<li class="chapter" data-level="16.2.1" data-path="coding.html"><a href="coding.html#rec"><i class="fa fa-check"></i><b>16.2.1</b> <code>rec()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="cutting.html"><a href="cutting.html"><i class="fa fa-check"></i><b>16.3</b> Cutting</a><ul>
+<li class="chapter" data-level="16.3.1" data-path="cutting.html"><a href="cutting.html#chop"><i class="fa fa-check"></i><b>16.3.1</b> <code>chop()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dealing-with-missing-values.html"><a href="dealing-with-missing-values.html"><i class="fa fa-check"></i><b>17</b> Dealing with missing values</a><ul>
+<li class="chapter" data-level="17.1" data-path="explore-missing.html"><a href="explore-missing.html"><i class="fa fa-check"></i><b>17.1</b> Exploring</a><ul>
+<li class="chapter" data-level="17.1.1" data-path="explore-missing.html"><a href="explore-missing.html#naniar-1"><i class="fa fa-check"></i><b>17.1.1</b> naniar</a></li>
+<li class="chapter" data-level="17.1.2" data-path="explore-missing.html"><a href="explore-missing.html#replace-a-value-with-na"><i class="fa fa-check"></i><b>17.1.2</b> Replace a value with NA</a></li>
+<li class="chapter" data-level="17.1.3" data-path="explore-missing.html"><a href="explore-missing.html#janitor-1"><i class="fa fa-check"></i><b>17.1.3</b> janitor</a></li>
+<li class="chapter" data-level="17.1.4" data-path="explore-missing.html"><a href="explore-missing.html#sjmisc"><i class="fa fa-check"></i><b>17.1.4</b> sjmisc</a></li>
+</ul></li>
+<li class="chapter" data-level="17.2" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>17.2</b> Wrangling</a><ul>
+<li class="chapter" data-level="17.2.1" data-path="wrangling.html"><a href="wrangling.html#tidyr"><i class="fa fa-check"></i><b>17.2.1</b> tidyr</a></li>
+<li class="chapter" data-level="17.2.2" data-path="wrangling.html"><a href="wrangling.html#janitor-2"><i class="fa fa-check"></i><b>17.2.2</b> janitor</a></li>
+<li class="chapter" data-level="17.2.3" data-path="wrangling.html"><a href="wrangling.html#visdat-1"><i class="fa fa-check"></i><b>17.2.3</b> visdat</a></li>
+</ul></li>
+<li class="chapter" data-level="17.3" data-path="imputation.html"><a href="imputation.html"><i class="fa fa-check"></i><b>17.3</b> Imputation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R for data science: tidyverse and beyond</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="summarize" class="section level2">
+<h2><span class="header-section-number">1.4</span> <code>summarize()</code></h2>
+<p>最后一个核心函数是<code>summarize()</code>，它用来计算摘要统计量，可以将数据框折叠成一行：</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" title="1"><span class="co">## 计算平均出发延误时间</span></a>
+<a class="sourceLine" id="cb82-2" title="2"><span class="kw">summarize</span>(flights,<span class="dt">delay =</span> <span class="kw">mean</span>(dep_delay,<span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb82-3" title="3"><span class="co">#&gt; # A tibble: 1 x 1</span></a>
+<a class="sourceLine" id="cb82-4" title="4"><span class="co">#&gt;   delay</span></a>
+<a class="sourceLine" id="cb82-5" title="5"><span class="co">#&gt;   &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb82-6" title="6"><span class="co">#&gt; 1  12.6</span></a></code></pre></div>
+<p>如果不和 <code>group_by()</code> 一起使用，那么 <code>summarize()</code> 也就没什么大用。<code>group_by()</code> 函数与 <code>summarize()</code> 联合使用的时候可以将分析单位从整个数据集更改为单个分组，接下来，在分组后的数据框上使用dplyr函数时，它们会自动应用到每个分组。更简单第说，你想从哪个层级上分析问题，就在<code>group_by</code>中对什么层级进行分组。<code>group_by() + summarize()</code>可以实现类似<code>aggregate()</code>函数的效果。
+例如，我们想知道每一天的平均出发延误时间，可以先对<code>(year,month,day)</code>进行分组，然后再使用<code>summarize()</code>：</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" title="1">flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb83-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(year,month,day) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb83-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">delay =</span> <span class="kw">mean</span>(dep_delay,<span class="dt">na.rm =</span> T))</a>
+<a class="sourceLine" id="cb83-4" title="4"><span class="co">#&gt; # A tibble: 365 x 4</span></a>
+<a class="sourceLine" id="cb83-5" title="5"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb83-6" title="6"><span class="co">#&gt;    year month   day delay</span></a>
+<a class="sourceLine" id="cb83-7" title="7"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb83-8" title="8"><span class="co">#&gt; 1  2013     1     1 11.5 </span></a>
+<a class="sourceLine" id="cb83-9" title="9"><span class="co">#&gt; 2  2013     1     2 13.9 </span></a>
+<a class="sourceLine" id="cb83-10" title="10"><span class="co">#&gt; 3  2013     1     3 11.0 </span></a>
+<a class="sourceLine" id="cb83-11" title="11"><span class="co">#&gt; 4  2013     1     4  8.95</span></a>
+<a class="sourceLine" id="cb83-12" title="12"><span class="co">#&gt; 5  2013     1     5  5.73</span></a>
+<a class="sourceLine" id="cb83-13" title="13"><span class="co">#&gt; 6  2013     1     6  7.15</span></a>
+<a class="sourceLine" id="cb83-14" title="14"><span class="co">#&gt; # ... with 359 more rows</span></a></code></pre></div>
+<p>注意，<code>summarize()</code>很不同的一点就是它会自动选择列，只在结果中显示之前在<code>group_by</code>中进行分类的变量和<code>summarize()</code>中算出的摘要统计量。</p>
+<p>这个生成的数据框只有365行，因为flights数据集中的时间跨度只有一年，(year, month, day)的唯一组合只可能有365个，这就是<code>summarize()</code>中的摘要函数的折叠效果：接受一个向量，只返回一个值，然后再用分组变量的一个组合来标识这个摘要量的对象（哪个层级上的平均值、最大值？）。从这个角度看，<code>summarize()和mutate()</code>对函数的要求恰好相反。</p>
+<p>用<code>aggregate()</code>函数的写法：</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb84-1" title="1"><span class="kw">aggregate</span>(dep_delay<span class="op">~</span>year<span class="op">+</span>month<span class="op">+</span>day,</a>
+<a class="sourceLine" id="cb84-2" title="2">          <span class="dt">FUN =</span> mean,</a>
+<a class="sourceLine" id="cb84-3" title="3">          <span class="dt">data =</span> flights) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb84-4" title="4"><span class="st">  </span><span class="kw">head</span>(<span class="dv">20</span>)</a>
+<a class="sourceLine" id="cb84-5" title="5"><span class="co">#&gt;    year month day dep_delay</span></a>
+<a class="sourceLine" id="cb84-6" title="6"><span class="co">#&gt; 1  2013     1   1    11.549</span></a>
+<a class="sourceLine" id="cb84-7" title="7"><span class="co">#&gt; 2  2013     2   1    10.853</span></a>
+<a class="sourceLine" id="cb84-8" title="8"><span class="co">#&gt; 3  2013     3   1    11.016</span></a>
+<a class="sourceLine" id="cb84-9" title="9"><span class="co">#&gt; 4  2013     4   1    12.421</span></a>
+<a class="sourceLine" id="cb84-10" title="10"><span class="co">#&gt; 5  2013     5   1     2.903</span></a>
+<a class="sourceLine" id="cb84-11" title="11"><span class="co">#&gt; 6  2013     6   1     2.778</span></a>
+<a class="sourceLine" id="cb84-12" title="12"><span class="co">#&gt; 7  2013     7   1    56.234</span></a>
+<a class="sourceLine" id="cb84-13" title="13"><span class="co">#&gt; 8  2013     8   1    34.574</span></a>
+<a class="sourceLine" id="cb84-14" title="14"><span class="co">#&gt; 9  2013     9   1     4.233</span></a>
+<a class="sourceLine" id="cb84-15" title="15"><span class="co">#&gt; 10 2013    10   1    -0.099</span></a>
+<a class="sourceLine" id="cb84-16" title="16"><span class="co">#&gt; 11 2013    11   1    13.273</span></a>
+<a class="sourceLine" id="cb84-17" title="17"><span class="co">#&gt; 12 2013    12   1     9.004</span></a>
+<a class="sourceLine" id="cb84-18" title="18"><span class="co">#&gt; 13 2013     1   2    13.859</span></a>
+<a class="sourceLine" id="cb84-19" title="19"><span class="co">#&gt; 14 2013     2   2     5.422</span></a>
+<a class="sourceLine" id="cb84-20" title="20"><span class="co">#&gt; 15 2013     3   2     8.027</span></a>
+<a class="sourceLine" id="cb84-21" title="21"><span class="co">#&gt; 16 2013     4   2     8.260</span></a>
+<a class="sourceLine" id="cb84-22" title="22"><span class="co">#&gt; 17 2013     5   2     6.389</span></a>
+<a class="sourceLine" id="cb84-23" title="23"><span class="co">#&gt; 18 2013     6   2    34.013</span></a>
+<a class="sourceLine" id="cb84-24" title="24"><span class="co">#&gt; 19 2013     7   2    19.285</span></a>
+<a class="sourceLine" id="cb84-25" title="25"><span class="co">#&gt; 20 2013     8   2    13.254</span></a></code></pre></div>
+<p>比较这两个结果，我们可以发现<code>group_by()</code>中越靠后的参数是越基本的单位，<code>group_by(year,month,day)</code>将按照 day, month, year 的顺序开始循环 ； 而 <code>aggregate()</code> 函数则正好相反</p>
+<div id="missing-values-in-summarize" class="section level3">
+<h3><span class="header-section-number">1.4.1</span> Missing values in <code>summarize()</code></h3>
+<p>在按照日期计算平均出发延误时间的例子中，使用 <code>mean()</code> 时设置了参数<code>na.rm =  T</code>，如果没有这样做，很多日期的平均延误时间将是缺失值：</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" title="1">flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb85-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(year,month,day) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb85-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">delay =</span> <span class="kw">mean</span>(dep_delay))</a>
+<a class="sourceLine" id="cb85-4" title="4"><span class="co">#&gt; # A tibble: 365 x 4</span></a>
+<a class="sourceLine" id="cb85-5" title="5"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb85-6" title="6"><span class="co">#&gt;    year month   day delay</span></a>
+<a class="sourceLine" id="cb85-7" title="7"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb85-8" title="8"><span class="co">#&gt; 1  2013     1     1    NA</span></a>
+<a class="sourceLine" id="cb85-9" title="9"><span class="co">#&gt; 2  2013     1     2    NA</span></a>
+<a class="sourceLine" id="cb85-10" title="10"><span class="co">#&gt; 3  2013     1     3    NA</span></a>
+<a class="sourceLine" id="cb85-11" title="11"><span class="co">#&gt; 4  2013     1     4    NA</span></a>
+<a class="sourceLine" id="cb85-12" title="12"><span class="co">#&gt; 5  2013     1     5    NA</span></a>
+<a class="sourceLine" id="cb85-13" title="13"><span class="co">#&gt; 6  2013     1     6    NA</span></a>
+<a class="sourceLine" id="cb85-14" title="14"><span class="co">#&gt; # ... with 359 more rows</span></a></code></pre></div>
+<p>这是因为聚合函数遵循缺失值的一般规则：如果输入中有缺失值，那么输出也是缺失值。好在所有聚合函数都有一个 <code>na.rm</code> 参数，可以在计算前出去缺失值。<br />
+在这个示例中，缺失值来源于取消的航班。我们也可以先取出取消的航班来解决却实质问题。保存去除缺失值的数据集为<code>not_cancelled</code>，以便我们可以在接下来的几个示例中继续使用：</p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb86-1" title="1">not_cancelled &lt;-<span class="st"> </span>flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb86-2" title="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(dep_delay), <span class="op">!</span><span class="kw">is.na</span>(arr_delay))</a>
+<a class="sourceLine" id="cb86-3" title="3"></a>
+<a class="sourceLine" id="cb86-4" title="4">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb86-5" title="5"><span class="st">  </span><span class="kw">group_by</span>(year,month,day) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb86-6" title="6"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">delay =</span> <span class="kw">mean</span>(dep_delay))</a>
+<a class="sourceLine" id="cb86-7" title="7"><span class="co">#&gt; # A tibble: 365 x 4</span></a>
+<a class="sourceLine" id="cb86-8" title="8"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb86-9" title="9"><span class="co">#&gt;    year month   day delay</span></a>
+<a class="sourceLine" id="cb86-10" title="10"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb86-11" title="11"><span class="co">#&gt; 1  2013     1     1 11.4 </span></a>
+<a class="sourceLine" id="cb86-12" title="12"><span class="co">#&gt; 2  2013     1     2 13.7 </span></a>
+<a class="sourceLine" id="cb86-13" title="13"><span class="co">#&gt; 3  2013     1     3 10.9 </span></a>
+<a class="sourceLine" id="cb86-14" title="14"><span class="co">#&gt; 4  2013     1     4  8.97</span></a>
+<a class="sourceLine" id="cb86-15" title="15"><span class="co">#&gt; 5  2013     1     5  5.73</span></a>
+<a class="sourceLine" id="cb86-16" title="16"><span class="co">#&gt; 6  2013     1     6  7.15</span></a>
+<a class="sourceLine" id="cb86-17" title="17"><span class="co">#&gt; # ... with 359 more rows</span></a></code></pre></div>
+</div>
+<div id="计数函数" class="section level3">
+<h3><span class="header-section-number">1.4.2</span> 计数函数</h3>
+<p><code>n()</code> 函数是一个与摘要函数 <code>summarize()</code> 配合的计数函数，它不需要任何参数，单独使用时，它计算的就是行计数：</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" title="1">flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb87-2" title="2"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb87-3" title="3"><span class="co">#&gt; # A tibble: 1 x 1</span></a>
+<a class="sourceLine" id="cb87-4" title="4"><span class="co">#&gt;        n</span></a>
+<a class="sourceLine" id="cb87-5" title="5"><span class="co">#&gt;    &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb87-6" title="6"><span class="co">#&gt; 1 336776</span></a></code></pre></div>
+<p>和 <code>group_by()</code> 联合使用时，它可以计算分组变量的每个水平上各有多少个观测：</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb88-1" title="1"><span class="co">## 每个月各有多少趟航班</span></a>
+<a class="sourceLine" id="cb88-2" title="2">flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb88-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(month) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb88-4" title="4"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>())  <span class="co">## 等价于summarize(n = sum(month))</span></a>
+<a class="sourceLine" id="cb88-5" title="5"><span class="co">#&gt; # A tibble: 12 x 2</span></a>
+<a class="sourceLine" id="cb88-6" title="6"><span class="co">#&gt;   month     n</span></a>
+<a class="sourceLine" id="cb88-7" title="7"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb88-8" title="8"><span class="co">#&gt; 1     1 27004</span></a>
+<a class="sourceLine" id="cb88-9" title="9"><span class="co">#&gt; 2     2 24951</span></a>
+<a class="sourceLine" id="cb88-10" title="10"><span class="co">#&gt; 3     3 28834</span></a>
+<a class="sourceLine" id="cb88-11" title="11"><span class="co">#&gt; 4     4 28330</span></a>
+<a class="sourceLine" id="cb88-12" title="12"><span class="co">#&gt; 5     5 28796</span></a>
+<a class="sourceLine" id="cb88-13" title="13"><span class="co">#&gt; 6     6 28243</span></a>
+<a class="sourceLine" id="cb88-14" title="14"><span class="co">#&gt; # ... with 6 more rows</span></a></code></pre></div>
+<p><code>n()</code>会把缺失值也包含到计数中，如果想要计算出非缺失值的数量，可以使用<code>sum(is.na(x))</code>。如果想要计算唯一值的数量，可以使用<code>n_distinct()</code></p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" title="1"><span class="co">## 哪个目的地有最多的航空公司？</span></a>
+<a class="sourceLine" id="cb89-2" title="2">flights <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb89-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(dest) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb89-4" title="4"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">carriers =</span> <span class="kw">n_distinct</span>(carrier)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb89-5" title="5"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(carriers))</a>
+<a class="sourceLine" id="cb89-6" title="6"><span class="co">#&gt; # A tibble: 105 x 2</span></a>
+<a class="sourceLine" id="cb89-7" title="7"><span class="co">#&gt;   dest  carriers</span></a>
+<a class="sourceLine" id="cb89-8" title="8"><span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb89-9" title="9"><span class="co">#&gt; 1 ATL          7</span></a>
+<a class="sourceLine" id="cb89-10" title="10"><span class="co">#&gt; 2 BOS          7</span></a>
+<a class="sourceLine" id="cb89-11" title="11"><span class="co">#&gt; 3 CLT          7</span></a>
+<a class="sourceLine" id="cb89-12" title="12"><span class="co">#&gt; 4 ORD          7</span></a>
+<a class="sourceLine" id="cb89-13" title="13"><span class="co">#&gt; 5 TPA          7</span></a>
+<a class="sourceLine" id="cb89-14" title="14"><span class="co">#&gt; 6 AUS          6</span></a>
+<a class="sourceLine" id="cb89-15" title="15"><span class="co">#&gt; # ... with 99 more rows</span></a></code></pre></div>
+<p>除了<code>n()</code> 以外， dplyr 提供了 4 个正式的计数函数：</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb90-1" title="1"><span class="kw">tally</span>(x, <span class="dt">wt =</span> <span class="ot">NULL</span>, <span class="dt">sort =</span> <span class="ot">FALSE</span>, <span class="dt">name =</span> <span class="st">&quot;n&quot;</span>)</a>
+<a class="sourceLine" id="cb90-2" title="2"></a>
+<a class="sourceLine" id="cb90-3" title="3"><span class="kw">count</span>(x, ..., <span class="dt">wt =</span> <span class="ot">NULL</span>, <span class="dt">sort =</span> <span class="ot">FALSE</span>, <span class="dt">name =</span> <span class="st">&quot;n&quot;</span>,</a>
+<a class="sourceLine" id="cb90-4" title="4">  <span class="dt">.drop =</span> <span class="kw">group_by_drop_default</span>(x))</a>
+<a class="sourceLine" id="cb90-5" title="5"></a>
+<a class="sourceLine" id="cb90-6" title="6"><span class="kw">add_tally</span>(x, wt, <span class="dt">sort =</span> <span class="ot">FALSE</span>, <span class="dt">name =</span> <span class="st">&quot;n&quot;</span>)</a>
+<a class="sourceLine" id="cb90-7" title="7"></a>
+<a class="sourceLine" id="cb90-8" title="8"><span class="kw">add_count</span>(x, ..., <span class="dt">wt =</span> <span class="ot">NULL</span>, <span class="dt">sort =</span> <span class="ot">FALSE</span>, <span class="dt">name =</span> <span class="st">&quot;n&quot;</span>)</a></code></pre></div>
+<p><code>x %&gt;% group_by(var) %&gt;% tally()</code> 是简化版的 <code>group_by(var) + summarize(n())</code><br />
+<code>x %&gt;% count(var)</code> 等价于 <code>x %&gt;% gruop_by(var) %&gt;% tally()</code></p>
+<p><code>x %&gt;% group_by(var) %&gt;% add_tally</code> 在 <strong>原数据集</strong> 中增添一列，记录 <code>var</code> 的不同水平的计数，等价于 <code>x %&gt;% add_count(var)</code>，注意这两个函数返回值的维度和<strong>原数据框</strong>相同(摘要数据框往往不利于细节观察)！！它们等价于 <code>group_by(var) %&gt;% mutate(n())</code></p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb91-1" title="1"><span class="co"># 无分组时，tally()即为样本数</span></a>
+<a class="sourceLine" id="cb91-2" title="2">mtcars <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-3" title="3"><span class="st">  </span><span class="kw">tally</span>()</a>
+<a class="sourceLine" id="cb91-4" title="4"><span class="co">#&gt;    n</span></a>
+<a class="sourceLine" id="cb91-5" title="5"><span class="co">#&gt; 1 32</span></a>
+<a class="sourceLine" id="cb91-6" title="6"></a>
+<a class="sourceLine" id="cb91-7" title="7"><span class="co"># tally() 的一般用法  </span></a>
+<a class="sourceLine" id="cb91-8" title="8">mtcars <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-9" title="9"><span class="st">  </span><span class="kw">group_by</span>(cyl) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-10" title="10"><span class="st">  </span><span class="kw">tally</span>()</a>
+<a class="sourceLine" id="cb91-11" title="11"><span class="co">#&gt; # A tibble: 3 x 2</span></a>
+<a class="sourceLine" id="cb91-12" title="12"><span class="co">#&gt;     cyl     n</span></a>
+<a class="sourceLine" id="cb91-13" title="13"><span class="co">#&gt;   &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb91-14" title="14"><span class="co">#&gt; 1     4    11</span></a>
+<a class="sourceLine" id="cb91-15" title="15"><span class="co">#&gt; 2     6     7</span></a>
+<a class="sourceLine" id="cb91-16" title="16"><span class="co">#&gt; 3     8    14</span></a>
+<a class="sourceLine" id="cb91-17" title="17"></a>
+<a class="sourceLine" id="cb91-18" title="18"><span class="co"># count() 等价 group_by() + tally()</span></a>
+<a class="sourceLine" id="cb91-19" title="19">mtcars <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-20" title="20"><span class="st">  </span><span class="kw">count</span>(cyl)</a>
+<a class="sourceLine" id="cb91-21" title="21"><span class="co">#&gt; # A tibble: 3 x 2</span></a>
+<a class="sourceLine" id="cb91-22" title="22"><span class="co">#&gt;     cyl     n</span></a>
+<a class="sourceLine" id="cb91-23" title="23"><span class="co">#&gt;   &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb91-24" title="24"><span class="co">#&gt; 1     4    11</span></a>
+<a class="sourceLine" id="cb91-25" title="25"><span class="co">#&gt; 2     6     7</span></a>
+<a class="sourceLine" id="cb91-26" title="26"><span class="co">#&gt; 3     8    14</span></a>
+<a class="sourceLine" id="cb91-27" title="27"></a>
+<a class="sourceLine" id="cb91-28" title="28"><span class="co"># count() 也可以在已有分组上继续分组  </span></a>
+<a class="sourceLine" id="cb91-29" title="29">mtcars <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-30" title="30"><span class="st">  </span><span class="kw">group_by</span>(gear) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-31" title="31"><span class="st">  </span><span class="kw">count</span>(carb)</a>
+<a class="sourceLine" id="cb91-32" title="32"><span class="co">#&gt; # A tibble: 11 x 3</span></a>
+<a class="sourceLine" id="cb91-33" title="33"><span class="co">#&gt; # Groups:   gear [3]</span></a>
+<a class="sourceLine" id="cb91-34" title="34"><span class="co">#&gt;    gear  carb     n</span></a>
+<a class="sourceLine" id="cb91-35" title="35"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb91-36" title="36"><span class="co">#&gt; 1     3     1     3</span></a>
+<a class="sourceLine" id="cb91-37" title="37"><span class="co">#&gt; 2     3     2     4</span></a>
+<a class="sourceLine" id="cb91-38" title="38"><span class="co">#&gt; 3     3     3     3</span></a>
+<a class="sourceLine" id="cb91-39" title="39"><span class="co">#&gt; 4     3     4     5</span></a>
+<a class="sourceLine" id="cb91-40" title="40"><span class="co">#&gt; 5     4     1     4</span></a>
+<a class="sourceLine" id="cb91-41" title="41"><span class="co">#&gt; 6     4     2     4</span></a>
+<a class="sourceLine" id="cb91-42" title="42"><span class="co">#&gt; # ... with 5 more rows</span></a>
+<a class="sourceLine" id="cb91-43" title="43"></a>
+<a class="sourceLine" id="cb91-44" title="44"><span class="co"># add_tally() is short-hand for mutate()</span></a>
+<a class="sourceLine" id="cb91-45" title="45">mtcars <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb91-46" title="46"><span class="st">  </span><span class="kw">add_tally</span>()</a>
+<a class="sourceLine" id="cb91-47" title="47"><span class="co">#&gt; # A tibble: 32 x 12</span></a>
+<a class="sourceLine" id="cb91-48" title="48"><span class="co">#&gt;     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb     n</span></a>
+<a class="sourceLine" id="cb91-49" title="49"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb91-50" title="50"><span class="co">#&gt; 1  21       6   160   110  3.9   2.62  16.5     0     1     4     4    32</span></a>
+<a class="sourceLine" id="cb91-51" title="51"><span class="co">#&gt; 2  21       6   160   110  3.9   2.88  17.0     0     1     4     4    32</span></a>
+<a class="sourceLine" id="cb91-52" title="52"><span class="co">#&gt; 3  22.8     4   108    93  3.85  2.32  18.6     1     1     4     1    32</span></a>
+<a class="sourceLine" id="cb91-53" title="53"><span class="co">#&gt; 4  21.4     6   258   110  3.08  3.22  19.4     1     0     3     1    32</span></a>
+<a class="sourceLine" id="cb91-54" title="54"><span class="co">#&gt; 5  18.7     8   360   175  3.15  3.44  17.0     0     0     3     2    32</span></a>
+<a class="sourceLine" id="cb91-55" title="55"><span class="co">#&gt; 6  18.1     6   225   105  2.76  3.46  20.2     1     0     3     1    32</span></a>
+<a class="sourceLine" id="cb91-56" title="56"><span class="co">#&gt; # ... with 26 more rows</span></a>
+<a class="sourceLine" id="cb91-57" title="57"></a>
+<a class="sourceLine" id="cb91-58" title="58"><span class="co"># add_count() is a short-hand for group_by() + add_tally()</span></a>
+<a class="sourceLine" id="cb91-59" title="59">mtcars <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-60" title="60"><span class="st">  </span><span class="kw">add_count</span>(cyl, <span class="dt">name =</span> <span class="st">&quot;count&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-61" title="61"><span class="st">  </span><span class="kw">select</span>(cyl, count)</a>
+<a class="sourceLine" id="cb91-62" title="62"><span class="co">#&gt; # A tibble: 32 x 2</span></a>
+<a class="sourceLine" id="cb91-63" title="63"><span class="co">#&gt;     cyl count</span></a>
+<a class="sourceLine" id="cb91-64" title="64"><span class="co">#&gt;   &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb91-65" title="65"><span class="co">#&gt; 1     6     7</span></a>
+<a class="sourceLine" id="cb91-66" title="66"><span class="co">#&gt; 2     6     7</span></a>
+<a class="sourceLine" id="cb91-67" title="67"><span class="co">#&gt; 3     4    11</span></a>
+<a class="sourceLine" id="cb91-68" title="68"><span class="co">#&gt; 4     6     7</span></a>
+<a class="sourceLine" id="cb91-69" title="69"><span class="co">#&gt; 5     8    14</span></a>
+<a class="sourceLine" id="cb91-70" title="70"><span class="co">#&gt; 6     6     7</span></a>
+<a class="sourceLine" id="cb91-71" title="71"><span class="co">#&gt; # ... with 26 more rows</span></a>
+<a class="sourceLine" id="cb91-72" title="72"></a>
+<a class="sourceLine" id="cb91-73" title="73"><span class="co"># add_count() is useful for groupwise filtering</span></a>
+<a class="sourceLine" id="cb91-74" title="74"><span class="co"># e.g.: show details for species that have a single member</span></a>
+<a class="sourceLine" id="cb91-75" title="75">starwars <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-76" title="76"><span class="st">  </span><span class="kw">add_count</span>(species) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb91-77" title="77"><span class="st">  </span><span class="kw">filter</span>(n <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb91-78" title="78"><span class="co">#&gt; # A tibble: 29 x 14</span></a>
+<a class="sourceLine" id="cb91-79" title="79"><span class="co">#&gt;   name  height  mass hair_color skin_color eye_color birth_year gender homeworld</span></a>
+<a class="sourceLine" id="cb91-80" title="80"><span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    </span></a>
+<a class="sourceLine" id="cb91-81" title="81"><span class="co">#&gt; 1 Gree~    173    74 &lt;NA&gt;       green      black             44 male   Rodia    </span></a>
+<a class="sourceLine" id="cb91-82" title="82"><span class="co">#&gt; 2 Jabb~    175  1358 &lt;NA&gt;       green-tan~ orange           600 herma~ Nal Hutta</span></a>
+<a class="sourceLine" id="cb91-83" title="83"><span class="co">#&gt; 3 Yoda      66    17 white      green      brown            896 male   &lt;NA&gt;     </span></a>
+<a class="sourceLine" id="cb91-84" title="84"><span class="co">#&gt; 4 Bossk    190   113 none       green      red               53 male   Trandosha</span></a>
+<a class="sourceLine" id="cb91-85" title="85"><span class="co">#&gt; 5 Ackb~    180    83 none       brown mot~ orange            41 male   Mon Cala </span></a>
+<a class="sourceLine" id="cb91-86" title="86"><span class="co">#&gt; 6 Wick~     88    20 brown      brown      brown              8 male   Endor    </span></a>
+<a class="sourceLine" id="cb91-87" title="87"><span class="co">#&gt; # ... with 23 more rows, and 5 more variables: species &lt;chr&gt;, films &lt;list&gt;,</span></a>
+<a class="sourceLine" id="cb91-88" title="88"><span class="co">#&gt; #   vehicles &lt;list&gt;, starships &lt;list&gt;, n &lt;int&gt;</span></a></code></pre></div>
+<p>另外， <code>sort = T</code> 可以使观测按照计数倒序排列，<code>name</code> 可以指定新生成的计数行名字（默认为“n”):</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb92-1" title="1">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb92-2" title="2"><span class="st">  </span><span class="kw">count</span>(dest, <span class="dt">sort =</span> T, <span class="dt">name =</span> <span class="st">&quot;count&quot;</span>)</a>
+<a class="sourceLine" id="cb92-3" title="3"><span class="co">#&gt; # A tibble: 104 x 2</span></a>
+<a class="sourceLine" id="cb92-4" title="4"><span class="co">#&gt;   dest  count</span></a>
+<a class="sourceLine" id="cb92-5" title="5"><span class="co">#&gt;   &lt;chr&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb92-6" title="6"><span class="co">#&gt; 1 ATL   16837</span></a>
+<a class="sourceLine" id="cb92-7" title="7"><span class="co">#&gt; 2 ORD   16566</span></a>
+<a class="sourceLine" id="cb92-8" title="8"><span class="co">#&gt; 3 LAX   16026</span></a>
+<a class="sourceLine" id="cb92-9" title="9"><span class="co">#&gt; 4 BOS   15022</span></a>
+<a class="sourceLine" id="cb92-10" title="10"><span class="co">#&gt; 5 MCO   13967</span></a>
+<a class="sourceLine" id="cb92-11" title="11"><span class="co">#&gt; 6 CLT   13674</span></a>
+<a class="sourceLine" id="cb92-12" title="12"><span class="co">#&gt; # ... with 98 more rows</span></a></code></pre></div>
+<p>还可以提供一个加权变量。例如，可以使用一下代码算出每架飞机飞行的总里程（实际上就是按计算某变量分组上另一个变量的和）：</p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" title="1">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb93-2" title="2"><span class="st">  </span><span class="kw">count</span>(tailnum, <span class="dt">wt =</span> distance)  </a>
+<a class="sourceLine" id="cb93-3" title="3"><span class="co">#&gt; # A tibble: 4,037 x 2</span></a>
+<a class="sourceLine" id="cb93-4" title="4"><span class="co">#&gt;   tailnum      n</span></a>
+<a class="sourceLine" id="cb93-5" title="5"><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb93-6" title="6"><span class="co">#&gt; 1 D942DN    3418</span></a>
+<a class="sourceLine" id="cb93-7" title="7"><span class="co">#&gt; 2 N0EGMQ  239143</span></a>
+<a class="sourceLine" id="cb93-8" title="8"><span class="co">#&gt; 3 N10156  109664</span></a>
+<a class="sourceLine" id="cb93-9" title="9"><span class="co">#&gt; 4 N102UW   25722</span></a>
+<a class="sourceLine" id="cb93-10" title="10"><span class="co">#&gt; 5 N103US   24619</span></a>
+<a class="sourceLine" id="cb93-11" title="11"><span class="co">#&gt; 6 N104UW   24616</span></a>
+<a class="sourceLine" id="cb93-12" title="12"><span class="co">#&gt; # ... with 4,031 more rows</span></a></code></pre></div>
+<p>进行聚合时，包含一列计数 <code>n()</code> 或非缺失值的计数 <code>sum(!is.na())</code> 很有用。这样就可以检查一下，以确保自己没有基于非常有限的样本做结论。<br />
+例如，查看一下具有最长平均到达延误时间的飞机（基于飞机编号进行识别):</p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb94-1" title="1">delays &lt;-<span class="st"> </span>not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb94-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(tailnum) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb94-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">delay =</span> <span class="kw">mean</span>(arr_delay))</a>
+<a class="sourceLine" id="cb94-4" title="4"></a>
+<a class="sourceLine" id="cb94-5" title="5"><span class="kw">ggplot</span>(delays) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb94-6" title="6"><span class="st">  </span><span class="kw">geom_histogram</span>(<span class="kw">aes</span>(delay))</a></code></pre></div>
+<p><img src="dplyr-core_files/figure-html/unnamed-chunk-104-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p>有些飞机的<strong>平均</strong>到达延误事件竟然接近 300 分钟，我们可以画一张航班数量和平均延误时间的散点图，一遍获得更深刻的理解:</p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" title="1"><span class="co">## n = n()对group_by中的变量水平进行计数，生成一个计数变量命名为n</span></a>
+<a class="sourceLine" id="cb95-2" title="2">delays &lt;-<span class="st"> </span>not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb95-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(tailnum) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb95-4" title="4"><span class="st">  </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb95-5" title="5">    <span class="dt">delay =</span> <span class="kw">mean</span>(arr_delay),</a>
+<a class="sourceLine" id="cb95-6" title="6">    <span class="dt">n =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb95-7" title="7"></a>
+<a class="sourceLine" id="cb95-8" title="8"><span class="kw">ggplot</span>(delays) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> n,<span class="dt">y =</span> delay),<span class="dt">alpha =</span> <span class="fl">0.1</span>)</a></code></pre></div>
+<p><img src="dplyr-core_files/figure-html/unnamed-chunk-105-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p>从散点图可以看出，如果航班对应的出航次数非常少时，平均延误时间的变动特别大，所有延误时间较长的航班的出航次数几乎都在 0 右边一点点。这张图的形状非常能说明问题:当绘制均值（或其他摘要统计量）和分组规模的关系时，总能看到样本量的增加，变动在不断减小。（样本统计量的方差随样本数变小）。</p>
+<p>这种数据模式还有另外一种常见的变体。我们来看一下棒球击球手的平均表现与击球次数之间的关系。我们用Lahman包中的数据埃及算棒球大联盟中的每个棒球队员的加大率（安打数 / 打数):</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb96-1" title="1"><span class="kw">library</span>(Lahman)</a>
+<a class="sourceLine" id="cb96-2" title="2">batters &lt;-<span class="st"> </span>Batting <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb96-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(playerID) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb96-4" title="4"><span class="st">  </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb96-5" title="5">    <span class="dt">ba =</span> <span class="kw">sum</span>(H,<span class="dt">na.rm =</span> T) <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(AB,<span class="dt">na.rm =</span> T),</a>
+<a class="sourceLine" id="cb96-6" title="6">    <span class="dt">ab =</span> <span class="kw">sum</span>(AB,<span class="dt">na.rm =</span> T))</a>
+<a class="sourceLine" id="cb96-7" title="7"></a>
+<a class="sourceLine" id="cb96-8" title="8">batters <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb96-9" title="9"><span class="st">  </span><span class="kw">filter</span>(ab <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb96-10" title="10"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(ab, ba)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb96-11" title="11"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb96-12" title="12"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">se =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p><img src="dplyr-core_files/figure-html/unnamed-chunk-106-1.svg" width="672" style="display: block; margin: auto;" /></p>
+<p>当绘制击球手的能力（用打击率 ba 衡量）与击球机会数量（用总打数ab衡量）之间的关系时，可以看到两个趋势：</p>
+<ul>
+<li>总大数越多，不同击球手的打击率之间变动越小<br />
+</li>
+<li>能力（ba）和击球机会数量（ab）之间存在正相关。这是因为球队会控制击球手的出场，很显然，球队会优先选择最好的队员。</li>
+</ul>
+<p>这对球员排名也有重要印象，如果只是使用<code>desc(ba)</code>进行排序，明显受益的将是那些因为出场数很少而侥幸有很高击打率的球员，而不是真正能力最高的球员：</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" title="1">batters <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb97-2" title="2"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(ba))</a>
+<a class="sourceLine" id="cb97-3" title="3"><span class="co">#&gt; # A tibble: 19,428 x 3</span></a>
+<a class="sourceLine" id="cb97-4" title="4"><span class="co">#&gt;   playerID     ba    ab</span></a>
+<a class="sourceLine" id="cb97-5" title="5"><span class="co">#&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb97-6" title="6"><span class="co">#&gt; 1 abramge01     1     1</span></a>
+<a class="sourceLine" id="cb97-7" title="7"><span class="co">#&gt; 2 alberan01     1     1</span></a>
+<a class="sourceLine" id="cb97-8" title="8"><span class="co">#&gt; 3 allarko01     1     1</span></a>
+<a class="sourceLine" id="cb97-9" title="9"><span class="co">#&gt; 4 banisje01     1     1</span></a>
+<a class="sourceLine" id="cb97-10" title="10"><span class="co">#&gt; 5 bartocl01     1     1</span></a>
+<a class="sourceLine" id="cb97-11" title="11"><span class="co">#&gt; 6 bassdo01      1     1</span></a>
+<a class="sourceLine" id="cb97-12" title="12"><span class="co">#&gt; # ... with 19,422 more rows</span></a></code></pre></div>
+</div>
+<div id="逻辑值的计数和比例sumx-10-和-meany-0" class="section level3">
+<h3><span class="header-section-number">1.4.3</span> 逻辑值的计数和比例:<code>sum(x &gt; 10) 和 mean(y == 0)</code></h3>
+<p>当与数值型函数一同使用时，<code>TRUE</code>会转换为1，<code>FALSE</code>会转换为0。这使得<code>sum()</code>和<code>mean()</code>非常适用于逻辑值：<code>sum()</code>可以找出x中TRUE的数量，<code>mean()</code>则可以找出比例。</p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" title="1"><span class="co">## 每天中有多少架航班是在早上5点前出发的？（这通常表明前一天延误的航班数量）</span></a>
+<a class="sourceLine" id="cb98-2" title="2">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb98-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(year,month,day) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb98-4" title="4"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n_early =</span> <span class="kw">sum</span>(dep_time <span class="op">&lt;</span><span class="st"> </span><span class="dv">500</span>))</a>
+<a class="sourceLine" id="cb98-5" title="5"><span class="co">#&gt; # A tibble: 365 x 4</span></a>
+<a class="sourceLine" id="cb98-6" title="6"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb98-7" title="7"><span class="co">#&gt;    year month   day n_early</span></a>
+<a class="sourceLine" id="cb98-8" title="8"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb98-9" title="9"><span class="co">#&gt; 1  2013     1     1       0</span></a>
+<a class="sourceLine" id="cb98-10" title="10"><span class="co">#&gt; 2  2013     1     2       3</span></a>
+<a class="sourceLine" id="cb98-11" title="11"><span class="co">#&gt; 3  2013     1     3       4</span></a>
+<a class="sourceLine" id="cb98-12" title="12"><span class="co">#&gt; 4  2013     1     4       3</span></a>
+<a class="sourceLine" id="cb98-13" title="13"><span class="co">#&gt; 5  2013     1     5       3</span></a>
+<a class="sourceLine" id="cb98-14" title="14"><span class="co">#&gt; 6  2013     1     6       2</span></a>
+<a class="sourceLine" id="cb98-15" title="15"><span class="co">#&gt; # ... with 359 more rows</span></a>
+<a class="sourceLine" id="cb98-16" title="16"><span class="co">## 每天中到达时间误超过一小时的航班比例是多少？</span></a>
+<a class="sourceLine" id="cb98-17" title="17">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb98-18" title="18"><span class="st">  </span><span class="kw">group_by</span>(year,month,day) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb98-19" title="19"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">hour_perc =</span> <span class="kw">mean</span>(arr_delay <span class="op">&gt;</span><span class="st"> </span><span class="dv">60</span>))</a>
+<a class="sourceLine" id="cb98-20" title="20"><span class="co">#&gt; # A tibble: 365 x 4</span></a>
+<a class="sourceLine" id="cb98-21" title="21"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb98-22" title="22"><span class="co">#&gt;    year month   day hour_perc</span></a>
+<a class="sourceLine" id="cb98-23" title="23"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb98-24" title="24"><span class="co">#&gt; 1  2013     1     1    0.0722</span></a>
+<a class="sourceLine" id="cb98-25" title="25"><span class="co">#&gt; 2  2013     1     2    0.0851</span></a>
+<a class="sourceLine" id="cb98-26" title="26"><span class="co">#&gt; 3  2013     1     3    0.0567</span></a>
+<a class="sourceLine" id="cb98-27" title="27"><span class="co">#&gt; 4  2013     1     4    0.0396</span></a>
+<a class="sourceLine" id="cb98-28" title="28"><span class="co">#&gt; 5  2013     1     5    0.0349</span></a>
+<a class="sourceLine" id="cb98-29" title="29"><span class="co">#&gt; 6  2013     1     6    0.0470</span></a>
+<a class="sourceLine" id="cb98-30" title="30"><span class="co">#&gt; # ... with 359 more rows</span></a></code></pre></div>
+</div>
+<div id="其他常用的摘要函数" class="section level3">
+<h3><span class="header-section-number">1.4.4</span> 其他常用的摘要函数</h3>
+<p>R中还提供了许多常用的摘要函数</p>
+<p><strong>位置度量</strong><br />
+我们已经使用过<code>mean(x)</code>、但用 <code>median(x)</code> 计算中位数也非常有用。</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb99-1" title="1"><span class="co">## 将聚合函数和逻辑筛选组合起来使用</span></a>
+<a class="sourceLine" id="cb99-2" title="2">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(year,month,day) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb99-3" title="3">  <span class="co">## 延误时间的中位数</span></a>
+<a class="sourceLine" id="cb99-4" title="4">  <span class="dt">arr_delay1 =</span> <span class="kw">median</span>(arr_delay),</a>
+<a class="sourceLine" id="cb99-5" title="5">  <span class="co">## 正延误时间的中位数</span></a>
+<a class="sourceLine" id="cb99-6" title="6">  <span class="dt">arr_delay2 =</span> <span class="kw">median</span>(arr_delay[arr_delay <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>])</a>
+<a class="sourceLine" id="cb99-7" title="7">)</a>
+<a class="sourceLine" id="cb99-8" title="8"><span class="co">#&gt; # A tibble: 365 x 5</span></a>
+<a class="sourceLine" id="cb99-9" title="9"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb99-10" title="10"><span class="co">#&gt;    year month   day arr_delay1 arr_delay2</span></a>
+<a class="sourceLine" id="cb99-11" title="11"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb99-12" title="12"><span class="co">#&gt; 1  2013     1     1          3         17</span></a>
+<a class="sourceLine" id="cb99-13" title="13"><span class="co">#&gt; 2  2013     1     2          4         16</span></a>
+<a class="sourceLine" id="cb99-14" title="14"><span class="co">#&gt; 3  2013     1     3          1         16</span></a>
+<a class="sourceLine" id="cb99-15" title="15"><span class="co">#&gt; 4  2013     1     4         -8         16</span></a>
+<a class="sourceLine" id="cb99-16" title="16"><span class="co">#&gt; 5  2013     1     5         -7         11</span></a>
+<a class="sourceLine" id="cb99-17" title="17"><span class="co">#&gt; 6  2013     1     6         -1         15</span></a>
+<a class="sourceLine" id="cb99-18" title="18"><span class="co">#&gt; # ... with 359 more rows</span></a></code></pre></div>
+<p><strong>分散程度度量<code>sd(x)、IQR(x)和mad(x)</code></strong><br />
+标准差是分散程度的标准度量方式。四分位距INterquartile Range<code>IQR(x)</code>和绝对中位差<code>mad(x)</code>基本等价，更适合有离群点的情况：</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" title="1"><span class="co">## 为什么到某些目的地距离比到其他目的地更多变？</span></a>
+<a class="sourceLine" id="cb100-2" title="2">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(dest) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">distance_sd =</span> <span class="kw">sd</span>(distance)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(<span class="kw">desc</span>(distance_sd))</a>
+<a class="sourceLine" id="cb100-3" title="3"><span class="co">#&gt; # A tibble: 104 x 2</span></a>
+<a class="sourceLine" id="cb100-4" title="4"><span class="co">#&gt;   dest  distance_sd</span></a>
+<a class="sourceLine" id="cb100-5" title="5"><span class="co">#&gt;   &lt;chr&gt;       &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb100-6" title="6"><span class="co">#&gt; 1 EGE         10.5 </span></a>
+<a class="sourceLine" id="cb100-7" title="7"><span class="co">#&gt; 2 SAN         10.4 </span></a>
+<a class="sourceLine" id="cb100-8" title="8"><span class="co">#&gt; 3 SFO         10.2 </span></a>
+<a class="sourceLine" id="cb100-9" title="9"><span class="co">#&gt; 4 HNL         10.0 </span></a>
+<a class="sourceLine" id="cb100-10" title="10"><span class="co">#&gt; 5 SEA          9.98</span></a>
+<a class="sourceLine" id="cb100-11" title="11"><span class="co">#&gt; 6 LAS          9.91</span></a>
+<a class="sourceLine" id="cb100-12" title="12"><span class="co">#&gt; # ... with 98 more rows</span></a></code></pre></div>
+<p><strong>秩的度量:<code>min(x)、quantile(x,0.25)和max(x)</code></strong><br />
+分位数是中位数的扩展。例如<code>quantile(x,0.25)</code>会找出x中按从小到大顺序大于前25%而小于后75%的值（即下四分位数）</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb101-1" title="1"><span class="co">## 每天最早和最晚的航班何时出发？</span></a>
+<a class="sourceLine" id="cb101-2" title="2">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(year,month,day) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">first =</span> <span class="kw">min</span>(dep_time),<span class="dt">last =</span> <span class="kw">max</span>(dep_time)) </a>
+<a class="sourceLine" id="cb101-3" title="3"><span class="co">#&gt; # A tibble: 365 x 5</span></a>
+<a class="sourceLine" id="cb101-4" title="4"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb101-5" title="5"><span class="co">#&gt;    year month   day first  last</span></a>
+<a class="sourceLine" id="cb101-6" title="6"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb101-7" title="7"><span class="co">#&gt; 1  2013     1     1   517  2356</span></a>
+<a class="sourceLine" id="cb101-8" title="8"><span class="co">#&gt; 2  2013     1     2    42  2354</span></a>
+<a class="sourceLine" id="cb101-9" title="9"><span class="co">#&gt; 3  2013     1     3    32  2349</span></a>
+<a class="sourceLine" id="cb101-10" title="10"><span class="co">#&gt; 4  2013     1     4    25  2358</span></a>
+<a class="sourceLine" id="cb101-11" title="11"><span class="co">#&gt; 5  2013     1     5    14  2357</span></a>
+<a class="sourceLine" id="cb101-12" title="12"><span class="co">#&gt; 6  2013     1     6    16  2355</span></a>
+<a class="sourceLine" id="cb101-13" title="13"><span class="co">#&gt; # ... with 359 more rows</span></a></code></pre></div>
+<p><strong>定位度量:<code>first(x)、nth(x,n)、last(x)</code></strong><br />
+这几个函数的作用与<code>x[1]、x[n]和x[length(x)]</code>相同，只是当定位不存在时（比如尝试从只有两个元素的分组中得到第三个元素），这些函数允许通过参数<code>default</code>设置一个默认值，而后者不能正常工作。</p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" title="1"><span class="co">## 找出每天排在第10的的出发时间记录</span></a>
+<a class="sourceLine" id="cb102-2" title="2">not_cancelled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb102-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(month,year,day) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb102-4" title="4"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">tenth_dep =</span> <span class="kw">nth</span>(dep_time,<span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb102-5" title="5"><span class="co">#&gt; # A tibble: 365 x 4</span></a>
+<a class="sourceLine" id="cb102-6" title="6"><span class="co">#&gt; # Groups:   month, year [12]</span></a>
+<a class="sourceLine" id="cb102-7" title="7"><span class="co">#&gt;   month  year   day tenth_dep</span></a>
+<a class="sourceLine" id="cb102-8" title="8"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb102-9" title="9"><span class="co">#&gt; 1     1  2013     1       558</span></a>
+<a class="sourceLine" id="cb102-10" title="10"><span class="co">#&gt; 2     1  2013     2       554</span></a>
+<a class="sourceLine" id="cb102-11" title="11"><span class="co">#&gt; 3     1  2013     3       552</span></a>
+<a class="sourceLine" id="cb102-12" title="12"><span class="co">#&gt; 4     1  2013     4       553</span></a>
+<a class="sourceLine" id="cb102-13" title="13"><span class="co">#&gt; 5     1  2013     5       555</span></a>
+<a class="sourceLine" id="cb102-14" title="14"><span class="co">#&gt; 6     1  2013     6       558</span></a>
+<a class="sourceLine" id="cb102-15" title="15"><span class="co">#&gt; # ... with 359 more rows</span></a></code></pre></div>
+</div>
+<div id="多个分组变量的消耗" class="section level3">
+<h3><span class="header-section-number">1.4.5</span> 多个分组变量的消耗</h3>
+<p>当时用多个分组变量时，每使用一次<code>summarize</code>就会消耗掉一个分组变量，如<code>group_by(year,month,day)</code>经过一次<code>summarize</code>后生成的数据集默认在<code>(year,month)</code>上分组，这使得我们可以对数据集进行循序渐进的分析：</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb103-1" title="1">daily &lt;-<span class="st"> </span>not_cancelled <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(year,month,day) </a>
+<a class="sourceLine" id="cb103-2" title="2"><span class="co">## 每天有多少架航班记录</span></a>
+<a class="sourceLine" id="cb103-3" title="3">(per_day &lt;-<span class="st"> </span>daily <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb103-4" title="4"><span class="st">    </span><span class="kw">summarize</span>(<span class="dt">flights =</span> <span class="kw">n</span>()))  </a>
+<a class="sourceLine" id="cb103-5" title="5"><span class="co">#&gt; # A tibble: 365 x 4</span></a>
+<a class="sourceLine" id="cb103-6" title="6"><span class="co">#&gt; # Groups:   year, month [12]</span></a>
+<a class="sourceLine" id="cb103-7" title="7"><span class="co">#&gt;    year month   day flights</span></a>
+<a class="sourceLine" id="cb103-8" title="8"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb103-9" title="9"><span class="co">#&gt; 1  2013     1     1     831</span></a>
+<a class="sourceLine" id="cb103-10" title="10"><span class="co">#&gt; 2  2013     1     2     928</span></a>
+<a class="sourceLine" id="cb103-11" title="11"><span class="co">#&gt; 3  2013     1     3     900</span></a>
+<a class="sourceLine" id="cb103-12" title="12"><span class="co">#&gt; 4  2013     1     4     908</span></a>
+<a class="sourceLine" id="cb103-13" title="13"><span class="co">#&gt; 5  2013     1     5     717</span></a>
+<a class="sourceLine" id="cb103-14" title="14"><span class="co">#&gt; 6  2013     1     6     829</span></a>
+<a class="sourceLine" id="cb103-15" title="15"><span class="co">#&gt; # ... with 359 more rows</span></a>
+<a class="sourceLine" id="cb103-16" title="16"></a>
+<a class="sourceLine" id="cb103-17" title="17"><span class="co">## 每月有多少架航班记录</span></a>
+<a class="sourceLine" id="cb103-18" title="18">(per_month &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb103-19" title="19"><span class="st">    </span>per_day <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb103-20" title="20"><span class="st">    </span><span class="kw">summarize</span>(<span class="dt">flights =</span> <span class="kw">sum</span>(flights))) </a>
+<a class="sourceLine" id="cb103-21" title="21"><span class="co">#&gt; # A tibble: 12 x 3</span></a>
+<a class="sourceLine" id="cb103-22" title="22"><span class="co">#&gt; # Groups:   year [1]</span></a>
+<a class="sourceLine" id="cb103-23" title="23"><span class="co">#&gt;    year month flights</span></a>
+<a class="sourceLine" id="cb103-24" title="24"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt;   &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb103-25" title="25"><span class="co">#&gt; 1  2013     1   26398</span></a>
+<a class="sourceLine" id="cb103-26" title="26"><span class="co">#&gt; 2  2013     2   23611</span></a>
+<a class="sourceLine" id="cb103-27" title="27"><span class="co">#&gt; 3  2013     3   27902</span></a>
+<a class="sourceLine" id="cb103-28" title="28"><span class="co">#&gt; 4  2013     4   27564</span></a>
+<a class="sourceLine" id="cb103-29" title="29"><span class="co">#&gt; 5  2013     5   28128</span></a>
+<a class="sourceLine" id="cb103-30" title="30"><span class="co">#&gt; 6  2013     6   27075</span></a>
+<a class="sourceLine" id="cb103-31" title="31"><span class="co">#&gt; # ... with 6 more rows</span></a>
+<a class="sourceLine" id="cb103-32" title="32"><span class="co">## 等价于not_cancelled %&gt;% group_by(year,month) %&gt;% summarize(flights = n()) </span></a>
+<a class="sourceLine" id="cb103-33" title="33"></a>
+<a class="sourceLine" id="cb103-34" title="34"><span class="co">## 每年有多少架航班记录</span></a>
+<a class="sourceLine" id="cb103-35" title="35">(per_year &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb103-36" title="36"><span class="st">    </span>per_month <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb103-37" title="37"><span class="st">    </span><span class="kw">summarize</span>(<span class="dt">flights =</span> <span class="kw">sum</span>(flights)))</a>
+<a class="sourceLine" id="cb103-38" title="38"><span class="co">#&gt; # A tibble: 1 x 2</span></a>
+<a class="sourceLine" id="cb103-39" title="39"><span class="co">#&gt;    year flights</span></a>
+<a class="sourceLine" id="cb103-40" title="40"><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb103-41" title="41"><span class="co">#&gt; 1  2013  327346</span></a>
+<a class="sourceLine" id="cb103-42" title="42"><span class="co">## 等价于not_cancelled %&gt;% group_by(year) %&gt;% summarize(flights = n()) </span></a></code></pre></div>
+<p>由于分组操作拥有这样的“继承性质”，有的时候可能想要取消分组，并回到未分组的数据继续操作，那么可以使用<code>ungroup()</code>函数取消分组：</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" title="1">daily <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb104-2" title="2"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb104-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">flights =</span> <span class="kw">n</span>())  <span class="co">## 对数据集整体进行摘要统计</span></a>
+<a class="sourceLine" id="cb104-4" title="4"><span class="co">#&gt; # A tibble: 1 x 1</span></a>
+<a class="sourceLine" id="cb104-5" title="5"><span class="co">#&gt;   flights</span></a>
+<a class="sourceLine" id="cb104-6" title="6"><span class="co">#&gt;     &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb104-7" title="7"><span class="co">#&gt; 1  327346</span></a></code></pre></div>
+<p>在循序渐进地进行摘要分析的时候，需要小心：使用求和与计数操作是没有问题的，但如果想要使用加权平均和方差的话，就要仔细考虑一下，任何基于秩的统计数据（如中位数，分为差）都不支持这样的操作。换句话说，对分组结果再求和就是对整体求和，但各分组中的中位数的中位数可不是整体的中位数。</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="select.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="group-by-combined-with-other-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/enixam/rfordatascience/edit/master/dplyr-core.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

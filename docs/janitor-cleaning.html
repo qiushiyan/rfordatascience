@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>14.1 cleaning | R for data science: tidyverse and beyond</title>
+  <meta name="description" content="14.1 cleaning | R for data science: tidyverse and beyond" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="14.1 cleaning | R for data science: tidyverse and beyond" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="enixam/rfordatascience" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="14.1 cleaning | R for data science: tidyverse and beyond" />
+  
+  
+  
+
+<meta name="author" content="Maxine" />
+
+
+<meta name="date" content="2020-05-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="janitor.html"/>
+<link rel="next" href="janitor-explore.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/jsoneditor-5.25.6/jsoneditor.min.css" rel="stylesheet" />
+<script src="libs/jsoneditor-5.25.6/jsoneditor.min.js"></script>
+<script src="libs/jsonedit-binding-3.0.0/jsonedit.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R4DS: tidyverse and beyond</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a></li>
+<li class="part"><span><b>I R for data science</b></span></li>
+<li class="chapter" data-level="1" data-path="dplyr-data-transformation.html"><a href="dplyr-data-transformation.html"><i class="fa fa-check"></i><b>1</b> dplyr: Data transformation</a><ul>
+<li class="chapter" data-level="1.1" data-path="filter.html"><a href="filter.html"><i class="fa fa-check"></i><b>1.1</b> <code>filter()</code></a><ul>
+<li class="chapter" data-level="1.1.1" data-path="filter.html"><a href="filter.html#operators"><i class="fa fa-check"></i><b>1.1.1</b> Operators</a></li>
+<li class="chapter" data-level="1.1.2" data-path="filter.html"><a href="filter.html#missing-values"><i class="fa fa-check"></i><b>1.1.2</b> Missing values</a></li>
+<li class="chapter" data-level="1.1.3" data-path="filter.html"><a href="filter.html#exercises"><i class="fa fa-check"></i><b>1.1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.1.4" data-path="filter.html"><a href="filter.html#slice"><i class="fa fa-check"></i><b>1.1.4</b> <code>slice()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="arrange.html"><a href="arrange.html"><i class="fa fa-check"></i><b>1.2</b> <code>arrange()</code></a><ul>
+<li class="chapter" data-level="1.2.1" data-path="arrange.html"><a href="arrange.html#exercises-1"><i class="fa fa-check"></i><b>1.2.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="select.html"><a href="select.html"><i class="fa fa-check"></i><b>1.3</b> <code>select()</code></a><ul>
+<li class="chapter" data-level="1.3.1" data-path="select.html"><a href="select.html#练习"><i class="fa fa-check"></i><b>1.3.1</b> 练习</a></li>
+<li class="chapter" data-level="1.3.2" data-path="select.html"><a href="select.html#常用创建函数"><i class="fa fa-check"></i><b>1.3.2</b> 常用创建函数</a></li>
+<li class="chapter" data-level="1.3.3" data-path="select.html"><a href="select.html#exercises-2"><i class="fa fa-check"></i><b>1.3.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="summarize.html"><a href="summarize.html"><i class="fa fa-check"></i><b>1.4</b> <code>summarize()</code></a><ul>
+<li class="chapter" data-level="1.4.1" data-path="summarize.html"><a href="summarize.html#missing-values-in-summarize"><i class="fa fa-check"></i><b>1.4.1</b> Missing values in <code>summarize()</code></a></li>
+<li class="chapter" data-level="1.4.2" data-path="summarize.html"><a href="summarize.html#计数函数"><i class="fa fa-check"></i><b>1.4.2</b> 计数函数</a></li>
+<li class="chapter" data-level="1.4.3" data-path="summarize.html"><a href="summarize.html#逻辑值的计数和比例sumx-10-和-meany-0"><i class="fa fa-check"></i><b>1.4.3</b> 逻辑值的计数和比例:<code>sum(x &gt; 10) 和 mean(y == 0)</code></a></li>
+<li class="chapter" data-level="1.4.4" data-path="summarize.html"><a href="summarize.html#其他常用的摘要函数"><i class="fa fa-check"></i><b>1.4.4</b> 其他常用的摘要函数</a></li>
+<li class="chapter" data-level="1.4.5" data-path="summarize.html"><a href="summarize.html#多个分组变量的消耗"><i class="fa fa-check"></i><b>1.4.5</b> 多个分组变量的消耗</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="group-by-combined-with-other-functions.html"><a href="group-by-combined-with-other-functions.html"><i class="fa fa-check"></i><b>1.5</b> <code>group_by()</code> combined with other functions</a></li>
+<li class="chapter" data-level="1.6" data-path="dplyr-exercise.html"><a href="dplyr-exercise.html"><i class="fa fa-check"></i><b>1.6</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="tibble-modern-data-frames.html"><a href="tibble-modern-data-frames.html"><i class="fa fa-check"></i><b>2</b> tibble: Modern data frames</a><ul>
+<li class="chapter" data-level="2.1" data-path="tibble-intro.html"><a href="tibble-intro.html"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html"><i class="fa fa-check"></i><b>2.2</b> Comparing tibble and data.frame</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#creating"><i class="fa fa-check"></i><b>2.2.1</b> Creating</a></li>
+<li class="chapter" data-level="2.2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#printing"><i class="fa fa-check"></i><b>2.2.2</b> Printing</a></li>
+<li class="chapter" data-level="2.2.3" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#subsetting"><i class="fa fa-check"></i><b>2.2.3</b> Subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html"><i class="fa fa-check"></i><b>2.3</b> Comparing two data frames (tibbles)</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#dplyrall_equal"><i class="fa fa-check"></i><b>2.3.1</b> <code>dplyr::all_equal()</code></a></li>
+<li class="chapter" data-level="2.3.2" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#janitorcompare_df_cols"><i class="fa fa-check"></i><b>2.3.2</b> <code>janitor::compare_df_cols()</code></a></li>
+<li class="chapter" data-level="2.3.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#vetralike"><i class="fa fa-check"></i><b>2.3.3</b> <code>vetr::alike()</code></a></li>
+<li class="chapter" data-level="2.3.4" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#diffdfdiffdf"><i class="fa fa-check"></i><b>2.3.4</b> <code>diffdf::diffdf()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="tibble-exercise.html"><a href="tibble-exercise.html"><i class="fa fa-check"></i><b>2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="readr-data-import.html"><a href="readr-data-import.html"><i class="fa fa-check"></i><b>3</b> readr: Data import</a><ul>
+<li class="chapter" data-level="3.1" data-path="importing-data-in-base-r.html"><a href="importing-data-in-base-r.html"><i class="fa fa-check"></i><b>3.1</b> Importing data in base R</a></li>
+<li class="chapter" data-level="3.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html"><i class="fa fa-check"></i><b>3.2</b> Importing data in <code>readr</code></a><ul>
+<li class="chapter" data-level="3.2.1" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#introduction"><i class="fa fa-check"></i><b>3.2.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#writing-data"><i class="fa fa-check"></i><b>3.2.2</b> Writing data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#exercises-3"><i class="fa fa-check"></i><b>3.2.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html"><i class="fa fa-check"></i><b>3.3</b> Parsing a vector</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#numeric"><i class="fa fa-check"></i><b>3.3.1</b> Numeric</a></li>
+<li class="chapter" data-level="3.3.2" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#character"><i class="fa fa-check"></i><b>3.3.2</b> Character</a></li>
+<li class="chapter" data-level="3.3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#factor"><i class="fa fa-check"></i><b>3.3.3</b> Factor</a></li>
+<li class="chapter" data-level="3.3.4" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#date-and-time"><i class="fa fa-check"></i><b>3.3.4</b> Date and time</a></li>
+<li class="chapter" data-level="3.3.5" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#exercises-4"><i class="fa fa-check"></i><b>3.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html"><i class="fa fa-check"></i><b>3.4</b> Parsing a file</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parsing-a-file.html"><a href="parsing-a-file.html#strategies"><i class="fa fa-check"></i><b>3.4.1</b> Strategies</a></li>
+<li class="chapter" data-level="3.4.2" data-path="parsing-a-file.html"><a href="parsing-a-file.html#possible-challenges"><i class="fa fa-check"></i><b>3.4.2</b> Possible challenges</a></li>
+<li class="chapter" data-level="3.4.3" data-path="parsing-a-file.html"><a href="parsing-a-file.html#other-tips"><i class="fa fa-check"></i><b>3.4.3</b> Other tips</a></li>
+<li class="chapter" data-level="3.4.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-dealing-with-metadata"><i class="fa fa-check"></i><b>3.4.4</b> Example: Dealing with metadata</a></li>
+<li class="chapter" data-level="3.4.5" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-multi-row-headers"><i class="fa fa-check"></i><b>3.4.5</b> Example: multi-row headers</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="readxl.html"><a href="readxl.html"><i class="fa fa-check"></i><b>3.5</b> <code>readxl</code></a><ul>
+<li class="chapter" data-level="3.5.1" data-path="readxl.html"><a href="readxl.html#multi-row-headers-in-excel"><i class="fa fa-check"></i><b>3.5.1</b> Multi-row headers in Excel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="lubridate-dates-and-times.html"><a href="lubridate-dates-and-times.html"><i class="fa fa-check"></i><b>4</b> lubridate: Dates and times</a><ul>
+<li class="chapter" data-level="4.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html"><i class="fa fa-check"></i><b>4.1</b> Creating dates and times</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-strings"><i class="fa fa-check"></i><b>4.1.1</b> From strings</a></li>
+<li class="chapter" data-level="4.1.2" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-individual-components"><i class="fa fa-check"></i><b>4.1.2</b> From individual components</a></li>
+<li class="chapter" data-level="4.1.3" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-other-times"><i class="fa fa-check"></i><b>4.1.3</b> From other times</a></li>
+<li class="chapter" data-level="4.1.4" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#exercises-5"><i class="fa fa-check"></i><b>4.1.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="date-time-components.html"><a href="date-time-components.html"><i class="fa fa-check"></i><b>4.2</b> Date-time components</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="date-time-components.html"><a href="date-time-components.html#accessing-components"><i class="fa fa-check"></i><b>4.2.1</b> Accessing components</a></li>
+<li class="chapter" data-level="4.2.2" data-path="date-time-components.html"><a href="date-time-components.html#rounding"><i class="fa fa-check"></i><b>4.2.2</b> Rounding</a></li>
+<li class="chapter" data-level="4.2.3" data-path="date-time-components.html"><a href="date-time-components.html#setting-components"><i class="fa fa-check"></i><b>4.2.3</b> Setting components</a></li>
+<li class="chapter" data-level="4.2.4" data-path="date-time-components.html"><a href="date-time-components.html#exercises-6"><i class="fa fa-check"></i><b>4.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="time-span.html"><a href="time-span.html"><i class="fa fa-check"></i><b>4.3</b> Time span</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="time-span.html"><a href="time-span.html#时期-durations"><i class="fa fa-check"></i><b>4.3.1</b> 时期 Durations</a></li>
+<li class="chapter" data-level="4.3.2" data-path="time-span.html"><a href="time-span.html#阶段-periods"><i class="fa fa-check"></i><b>4.3.2</b> 阶段 Periods</a></li>
+<li class="chapter" data-level="4.3.3" data-path="time-span.html"><a href="time-span.html#区间-intervals"><i class="fa fa-check"></i><b>4.3.3</b> 区间 Intervals</a></li>
+<li class="chapter" data-level="4.3.4" data-path="time-span.html"><a href="time-span.html#conclusion"><i class="fa fa-check"></i><b>4.3.4</b> Conclusion</a></li>
+<li class="chapter" data-level="4.3.5" data-path="time-span.html"><a href="time-span.html#exercises-7"><i class="fa fa-check"></i><b>4.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="hms.html"><a href="hms.html"><i class="fa fa-check"></i><b>4.4</b> hms</a></li>
+<li class="chapter" data-level="4.5" data-path="dint.html"><a href="dint.html"><i class="fa fa-check"></i><b>4.5</b> dint</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="dint.html"><a href="dint.html#creation"><i class="fa fa-check"></i><b>4.5.1</b> Creation</a></li>
+<li class="chapter" data-level="4.5.2" data-path="dint.html"><a href="dint.html#arithmetic-and-sequences"><i class="fa fa-check"></i><b>4.5.2</b> Arithmetic and Sequences</a></li>
+<li class="chapter" data-level="4.5.3" data-path="dint.html"><a href="dint.html#accessors"><i class="fa fa-check"></i><b>4.5.3</b> Accessors</a></li>
+<li class="chapter" data-level="4.5.4" data-path="dint.html"><a href="dint.html#formatting"><i class="fa fa-check"></i><b>4.5.4</b> Formatting</a></li>
+<li class="chapter" data-level="4.5.5" data-path="dint.html"><a href="dint.html#labelling-functions-in-ggplot2"><i class="fa fa-check"></i><b>4.5.5</b> Labelling functions in ggplot2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="forcats-factor.html"><a href="forcats-factor.html"><i class="fa fa-check"></i><b>5</b> forcats: factor</a><ul>
+<li class="chapter" data-level="5.1" data-path="factor-basics.html"><a href="factor-basics.html"><i class="fa fa-check"></i><b>5.1</b> Factor basics</a></li>
+<li class="chapter" data-level="5.2" data-path="sorting.html"><a href="sorting.html"><i class="fa fa-check"></i><b>5.2</b> Sorting</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="sorting.html"><a href="sorting.html#sorting-by-frequency-appearance-or-numeric-order"><i class="fa fa-check"></i><b>5.2.1</b> Sorting by frequency, appearance, or numeric order</a></li>
+<li class="chapter" data-level="5.2.2" data-path="sorting.html"><a href="sorting.html#sorting-by-another-variable"><i class="fa fa-check"></i><b>5.2.2</b> Sorting by another variable</a></li>
+<li class="chapter" data-level="5.2.3" data-path="sorting.html"><a href="sorting.html#sorting-manually"><i class="fa fa-check"></i><b>5.2.3</b> Sorting manually</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html"><i class="fa fa-check"></i><b>5.3</b> Chaninge number of levels</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#lumping-levels"><i class="fa fa-check"></i><b>5.3.1</b> Lumping levels</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#expanding-levels"><i class="fa fa-check"></i><b>5.3.2</b> Expanding levels</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#dropping-levels"><i class="fa fa-check"></i><b>5.3.3</b> Dropping levels</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#transforming-na-levels"><i class="fa fa-check"></i><b>5.3.4</b> Transforming NA levels</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="recoding.html"><a href="recoding.html"><i class="fa fa-check"></i><b>5.4</b> Recoding</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="recoding.html"><a href="recoding.html#exercises-8"><i class="fa fa-check"></i><b>5.4.1</b> Exercises</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="tidyr-tidy-data.html"><a href="tidyr-tidy-data.html"><i class="fa fa-check"></i><b>6</b> tidyr: Tidy data</a><ul>
+<li class="chapter" data-level="6.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html"><i class="fa fa-check"></i><b>6.1</b> Tidy data</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html#exercises-9"><i class="fa fa-check"></i><b>6.1.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pivoting.html"><a href="pivoting.html"><i class="fa fa-check"></i><b>6.2</b> Pivoting</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="pivoting.html"><a href="pivoting.html#pivot_longer"><i class="fa fa-check"></i><b>6.2.1</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="pivoting.html"><a href="pivoting.html#pivot_wider"><i class="fa fa-check"></i><b>6.2.2</b> <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.3" data-path="pivoting.html"><a href="pivoting.html#combining-pivot_longer-and-pivot_wider"><i class="fa fa-check"></i><b>6.2.3</b> Combining <code>pivot_longer()</code> and <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.4" data-path="pivoting.html"><a href="pivoting.html#exercises-10"><i class="fa fa-check"></i><b>6.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="nesting.html"><a href="nesting.html"><i class="fa fa-check"></i><b>6.3</b> Nesting</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="nesting.html"><a href="nesting.html#example-managing-multiple-models"><i class="fa fa-check"></i><b>6.3.1</b> Example: Managing multiple models</a></li>
+<li class="chapter" data-level="6.3.2" data-path="nesting.html"><a href="nesting.html#multi-choice"><i class="fa fa-check"></i><b>6.3.2</b> Example: Multicple hoice data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="rectangling.html"><a href="rectangling.html"><i class="fa fa-check"></i><b>6.4</b> Rectangling</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="rectangling.html"><a href="rectangling.html#github-users"><i class="fa fa-check"></i><b>6.4.1</b> Github users</a></li>
+<li class="chapter" data-level="6.4.2" data-path="rectangling.html"><a href="rectangling.html#github-repos"><i class="fa fa-check"></i><b>6.4.2</b> Github repos</a></li>
+<li class="chapter" data-level="6.4.3" data-path="rectangling.html"><a href="rectangling.html#game-of-throne-characters"><i class="fa fa-check"></i><b>6.4.3</b> Game of Throne characters</a></li>
+<li class="chapter" data-level="6.4.4" data-path="rectangling.html"><a href="rectangling.html#sharla-gelfands-discography"><i class="fa fa-check"></i><b>6.4.4</b> Sharla Gelfand’s discography</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="separate-and-untie.html"><a href="separate-and-untie.html"><i class="fa fa-check"></i><b>6.5</b> <code>separate()</code> and <code>untie()</code></a><ul>
+<li class="chapter" data-level="6.5.1" data-path="separate-and-untie.html"><a href="separate-and-untie.html#separate"><i class="fa fa-check"></i><b>6.5.1</b> <code>separate()</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="separate-and-untie.html"><a href="separate-and-untie.html#unite"><i class="fa fa-check"></i><b>6.5.2</b> <code>unite()</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="separate-and-untie.html"><a href="separate-and-untie.html#exercises-11"><i class="fa fa-check"></i><b>6.5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="tidyr-missing.html"><a href="tidyr-missing.html"><i class="fa fa-check"></i><b>6.6</b> Handling missing values</a></li>
+<li class="chapter" data-level="6.7" data-path="tidyr-case.html"><a href="tidyr-case.html"><i class="fa fa-check"></i><b>6.7</b> Case Study</a></li>
+<li class="chapter" data-level="6.8" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html"><i class="fa fa-check"></i><b>6.8</b> Miscellaneous Functions</a><ul>
+<li class="chapter" data-level="6.8.1" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#chop-and-unchop"><i class="fa fa-check"></i><b>6.8.1</b> <code>chop()</code> and <code>unchop()</code></a></li>
+<li class="chapter" data-level="6.8.2" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#uncount"><i class="fa fa-check"></i><b>6.8.2</b> <code>uncount()</code></a></li>
+<li class="chapter" data-level="6.8.3" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#exercises-12"><i class="fa fa-check"></i><b>6.8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="non-tidy.html"><a href="non-tidy.html"><i class="fa fa-check"></i><b>6.9</b> None-tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="purrr-functional-programming.html"><a href="purrr-functional-programming.html"><i class="fa fa-check"></i><b>7</b> purrr: Functional programming</a><ul>
+<li class="chapter" data-level="7.1" data-path="map-family.html"><a href="map-family.html"><i class="fa fa-check"></i><b>7.1</b> <code>map()</code> family</a></li>
+<li class="chapter" data-level="7.2" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html"><i class="fa fa-check"></i><b>7.2</b> Producing atomic vectors</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html#purrr-style-anonymous-functions"><i class="fa fa-check"></i><b>7.2.1</b> purrr-style anonymous functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="predicate-functions.html"><a href="predicate-functions.html"><i class="fa fa-check"></i><b>7.3</b> Predicate functions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="predicate-functions.html"><a href="predicate-functions.html#basics"><i class="fa fa-check"></i><b>7.3.1</b> Basics</a></li>
+<li class="chapter" data-level="7.3.2" data-path="predicate-functions.html"><a href="predicate-functions.html#map-variants"><i class="fa fa-check"></i><b>7.3.2</b> Map variants</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="group-functions.html"><a href="group-functions.html"><i class="fa fa-check"></i><b>7.4</b> group functions</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="group-functions.html"><a href="group-functions.html#group_mapgroup_modify"><i class="fa fa-check"></i><b>7.4.1</b> group_map、group_modify</a></li>
+<li class="chapter" data-level="7.4.2" data-path="group-functions.html"><a href="group-functions.html#group_nestgroup_splitgroup_keysgroup_data"><i class="fa fa-check"></i><b>7.4.2</b> group_nest、group_split、group_keys、group_data</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="other-useful-tools.html"><a href="other-useful-tools.html"><i class="fa fa-check"></i><b>7.5</b> Other useful tools</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="other-useful-tools.html"><a href="other-useful-tools.html#imap"><i class="fa fa-check"></i><b>7.5.1</b> <code>imap()</code></a></li>
+<li class="chapter" data-level="7.5.2" data-path="other-useful-tools.html"><a href="other-useful-tools.html#adverbs"><i class="fa fa-check"></i><b>7.5.2</b> adverbs</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="relational-data.html"><a href="relational-data.html"><i class="fa fa-check"></i><b>8</b> Relational data</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="mutating-joins.html"><a href="mutating-joins.html"><i class="fa fa-check"></i><b>8.2</b> Mutating joins</a></li>
+<li class="chapter" data-level="8.3" data-path="filtering-join.html"><a href="filtering-join.html"><i class="fa fa-check"></i><b>8.3</b> Filtering join</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="broom-tidy-representation-of-models.html"><a href="broom-tidy-representation-of-models.html"><i class="fa fa-check"></i><b>9</b> broom: Tidy representation of models</a><ul>
+<li class="chapter" data-level="9.1" data-path="viz-many-models.html"><a href="viz-many-models.html"><i class="fa fa-check"></i><b>9.1</b> Visualizing many models</a></li>
+<li class="chapter" data-level="9.2" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9.2</b> Examples</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="examples.html"><a href="examples.html#pca"><i class="fa fa-check"></i><b>9.2.1</b> PCA</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="broomextra.html"><a href="broomextra.html"><i class="fa fa-check"></i><b>9.3</b> broomExtra</a></li>
+<li class="chapter" data-level="9.4" data-path="ggfortify.html"><a href="ggfortify.html"><i class="fa fa-check"></i><b>9.4</b> ggfortify</a></li>
+</ul></li>
+<li class="part"><span><b>II Importing</b></span></li>
+<li class="chapter" data-level="10" data-path="vroom-fast-reading-of-delimited-files.html"><a href="vroom-fast-reading-of-delimited-files.html"><i class="fa fa-check"></i><b>10</b> vroom: Fast reading of delimited files</a></li>
+<li class="chapter" data-level="11" data-path="reading-in-data-from-other-formats.html"><a href="reading-in-data-from-other-formats.html"><i class="fa fa-check"></i><b>11</b> Reading in data from other formats</a><ul>
+<li class="chapter" data-level="11.1" data-path="pdf.html"><a href="pdf.html"><i class="fa fa-check"></i><b>11.1</b> PDF</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="pdf.html"><a href="pdf.html#scraping-pdf-data"><i class="fa fa-check"></i><b>11.1.1</b> Scraping pdf data</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="office-documents.html"><a href="office-documents.html"><i class="fa fa-check"></i><b>11.2</b> Office documents</a></li>
+<li class="chapter" data-level="11.3" data-path="google-sheet.html"><a href="google-sheet.html"><i class="fa fa-check"></i><b>11.3</b> Google sheet</a></li>
+<li class="chapter" data-level="11.4" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i><b>11.4</b> Images</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="useful-apis.html"><a href="useful-apis.html"><i class="fa fa-check"></i><b>12</b> Useful APIs</a><ul>
+<li class="chapter" data-level="12.1" data-path="wdi.html"><a href="wdi.html"><i class="fa fa-check"></i><b>12.1</b> WDI</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="wdi.html"><a href="wdi.html#wdisearch"><i class="fa fa-check"></i><b>12.1.1</b> <code>WDIsearch()</code></a></li>
+<li class="chapter" data-level="12.1.2" data-path="wdi.html"><a href="wdi.html#wdi-1"><i class="fa fa-check"></i><b>12.1.2</b> <code>WDI</code></a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="ipumsr.html"><a href="ipumsr.html"><i class="fa fa-check"></i><b>12.2</b> ipumsr</a></li>
+</ul></li>
+<li class="part"><span><b>III Exploring and Wrangling</b></span></li>
+<li class="chapter" data-level="13" data-path="data-summary.html"><a href="data-summary.html"><i class="fa fa-check"></i><b>13</b> Data summary</a><ul>
+<li class="chapter" data-level="13.1" data-path="skimr.html"><a href="skimr.html"><i class="fa fa-check"></i><b>13.1</b> skimr</a></li>
+<li class="chapter" data-level="13.2" data-path="visdat.html"><a href="visdat.html"><i class="fa fa-check"></i><b>13.2</b> visdat</a></li>
+<li class="chapter" data-level="13.3" data-path="summarytools.html"><a href="summarytools.html"><i class="fa fa-check"></i><b>13.3</b> summarytools</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="summarytools.html"><a href="summarytools.html#freq"><i class="fa fa-check"></i><b>13.3.1</b> <code>freq</code></a></li>
+<li class="chapter" data-level="13.3.2" data-path="summarytools.html"><a href="summarytools.html#descr"><i class="fa fa-check"></i><b>13.3.2</b> <code>descr()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="gt-and-gtsummary.html"><a href="gt-and-gtsummary.html"><i class="fa fa-check"></i><b>13.4</b> gt and gtsummary</a></li>
+<li class="chapter" data-level="13.5" data-path="naniar.html"><a href="naniar.html"><i class="fa fa-check"></i><b>13.5</b> naniar</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="janitor.html"><a href="janitor.html"><i class="fa fa-check"></i><b>14</b> Janitor</a><ul>
+<li class="chapter" data-level="14.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html"><i class="fa fa-check"></i><b>14.1</b> cleaning</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html#clean_names"><i class="fa fa-check"></i><b>14.1.1</b> <code>clean_names</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="janitor-explore.html"><a href="janitor-explore.html"><i class="fa fa-check"></i><b>14.2</b> Exploring</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="janitor-explore.html"><a href="janitor-explore.html#tabyl"><i class="fa fa-check"></i><b>14.2.1</b> <code>tabyl</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="janitor-explore.html"><a href="janitor-explore.html#get_dupes"><i class="fa fa-check"></i><b>14.2.2</b> <code>get_dupes</code></a></li>
+<li class="chapter" data-level="14.2.3" data-path="janitor-explore.html"><a href="janitor-explore.html#remove_"><i class="fa fa-check"></i><b>14.2.3</b> <code>remove_</code></a></li>
+<li class="chapter" data-level="14.2.4" data-path="janitor-explore.html"><a href="janitor-explore.html#round_half_up"><i class="fa fa-check"></i><b>14.2.4</b> <code>round_half_up</code></a></li>
+<li class="chapter" data-level="14.2.5" data-path="janitor-explore.html"><a href="janitor-explore.html#excel_numeric_to_date"><i class="fa fa-check"></i><b>14.2.5</b> <code>excel_numeric_to_date</code></a></li>
+<li class="chapter" data-level="14.2.6" data-path="janitor-explore.html"><a href="janitor-explore.html#top_levels"><i class="fa fa-check"></i><b>14.2.6</b> <code>top_levels</code></a></li>
+<li class="chapter" data-level="14.2.7" data-path="janitor-explore.html"><a href="janitor-explore.html#row_to_names"><i class="fa fa-check"></i><b>14.2.7</b> <code>row_to_names</code></a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Miscellaneous tools</b></span></li>
+<li class="chapter" data-level="15" data-path="advanced-relational-data.html"><a href="advanced-relational-data.html"><i class="fa fa-check"></i><b>15</b> Advanced relational data</a><ul>
+<li class="chapter" data-level="15.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html"><i class="fa fa-check"></i><b>15.1</b> fuzzyjoin</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#inexact-matching"><i class="fa fa-check"></i><b>15.1.1</b> inexact matching</a></li>
+<li class="chapter" data-level="15.1.2" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#stringdist"><i class="fa fa-check"></i><b>15.1.2</b> stringdist</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="funneljoin.html"><a href="funneljoin.html"><i class="fa fa-check"></i><b>15.2</b> funneljoin</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="funneljoin.html"><a href="funneljoin.html#after_join"><i class="fa fa-check"></i><b>15.2.1</b> <code>after_join()</code></a></li>
+<li class="chapter" data-level="15.2.2" data-path="funneljoin.html"><a href="funneljoin.html#funnel-in-one-table"><i class="fa fa-check"></i><b>15.2.2</b> funnel in one table</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="dm.html"><a href="dm.html"><i class="fa fa-check"></i><b>15.3</b> dm</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="categorical-data-facotr.html"><a href="categorical-data-facotr.html"><i class="fa fa-check"></i><b>16</b> Categorical data (facotr)</a><ul>
+<li class="chapter" data-level="16.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html"><i class="fa fa-check"></i><b>16.1</b> Frequency and contingency table</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html#frq-and-flat_table"><i class="fa fa-check"></i><b>16.1.1</b> <code>frq()</code> and <code>flat_table()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="coding.html"><a href="coding.html"><i class="fa fa-check"></i><b>16.2</b> Coding</a><ul>
+<li class="chapter" data-level="16.2.1" data-path="coding.html"><a href="coding.html#rec"><i class="fa fa-check"></i><b>16.2.1</b> <code>rec()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="cutting.html"><a href="cutting.html"><i class="fa fa-check"></i><b>16.3</b> Cutting</a><ul>
+<li class="chapter" data-level="16.3.1" data-path="cutting.html"><a href="cutting.html#chop"><i class="fa fa-check"></i><b>16.3.1</b> <code>chop()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dealing-with-missing-values.html"><a href="dealing-with-missing-values.html"><i class="fa fa-check"></i><b>17</b> Dealing with missing values</a><ul>
+<li class="chapter" data-level="17.1" data-path="explore-missing.html"><a href="explore-missing.html"><i class="fa fa-check"></i><b>17.1</b> Exploring</a><ul>
+<li class="chapter" data-level="17.1.1" data-path="explore-missing.html"><a href="explore-missing.html#naniar-1"><i class="fa fa-check"></i><b>17.1.1</b> naniar</a></li>
+<li class="chapter" data-level="17.1.2" data-path="explore-missing.html"><a href="explore-missing.html#replace-a-value-with-na"><i class="fa fa-check"></i><b>17.1.2</b> Replace a value with NA</a></li>
+<li class="chapter" data-level="17.1.3" data-path="explore-missing.html"><a href="explore-missing.html#janitor-1"><i class="fa fa-check"></i><b>17.1.3</b> janitor</a></li>
+<li class="chapter" data-level="17.1.4" data-path="explore-missing.html"><a href="explore-missing.html#sjmisc"><i class="fa fa-check"></i><b>17.1.4</b> sjmisc</a></li>
+</ul></li>
+<li class="chapter" data-level="17.2" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>17.2</b> Wrangling</a><ul>
+<li class="chapter" data-level="17.2.1" data-path="wrangling.html"><a href="wrangling.html#tidyr"><i class="fa fa-check"></i><b>17.2.1</b> tidyr</a></li>
+<li class="chapter" data-level="17.2.2" data-path="wrangling.html"><a href="wrangling.html#janitor-2"><i class="fa fa-check"></i><b>17.2.2</b> janitor</a></li>
+<li class="chapter" data-level="17.2.3" data-path="wrangling.html"><a href="wrangling.html#visdat-1"><i class="fa fa-check"></i><b>17.2.3</b> visdat</a></li>
+</ul></li>
+<li class="chapter" data-level="17.3" data-path="imputation.html"><a href="imputation.html"><i class="fa fa-check"></i><b>17.3</b> Imputation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R for data science: tidyverse and beyond</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="janitor-cleaning" class="section level2">
+<h2><span class="header-section-number">14.1</span> cleaning</h2>
+<div id="clean_names" class="section level3">
+<h3><span class="header-section-number">14.1.1</span> <code>clean_names</code></h3>
+<p><code>clean_names()</code> 将输入数据框的列名转换为整洁格式，与 <code>readxl::read_excel()</code> 和 <code>readr::read_csv()</code> 等不会擅自修改原列名的函数搭配使用效果最佳。 <code>clean_names()</code> 的 <strong>输入输出</strong> 都是数据框，这使它很适应和管道操作符 <code>%&gt;%</code> 和 tidyverse 中的其他函数一同工作。</p>
+<p>列名的转换有以下几种主要情形：</p>
+<ul>
+<li><p>统一字母的大小写，采用一致的命名方式（默认为蛇形命名法 <code>snake_case</code>）</p></li>
+<li><p>自动为重复的列名编号，填充空的列名</p></li>
+<li><p>删除空格和某些特殊字符，如括号， <code>œ</code>、<code>oe</code></p></li>
+<li><p>“%” 转换至 “percent”, “#” 转换至 “number”</p></li>
+</ul>
+<div class="sourceCode" id="cb534"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb534-1" title="1"><span class="co"># Create a data.frame with dirty names</span></a>
+<a class="sourceLine" id="cb534-2" title="2">test_df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="dv">6</span>))</a>
+<a class="sourceLine" id="cb534-3" title="3"><span class="kw">names</span>(test_df) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;firstName&quot;</span>, <span class="st">&quot;ábc@!*&quot;</span>, <span class="st">&quot;% successful (2009)&quot;</span>,</a>
+<a class="sourceLine" id="cb534-4" title="4">                    <span class="st">&quot;REPEAT VALUE&quot;</span>, <span class="st">&quot;REPEAT VALUE&quot;</span>, <span class="st">&quot;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb535"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb535-1" title="1"><span class="co"># Clean the variable names, returning a data.frame:</span></a>
+<a class="sourceLine" id="cb535-2" title="2">test_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb535-3" title="3"><span class="st">  </span><span class="kw">clean_names</span>()</a>
+<a class="sourceLine" id="cb535-4" title="4"><span class="co">#&gt;   first_name abc percent_successful_2009 repeat_value repeat_value_2  x</span></a>
+<a class="sourceLine" id="cb535-5" title="5"><span class="co">#&gt; 1         NA  NA                      NA           NA             NA NA</span></a></code></pre></div>
+<p>与 Base R 中的 <code>make.names()</code> 对比 (注意这个函数是基于字符向量的)：</p>
+<div class="sourceCode" id="cb536"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb536-1" title="1"><span class="kw">names</span>(test_df) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb536-2" title="2"><span class="st">  </span><span class="kw">make.names</span>()</a>
+<a class="sourceLine" id="cb536-3" title="3"><span class="co">#&gt; [1] &quot;firstName&quot;            &quot;ábc...&quot;               &quot;X..successful..2009.&quot;</span></a>
+<a class="sourceLine" id="cb536-4" title="4"><span class="co">#&gt; [4] &quot;REPEAT.VALUE&quot;         &quot;REPEAT.VALUE&quot;         &quot;X&quot;</span></a></code></pre></div>
+<p>改变命名规范：</p>
+<div class="sourceCode" id="cb537"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb537-1" title="1"><span class="co"># snake_case  </span></a>
+<a class="sourceLine" id="cb537-2" title="2">test_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb537-3" title="3"><span class="st">  </span><span class="kw">clean_names</span>()</a>
+<a class="sourceLine" id="cb537-4" title="4"><span class="co">#&gt;   first_name abc percent_successful_2009 repeat_value repeat_value_2  x</span></a>
+<a class="sourceLine" id="cb537-5" title="5"><span class="co">#&gt; 1         NA  NA                      NA           NA             NA NA</span></a>
+<a class="sourceLine" id="cb537-6" title="6"></a>
+<a class="sourceLine" id="cb537-7" title="7"><span class="co"># lower_camel and upper_camel  </span></a>
+<a class="sourceLine" id="cb537-8" title="8">test_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb537-9" title="9"><span class="st">  </span><span class="kw">clean_names</span>(<span class="dt">case =</span> <span class="st">&quot;lower_camel&quot;</span>)</a>
+<a class="sourceLine" id="cb537-10" title="10"><span class="co">#&gt;   firstName abc percentSuccessful2009 repeatValue repeatValue_2  x</span></a>
+<a class="sourceLine" id="cb537-11" title="11"><span class="co">#&gt; 1        NA  NA                    NA          NA            NA NA</span></a>
+<a class="sourceLine" id="cb537-12" title="12">test_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb537-13" title="13"><span class="st">  </span><span class="kw">clean_names</span>(<span class="dt">case =</span> <span class="st">&quot;upper_camel&quot;</span>)</a>
+<a class="sourceLine" id="cb537-14" title="14"><span class="co">#&gt;   FirstName Abc PercentSuccessful2009 RepeatValue RepeatValue_2  X</span></a>
+<a class="sourceLine" id="cb537-15" title="15"><span class="co">#&gt; 1        NA  NA                    NA          NA            NA NA</span></a></code></pre></div>
+<p><code>clean_names()</code> 只能适用于于数据框 ，而 <code>make_clean_names()</code> 适用于向量，这使后者可以作为很多函数的参数，进行有效的 functional programming， 例如以下四种修改列名的方式是等效的：</p>
+<div class="sourceCode" id="cb538"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb538-1" title="1">iris <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">clean_names</span>()</a>
+<a class="sourceLine" id="cb538-2" title="2"><span class="co">#&gt;     sepal_length sepal_width petal_length petal_width    species</span></a>
+<a class="sourceLine" id="cb538-3" title="3"><span class="co">#&gt; 1            5.1         3.5          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-4" title="4"><span class="co">#&gt; 2            4.9         3.0          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-5" title="5"><span class="co">#&gt; 3            4.7         3.2          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-6" title="6"><span class="co">#&gt; 4            4.6         3.1          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-7" title="7"><span class="co">#&gt; 5            5.0         3.6          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-8" title="8"><span class="co">#&gt; 6            5.4         3.9          1.7         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-9" title="9"><span class="co">#&gt; 7            4.6         3.4          1.4         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-10" title="10"><span class="co">#&gt; 8            5.0         3.4          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-11" title="11"><span class="co">#&gt; 9            4.4         2.9          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-12" title="12"><span class="co">#&gt; 10           4.9         3.1          1.5         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-13" title="13"><span class="co">#&gt; 11           5.4         3.7          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-14" title="14"><span class="co">#&gt; 12           4.8         3.4          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-15" title="15"><span class="co">#&gt; 13           4.8         3.0          1.4         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-16" title="16"><span class="co">#&gt; 14           4.3         3.0          1.1         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-17" title="17"><span class="co">#&gt; 15           5.8         4.0          1.2         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-18" title="18"><span class="co">#&gt; 16           5.7         4.4          1.5         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-19" title="19"><span class="co">#&gt; 17           5.4         3.9          1.3         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-20" title="20"><span class="co">#&gt; 18           5.1         3.5          1.4         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-21" title="21"><span class="co">#&gt; 19           5.7         3.8          1.7         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-22" title="22"><span class="co">#&gt; 20           5.1         3.8          1.5         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-23" title="23"><span class="co">#&gt; 21           5.4         3.4          1.7         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-24" title="24"><span class="co">#&gt; 22           5.1         3.7          1.5         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-25" title="25"><span class="co">#&gt; 23           4.6         3.6          1.0         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-26" title="26"><span class="co">#&gt; 24           5.1         3.3          1.7         0.5     setosa</span></a>
+<a class="sourceLine" id="cb538-27" title="27"><span class="co">#&gt; 25           4.8         3.4          1.9         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-28" title="28"><span class="co">#&gt; 26           5.0         3.0          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-29" title="29"><span class="co">#&gt; 27           5.0         3.4          1.6         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-30" title="30"><span class="co">#&gt; 28           5.2         3.5          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-31" title="31"><span class="co">#&gt; 29           5.2         3.4          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-32" title="32"><span class="co">#&gt; 30           4.7         3.2          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-33" title="33"><span class="co">#&gt; 31           4.8         3.1          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-34" title="34"><span class="co">#&gt; 32           5.4         3.4          1.5         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-35" title="35"><span class="co">#&gt; 33           5.2         4.1          1.5         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-36" title="36"><span class="co">#&gt; 34           5.5         4.2          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-37" title="37"><span class="co">#&gt; 35           4.9         3.1          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-38" title="38"><span class="co">#&gt; 36           5.0         3.2          1.2         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-39" title="39"><span class="co">#&gt; 37           5.5         3.5          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-40" title="40"><span class="co">#&gt; 38           4.9         3.6          1.4         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-41" title="41"><span class="co">#&gt; 39           4.4         3.0          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-42" title="42"><span class="co">#&gt; 40           5.1         3.4          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-43" title="43"><span class="co">#&gt; 41           5.0         3.5          1.3         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-44" title="44"><span class="co">#&gt; 42           4.5         2.3          1.3         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-45" title="45"><span class="co">#&gt; 43           4.4         3.2          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-46" title="46"><span class="co">#&gt; 44           5.0         3.5          1.6         0.6     setosa</span></a>
+<a class="sourceLine" id="cb538-47" title="47"><span class="co">#&gt; 45           5.1         3.8          1.9         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-48" title="48"><span class="co">#&gt; 46           4.8         3.0          1.4         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-49" title="49"><span class="co">#&gt; 47           5.1         3.8          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-50" title="50"><span class="co">#&gt; 48           4.6         3.2          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-51" title="51"><span class="co">#&gt; 49           5.3         3.7          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-52" title="52"><span class="co">#&gt; 50           5.0         3.3          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-53" title="53"><span class="co">#&gt; 51           7.0         3.2          4.7         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-54" title="54"><span class="co">#&gt; 52           6.4         3.2          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-55" title="55"><span class="co">#&gt; 53           6.9         3.1          4.9         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-56" title="56"><span class="co">#&gt; 54           5.5         2.3          4.0         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-57" title="57"><span class="co">#&gt; 55           6.5         2.8          4.6         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-58" title="58"><span class="co">#&gt; 56           5.7         2.8          4.5         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-59" title="59"><span class="co">#&gt; 57           6.3         3.3          4.7         1.6 versicolor</span></a>
+<a class="sourceLine" id="cb538-60" title="60"><span class="co">#&gt; 58           4.9         2.4          3.3         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-61" title="61"><span class="co">#&gt; 59           6.6         2.9          4.6         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-62" title="62"><span class="co">#&gt; 60           5.2         2.7          3.9         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-63" title="63"><span class="co">#&gt; 61           5.0         2.0          3.5         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-64" title="64"><span class="co">#&gt; 62           5.9         3.0          4.2         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-65" title="65"><span class="co">#&gt; 63           6.0         2.2          4.0         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-66" title="66"><span class="co">#&gt; 64           6.1         2.9          4.7         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-67" title="67"><span class="co">#&gt; 65           5.6         2.9          3.6         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-68" title="68"><span class="co">#&gt; 66           6.7         3.1          4.4         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-69" title="69"><span class="co">#&gt; 67           5.6         3.0          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-70" title="70"><span class="co">#&gt; 68           5.8         2.7          4.1         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-71" title="71"><span class="co">#&gt; 69           6.2         2.2          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-72" title="72"><span class="co">#&gt; 70           5.6         2.5          3.9         1.1 versicolor</span></a>
+<a class="sourceLine" id="cb538-73" title="73"><span class="co">#&gt; 71           5.9         3.2          4.8         1.8 versicolor</span></a>
+<a class="sourceLine" id="cb538-74" title="74"><span class="co">#&gt; 72           6.1         2.8          4.0         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-75" title="75"><span class="co">#&gt; 73           6.3         2.5          4.9         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-76" title="76"><span class="co">#&gt; 74           6.1         2.8          4.7         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-77" title="77"><span class="co">#&gt; 75           6.4         2.9          4.3         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-78" title="78"><span class="co">#&gt; 76           6.6         3.0          4.4         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-79" title="79"><span class="co">#&gt; 77           6.8         2.8          4.8         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-80" title="80"><span class="co">#&gt; 78           6.7         3.0          5.0         1.7 versicolor</span></a>
+<a class="sourceLine" id="cb538-81" title="81"><span class="co">#&gt; 79           6.0         2.9          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-82" title="82"><span class="co">#&gt; 80           5.7         2.6          3.5         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-83" title="83"><span class="co">#&gt; 81           5.5         2.4          3.8         1.1 versicolor</span></a>
+<a class="sourceLine" id="cb538-84" title="84"><span class="co">#&gt; 82           5.5         2.4          3.7         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-85" title="85"><span class="co">#&gt; 83           5.8         2.7          3.9         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-86" title="86"><span class="co">#&gt; 84           6.0         2.7          5.1         1.6 versicolor</span></a>
+<a class="sourceLine" id="cb538-87" title="87"><span class="co">#&gt; 85           5.4         3.0          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-88" title="88"><span class="co">#&gt; 86           6.0         3.4          4.5         1.6 versicolor</span></a>
+<a class="sourceLine" id="cb538-89" title="89"><span class="co">#&gt; 87           6.7         3.1          4.7         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-90" title="90"><span class="co">#&gt; 88           6.3         2.3          4.4         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-91" title="91"><span class="co">#&gt; 89           5.6         3.0          4.1         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-92" title="92"><span class="co">#&gt; 90           5.5         2.5          4.0         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-93" title="93"><span class="co">#&gt; 91           5.5         2.6          4.4         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-94" title="94"><span class="co">#&gt; 92           6.1         3.0          4.6         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-95" title="95"><span class="co">#&gt; 93           5.8         2.6          4.0         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-96" title="96"><span class="co">#&gt; 94           5.0         2.3          3.3         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-97" title="97"><span class="co">#&gt; 95           5.6         2.7          4.2         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-98" title="98"><span class="co">#&gt; 96           5.7         3.0          4.2         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-99" title="99"><span class="co">#&gt; 97           5.7         2.9          4.2         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-100" title="100"><span class="co">#&gt; 98           6.2         2.9          4.3         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-101" title="101"><span class="co">#&gt; 99           5.1         2.5          3.0         1.1 versicolor</span></a>
+<a class="sourceLine" id="cb538-102" title="102"><span class="co">#&gt; 100          5.7         2.8          4.1         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-103" title="103"><span class="co">#&gt; 101          6.3         3.3          6.0         2.5  virginica</span></a>
+<a class="sourceLine" id="cb538-104" title="104"><span class="co">#&gt; 102          5.8         2.7          5.1         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-105" title="105"><span class="co">#&gt; 103          7.1         3.0          5.9         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-106" title="106"><span class="co">#&gt; 104          6.3         2.9          5.6         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-107" title="107"><span class="co">#&gt; 105          6.5         3.0          5.8         2.2  virginica</span></a>
+<a class="sourceLine" id="cb538-108" title="108"><span class="co">#&gt; 106          7.6         3.0          6.6         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-109" title="109"><span class="co">#&gt; 107          4.9         2.5          4.5         1.7  virginica</span></a>
+<a class="sourceLine" id="cb538-110" title="110"><span class="co">#&gt; 108          7.3         2.9          6.3         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-111" title="111"><span class="co">#&gt; 109          6.7         2.5          5.8         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-112" title="112"><span class="co">#&gt; 110          7.2         3.6          6.1         2.5  virginica</span></a>
+<a class="sourceLine" id="cb538-113" title="113"><span class="co">#&gt; 111          6.5         3.2          5.1         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-114" title="114"><span class="co">#&gt; 112          6.4         2.7          5.3         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-115" title="115"><span class="co">#&gt; 113          6.8         3.0          5.5         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-116" title="116"><span class="co">#&gt; 114          5.7         2.5          5.0         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-117" title="117"><span class="co">#&gt; 115          5.8         2.8          5.1         2.4  virginica</span></a>
+<a class="sourceLine" id="cb538-118" title="118"><span class="co">#&gt; 116          6.4         3.2          5.3         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-119" title="119"><span class="co">#&gt; 117          6.5         3.0          5.5         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-120" title="120"><span class="co">#&gt; 118          7.7         3.8          6.7         2.2  virginica</span></a>
+<a class="sourceLine" id="cb538-121" title="121"><span class="co">#&gt; 119          7.7         2.6          6.9         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-122" title="122"><span class="co">#&gt; 120          6.0         2.2          5.0         1.5  virginica</span></a>
+<a class="sourceLine" id="cb538-123" title="123"><span class="co">#&gt; 121          6.9         3.2          5.7         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-124" title="124"><span class="co">#&gt; 122          5.6         2.8          4.9         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-125" title="125"><span class="co">#&gt; 123          7.7         2.8          6.7         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-126" title="126"><span class="co">#&gt; 124          6.3         2.7          4.9         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-127" title="127"><span class="co">#&gt; 125          6.7         3.3          5.7         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-128" title="128"><span class="co">#&gt; 126          7.2         3.2          6.0         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-129" title="129"><span class="co">#&gt; 127          6.2         2.8          4.8         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-130" title="130"><span class="co">#&gt; 128          6.1         3.0          4.9         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-131" title="131"><span class="co">#&gt; 129          6.4         2.8          5.6         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-132" title="132"><span class="co">#&gt; 130          7.2         3.0          5.8         1.6  virginica</span></a>
+<a class="sourceLine" id="cb538-133" title="133"><span class="co">#&gt; 131          7.4         2.8          6.1         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-134" title="134"><span class="co">#&gt; 132          7.9         3.8          6.4         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-135" title="135"><span class="co">#&gt; 133          6.4         2.8          5.6         2.2  virginica</span></a>
+<a class="sourceLine" id="cb538-136" title="136"><span class="co">#&gt; 134          6.3         2.8          5.1         1.5  virginica</span></a>
+<a class="sourceLine" id="cb538-137" title="137"><span class="co">#&gt; 135          6.1         2.6          5.6         1.4  virginica</span></a>
+<a class="sourceLine" id="cb538-138" title="138"><span class="co">#&gt; 136          7.7         3.0          6.1         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-139" title="139"><span class="co">#&gt; 137          6.3         3.4          5.6         2.4  virginica</span></a>
+<a class="sourceLine" id="cb538-140" title="140"><span class="co">#&gt; 138          6.4         3.1          5.5         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-141" title="141"><span class="co">#&gt; 139          6.0         3.0          4.8         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-142" title="142"><span class="co">#&gt; 140          6.9         3.1          5.4         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-143" title="143"><span class="co">#&gt; 141          6.7         3.1          5.6         2.4  virginica</span></a>
+<a class="sourceLine" id="cb538-144" title="144"><span class="co">#&gt; 142          6.9         3.1          5.1         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-145" title="145"><span class="co">#&gt; 143          5.8         2.7          5.1         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-146" title="146"><span class="co">#&gt; 144          6.8         3.2          5.9         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-147" title="147"><span class="co">#&gt; 145          6.7         3.3          5.7         2.5  virginica</span></a>
+<a class="sourceLine" id="cb538-148" title="148"><span class="co">#&gt; 146          6.7         3.0          5.2         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-149" title="149"><span class="co">#&gt; 147          6.3         2.5          5.0         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-150" title="150"><span class="co">#&gt; 148          6.5         3.0          5.2         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-151" title="151"><span class="co">#&gt; 149          6.2         3.4          5.4         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-152" title="152"><span class="co">#&gt; 150          5.9         3.0          5.1         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-153" title="153"></a>
+<a class="sourceLine" id="cb538-154" title="154">iris <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">names</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">make_clean_names</span>()</a>
+<a class="sourceLine" id="cb538-155" title="155"><span class="co">#&gt; [1] &quot;sepal_length&quot; &quot;sepal_width&quot;  &quot;petal_length&quot; &quot;petal_width&quot;  &quot;species&quot;</span></a>
+<a class="sourceLine" id="cb538-156" title="156"></a>
+<a class="sourceLine" id="cb538-157" title="157">iris <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as_tibble</span>(<span class="dt">name_repair =</span> make_clean_names)</a>
+<a class="sourceLine" id="cb538-158" title="158"><span class="co">#&gt; # A tibble: 150 x 5</span></a>
+<a class="sourceLine" id="cb538-159" title="159"><span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span></a>
+<a class="sourceLine" id="cb538-160" title="160"><span class="co">#&gt;          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  </span></a>
+<a class="sourceLine" id="cb538-161" title="161"><span class="co">#&gt; 1          5.1         3.5          1.4         0.2 setosa </span></a>
+<a class="sourceLine" id="cb538-162" title="162"><span class="co">#&gt; 2          4.9         3            1.4         0.2 setosa </span></a>
+<a class="sourceLine" id="cb538-163" title="163"><span class="co">#&gt; 3          4.7         3.2          1.3         0.2 setosa </span></a>
+<a class="sourceLine" id="cb538-164" title="164"><span class="co">#&gt; 4          4.6         3.1          1.5         0.2 setosa </span></a>
+<a class="sourceLine" id="cb538-165" title="165"><span class="co">#&gt; 5          5           3.6          1.4         0.2 setosa </span></a>
+<a class="sourceLine" id="cb538-166" title="166"><span class="co">#&gt; 6          5.4         3.9          1.7         0.4 setosa </span></a>
+<a class="sourceLine" id="cb538-167" title="167"><span class="co">#&gt; # ... with 144 more rows</span></a>
+<a class="sourceLine" id="cb538-168" title="168"></a>
+<a class="sourceLine" id="cb538-169" title="169">iris <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename_all</span>(make_clean_names) </a>
+<a class="sourceLine" id="cb538-170" title="170"><span class="co">#&gt;     sepal_length sepal_width petal_length petal_width    species</span></a>
+<a class="sourceLine" id="cb538-171" title="171"><span class="co">#&gt; 1            5.1         3.5          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-172" title="172"><span class="co">#&gt; 2            4.9         3.0          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-173" title="173"><span class="co">#&gt; 3            4.7         3.2          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-174" title="174"><span class="co">#&gt; 4            4.6         3.1          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-175" title="175"><span class="co">#&gt; 5            5.0         3.6          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-176" title="176"><span class="co">#&gt; 6            5.4         3.9          1.7         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-177" title="177"><span class="co">#&gt; 7            4.6         3.4          1.4         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-178" title="178"><span class="co">#&gt; 8            5.0         3.4          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-179" title="179"><span class="co">#&gt; 9            4.4         2.9          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-180" title="180"><span class="co">#&gt; 10           4.9         3.1          1.5         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-181" title="181"><span class="co">#&gt; 11           5.4         3.7          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-182" title="182"><span class="co">#&gt; 12           4.8         3.4          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-183" title="183"><span class="co">#&gt; 13           4.8         3.0          1.4         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-184" title="184"><span class="co">#&gt; 14           4.3         3.0          1.1         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-185" title="185"><span class="co">#&gt; 15           5.8         4.0          1.2         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-186" title="186"><span class="co">#&gt; 16           5.7         4.4          1.5         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-187" title="187"><span class="co">#&gt; 17           5.4         3.9          1.3         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-188" title="188"><span class="co">#&gt; 18           5.1         3.5          1.4         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-189" title="189"><span class="co">#&gt; 19           5.7         3.8          1.7         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-190" title="190"><span class="co">#&gt; 20           5.1         3.8          1.5         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-191" title="191"><span class="co">#&gt; 21           5.4         3.4          1.7         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-192" title="192"><span class="co">#&gt; 22           5.1         3.7          1.5         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-193" title="193"><span class="co">#&gt; 23           4.6         3.6          1.0         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-194" title="194"><span class="co">#&gt; 24           5.1         3.3          1.7         0.5     setosa</span></a>
+<a class="sourceLine" id="cb538-195" title="195"><span class="co">#&gt; 25           4.8         3.4          1.9         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-196" title="196"><span class="co">#&gt; 26           5.0         3.0          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-197" title="197"><span class="co">#&gt; 27           5.0         3.4          1.6         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-198" title="198"><span class="co">#&gt; 28           5.2         3.5          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-199" title="199"><span class="co">#&gt; 29           5.2         3.4          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-200" title="200"><span class="co">#&gt; 30           4.7         3.2          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-201" title="201"><span class="co">#&gt; 31           4.8         3.1          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-202" title="202"><span class="co">#&gt; 32           5.4         3.4          1.5         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-203" title="203"><span class="co">#&gt; 33           5.2         4.1          1.5         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-204" title="204"><span class="co">#&gt; 34           5.5         4.2          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-205" title="205"><span class="co">#&gt; 35           4.9         3.1          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-206" title="206"><span class="co">#&gt; 36           5.0         3.2          1.2         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-207" title="207"><span class="co">#&gt; 37           5.5         3.5          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-208" title="208"><span class="co">#&gt; 38           4.9         3.6          1.4         0.1     setosa</span></a>
+<a class="sourceLine" id="cb538-209" title="209"><span class="co">#&gt; 39           4.4         3.0          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-210" title="210"><span class="co">#&gt; 40           5.1         3.4          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-211" title="211"><span class="co">#&gt; 41           5.0         3.5          1.3         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-212" title="212"><span class="co">#&gt; 42           4.5         2.3          1.3         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-213" title="213"><span class="co">#&gt; 43           4.4         3.2          1.3         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-214" title="214"><span class="co">#&gt; 44           5.0         3.5          1.6         0.6     setosa</span></a>
+<a class="sourceLine" id="cb538-215" title="215"><span class="co">#&gt; 45           5.1         3.8          1.9         0.4     setosa</span></a>
+<a class="sourceLine" id="cb538-216" title="216"><span class="co">#&gt; 46           4.8         3.0          1.4         0.3     setosa</span></a>
+<a class="sourceLine" id="cb538-217" title="217"><span class="co">#&gt; 47           5.1         3.8          1.6         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-218" title="218"><span class="co">#&gt; 48           4.6         3.2          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-219" title="219"><span class="co">#&gt; 49           5.3         3.7          1.5         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-220" title="220"><span class="co">#&gt; 50           5.0         3.3          1.4         0.2     setosa</span></a>
+<a class="sourceLine" id="cb538-221" title="221"><span class="co">#&gt; 51           7.0         3.2          4.7         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-222" title="222"><span class="co">#&gt; 52           6.4         3.2          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-223" title="223"><span class="co">#&gt; 53           6.9         3.1          4.9         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-224" title="224"><span class="co">#&gt; 54           5.5         2.3          4.0         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-225" title="225"><span class="co">#&gt; 55           6.5         2.8          4.6         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-226" title="226"><span class="co">#&gt; 56           5.7         2.8          4.5         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-227" title="227"><span class="co">#&gt; 57           6.3         3.3          4.7         1.6 versicolor</span></a>
+<a class="sourceLine" id="cb538-228" title="228"><span class="co">#&gt; 58           4.9         2.4          3.3         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-229" title="229"><span class="co">#&gt; 59           6.6         2.9          4.6         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-230" title="230"><span class="co">#&gt; 60           5.2         2.7          3.9         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-231" title="231"><span class="co">#&gt; 61           5.0         2.0          3.5         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-232" title="232"><span class="co">#&gt; 62           5.9         3.0          4.2         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-233" title="233"><span class="co">#&gt; 63           6.0         2.2          4.0         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-234" title="234"><span class="co">#&gt; 64           6.1         2.9          4.7         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-235" title="235"><span class="co">#&gt; 65           5.6         2.9          3.6         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-236" title="236"><span class="co">#&gt; 66           6.7         3.1          4.4         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-237" title="237"><span class="co">#&gt; 67           5.6         3.0          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-238" title="238"><span class="co">#&gt; 68           5.8         2.7          4.1         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-239" title="239"><span class="co">#&gt; 69           6.2         2.2          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-240" title="240"><span class="co">#&gt; 70           5.6         2.5          3.9         1.1 versicolor</span></a>
+<a class="sourceLine" id="cb538-241" title="241"><span class="co">#&gt; 71           5.9         3.2          4.8         1.8 versicolor</span></a>
+<a class="sourceLine" id="cb538-242" title="242"><span class="co">#&gt; 72           6.1         2.8          4.0         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-243" title="243"><span class="co">#&gt; 73           6.3         2.5          4.9         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-244" title="244"><span class="co">#&gt; 74           6.1         2.8          4.7         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-245" title="245"><span class="co">#&gt; 75           6.4         2.9          4.3         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-246" title="246"><span class="co">#&gt; 76           6.6         3.0          4.4         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-247" title="247"><span class="co">#&gt; 77           6.8         2.8          4.8         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-248" title="248"><span class="co">#&gt; 78           6.7         3.0          5.0         1.7 versicolor</span></a>
+<a class="sourceLine" id="cb538-249" title="249"><span class="co">#&gt; 79           6.0         2.9          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-250" title="250"><span class="co">#&gt; 80           5.7         2.6          3.5         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-251" title="251"><span class="co">#&gt; 81           5.5         2.4          3.8         1.1 versicolor</span></a>
+<a class="sourceLine" id="cb538-252" title="252"><span class="co">#&gt; 82           5.5         2.4          3.7         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-253" title="253"><span class="co">#&gt; 83           5.8         2.7          3.9         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-254" title="254"><span class="co">#&gt; 84           6.0         2.7          5.1         1.6 versicolor</span></a>
+<a class="sourceLine" id="cb538-255" title="255"><span class="co">#&gt; 85           5.4         3.0          4.5         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-256" title="256"><span class="co">#&gt; 86           6.0         3.4          4.5         1.6 versicolor</span></a>
+<a class="sourceLine" id="cb538-257" title="257"><span class="co">#&gt; 87           6.7         3.1          4.7         1.5 versicolor</span></a>
+<a class="sourceLine" id="cb538-258" title="258"><span class="co">#&gt; 88           6.3         2.3          4.4         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-259" title="259"><span class="co">#&gt; 89           5.6         3.0          4.1         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-260" title="260"><span class="co">#&gt; 90           5.5         2.5          4.0         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-261" title="261"><span class="co">#&gt; 91           5.5         2.6          4.4         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-262" title="262"><span class="co">#&gt; 92           6.1         3.0          4.6         1.4 versicolor</span></a>
+<a class="sourceLine" id="cb538-263" title="263"><span class="co">#&gt; 93           5.8         2.6          4.0         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-264" title="264"><span class="co">#&gt; 94           5.0         2.3          3.3         1.0 versicolor</span></a>
+<a class="sourceLine" id="cb538-265" title="265"><span class="co">#&gt; 95           5.6         2.7          4.2         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-266" title="266"><span class="co">#&gt; 96           5.7         3.0          4.2         1.2 versicolor</span></a>
+<a class="sourceLine" id="cb538-267" title="267"><span class="co">#&gt; 97           5.7         2.9          4.2         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-268" title="268"><span class="co">#&gt; 98           6.2         2.9          4.3         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-269" title="269"><span class="co">#&gt; 99           5.1         2.5          3.0         1.1 versicolor</span></a>
+<a class="sourceLine" id="cb538-270" title="270"><span class="co">#&gt; 100          5.7         2.8          4.1         1.3 versicolor</span></a>
+<a class="sourceLine" id="cb538-271" title="271"><span class="co">#&gt; 101          6.3         3.3          6.0         2.5  virginica</span></a>
+<a class="sourceLine" id="cb538-272" title="272"><span class="co">#&gt; 102          5.8         2.7          5.1         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-273" title="273"><span class="co">#&gt; 103          7.1         3.0          5.9         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-274" title="274"><span class="co">#&gt; 104          6.3         2.9          5.6         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-275" title="275"><span class="co">#&gt; 105          6.5         3.0          5.8         2.2  virginica</span></a>
+<a class="sourceLine" id="cb538-276" title="276"><span class="co">#&gt; 106          7.6         3.0          6.6         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-277" title="277"><span class="co">#&gt; 107          4.9         2.5          4.5         1.7  virginica</span></a>
+<a class="sourceLine" id="cb538-278" title="278"><span class="co">#&gt; 108          7.3         2.9          6.3         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-279" title="279"><span class="co">#&gt; 109          6.7         2.5          5.8         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-280" title="280"><span class="co">#&gt; 110          7.2         3.6          6.1         2.5  virginica</span></a>
+<a class="sourceLine" id="cb538-281" title="281"><span class="co">#&gt; 111          6.5         3.2          5.1         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-282" title="282"><span class="co">#&gt; 112          6.4         2.7          5.3         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-283" title="283"><span class="co">#&gt; 113          6.8         3.0          5.5         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-284" title="284"><span class="co">#&gt; 114          5.7         2.5          5.0         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-285" title="285"><span class="co">#&gt; 115          5.8         2.8          5.1         2.4  virginica</span></a>
+<a class="sourceLine" id="cb538-286" title="286"><span class="co">#&gt; 116          6.4         3.2          5.3         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-287" title="287"><span class="co">#&gt; 117          6.5         3.0          5.5         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-288" title="288"><span class="co">#&gt; 118          7.7         3.8          6.7         2.2  virginica</span></a>
+<a class="sourceLine" id="cb538-289" title="289"><span class="co">#&gt; 119          7.7         2.6          6.9         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-290" title="290"><span class="co">#&gt; 120          6.0         2.2          5.0         1.5  virginica</span></a>
+<a class="sourceLine" id="cb538-291" title="291"><span class="co">#&gt; 121          6.9         3.2          5.7         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-292" title="292"><span class="co">#&gt; 122          5.6         2.8          4.9         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-293" title="293"><span class="co">#&gt; 123          7.7         2.8          6.7         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-294" title="294"><span class="co">#&gt; 124          6.3         2.7          4.9         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-295" title="295"><span class="co">#&gt; 125          6.7         3.3          5.7         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-296" title="296"><span class="co">#&gt; 126          7.2         3.2          6.0         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-297" title="297"><span class="co">#&gt; 127          6.2         2.8          4.8         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-298" title="298"><span class="co">#&gt; 128          6.1         3.0          4.9         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-299" title="299"><span class="co">#&gt; 129          6.4         2.8          5.6         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-300" title="300"><span class="co">#&gt; 130          7.2         3.0          5.8         1.6  virginica</span></a>
+<a class="sourceLine" id="cb538-301" title="301"><span class="co">#&gt; 131          7.4         2.8          6.1         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-302" title="302"><span class="co">#&gt; 132          7.9         3.8          6.4         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-303" title="303"><span class="co">#&gt; 133          6.4         2.8          5.6         2.2  virginica</span></a>
+<a class="sourceLine" id="cb538-304" title="304"><span class="co">#&gt; 134          6.3         2.8          5.1         1.5  virginica</span></a>
+<a class="sourceLine" id="cb538-305" title="305"><span class="co">#&gt; 135          6.1         2.6          5.6         1.4  virginica</span></a>
+<a class="sourceLine" id="cb538-306" title="306"><span class="co">#&gt; 136          7.7         3.0          6.1         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-307" title="307"><span class="co">#&gt; 137          6.3         3.4          5.6         2.4  virginica</span></a>
+<a class="sourceLine" id="cb538-308" title="308"><span class="co">#&gt; 138          6.4         3.1          5.5         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-309" title="309"><span class="co">#&gt; 139          6.0         3.0          4.8         1.8  virginica</span></a>
+<a class="sourceLine" id="cb538-310" title="310"><span class="co">#&gt; 140          6.9         3.1          5.4         2.1  virginica</span></a>
+<a class="sourceLine" id="cb538-311" title="311"><span class="co">#&gt; 141          6.7         3.1          5.6         2.4  virginica</span></a>
+<a class="sourceLine" id="cb538-312" title="312"><span class="co">#&gt; 142          6.9         3.1          5.1         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-313" title="313"><span class="co">#&gt; 143          5.8         2.7          5.1         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-314" title="314"><span class="co">#&gt; 144          6.8         3.2          5.9         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-315" title="315"><span class="co">#&gt; 145          6.7         3.3          5.7         2.5  virginica</span></a>
+<a class="sourceLine" id="cb538-316" title="316"><span class="co">#&gt; 146          6.7         3.0          5.2         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-317" title="317"><span class="co">#&gt; 147          6.3         2.5          5.0         1.9  virginica</span></a>
+<a class="sourceLine" id="cb538-318" title="318"><span class="co">#&gt; 148          6.5         3.0          5.2         2.0  virginica</span></a>
+<a class="sourceLine" id="cb538-319" title="319"><span class="co">#&gt; 149          6.2         3.4          5.4         2.3  virginica</span></a>
+<a class="sourceLine" id="cb538-320" title="320"><span class="co">#&gt; 150          5.9         3.0          5.1         1.8  virginica</span></a></code></pre></div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="janitor.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="janitor-explore.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/enixam/rfordatascience/edit/master/janitor.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>2.2 Comparing tibble and data.frame | R for data science: tidyverse and beyond</title>
+  <meta name="description" content="2.2 Comparing tibble and data.frame | R for data science: tidyverse and beyond" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="2.2 Comparing tibble and data.frame | R for data science: tidyverse and beyond" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="enixam/rfordatascience" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="2.2 Comparing tibble and data.frame | R for data science: tidyverse and beyond" />
+  
+  
+  
+
+<meta name="author" content="Maxine" />
+
+
+<meta name="date" content="2020-05-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="tibble-intro.html"/>
+<link rel="next" href="comparing-two-data-frames-tibbles.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/jsoneditor-5.25.6/jsoneditor.min.css" rel="stylesheet" />
+<script src="libs/jsoneditor-5.25.6/jsoneditor.min.js"></script>
+<script src="libs/jsonedit-binding-3.0.0/jsonedit.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R4DS: tidyverse and beyond</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a></li>
+<li class="part"><span><b>I R for data science</b></span></li>
+<li class="chapter" data-level="1" data-path="dplyr-data-transformation.html"><a href="dplyr-data-transformation.html"><i class="fa fa-check"></i><b>1</b> dplyr: Data transformation</a><ul>
+<li class="chapter" data-level="1.1" data-path="filter.html"><a href="filter.html"><i class="fa fa-check"></i><b>1.1</b> <code>filter()</code></a><ul>
+<li class="chapter" data-level="1.1.1" data-path="filter.html"><a href="filter.html#operators"><i class="fa fa-check"></i><b>1.1.1</b> Operators</a></li>
+<li class="chapter" data-level="1.1.2" data-path="filter.html"><a href="filter.html#missing-values"><i class="fa fa-check"></i><b>1.1.2</b> Missing values</a></li>
+<li class="chapter" data-level="1.1.3" data-path="filter.html"><a href="filter.html#exercises"><i class="fa fa-check"></i><b>1.1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.1.4" data-path="filter.html"><a href="filter.html#slice"><i class="fa fa-check"></i><b>1.1.4</b> <code>slice()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="arrange.html"><a href="arrange.html"><i class="fa fa-check"></i><b>1.2</b> <code>arrange()</code></a><ul>
+<li class="chapter" data-level="1.2.1" data-path="arrange.html"><a href="arrange.html#exercises-1"><i class="fa fa-check"></i><b>1.2.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="select.html"><a href="select.html"><i class="fa fa-check"></i><b>1.3</b> <code>select()</code></a><ul>
+<li class="chapter" data-level="1.3.1" data-path="select.html"><a href="select.html#练习"><i class="fa fa-check"></i><b>1.3.1</b> 练习</a></li>
+<li class="chapter" data-level="1.3.2" data-path="select.html"><a href="select.html#常用创建函数"><i class="fa fa-check"></i><b>1.3.2</b> 常用创建函数</a></li>
+<li class="chapter" data-level="1.3.3" data-path="select.html"><a href="select.html#exercises-2"><i class="fa fa-check"></i><b>1.3.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="summarize.html"><a href="summarize.html"><i class="fa fa-check"></i><b>1.4</b> <code>summarize()</code></a><ul>
+<li class="chapter" data-level="1.4.1" data-path="summarize.html"><a href="summarize.html#missing-values-in-summarize"><i class="fa fa-check"></i><b>1.4.1</b> Missing values in <code>summarize()</code></a></li>
+<li class="chapter" data-level="1.4.2" data-path="summarize.html"><a href="summarize.html#计数函数"><i class="fa fa-check"></i><b>1.4.2</b> 计数函数</a></li>
+<li class="chapter" data-level="1.4.3" data-path="summarize.html"><a href="summarize.html#逻辑值的计数和比例sumx-10-和-meany-0"><i class="fa fa-check"></i><b>1.4.3</b> 逻辑值的计数和比例:<code>sum(x &gt; 10) 和 mean(y == 0)</code></a></li>
+<li class="chapter" data-level="1.4.4" data-path="summarize.html"><a href="summarize.html#其他常用的摘要函数"><i class="fa fa-check"></i><b>1.4.4</b> 其他常用的摘要函数</a></li>
+<li class="chapter" data-level="1.4.5" data-path="summarize.html"><a href="summarize.html#多个分组变量的消耗"><i class="fa fa-check"></i><b>1.4.5</b> 多个分组变量的消耗</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="group-by-combined-with-other-functions.html"><a href="group-by-combined-with-other-functions.html"><i class="fa fa-check"></i><b>1.5</b> <code>group_by()</code> combined with other functions</a></li>
+<li class="chapter" data-level="1.6" data-path="dplyr-exercise.html"><a href="dplyr-exercise.html"><i class="fa fa-check"></i><b>1.6</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="tibble-modern-data-frames.html"><a href="tibble-modern-data-frames.html"><i class="fa fa-check"></i><b>2</b> tibble: Modern data frames</a><ul>
+<li class="chapter" data-level="2.1" data-path="tibble-intro.html"><a href="tibble-intro.html"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html"><i class="fa fa-check"></i><b>2.2</b> Comparing tibble and data.frame</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#creating"><i class="fa fa-check"></i><b>2.2.1</b> Creating</a></li>
+<li class="chapter" data-level="2.2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#printing"><i class="fa fa-check"></i><b>2.2.2</b> Printing</a></li>
+<li class="chapter" data-level="2.2.3" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#subsetting"><i class="fa fa-check"></i><b>2.2.3</b> Subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html"><i class="fa fa-check"></i><b>2.3</b> Comparing two data frames (tibbles)</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#dplyrall_equal"><i class="fa fa-check"></i><b>2.3.1</b> <code>dplyr::all_equal()</code></a></li>
+<li class="chapter" data-level="2.3.2" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#janitorcompare_df_cols"><i class="fa fa-check"></i><b>2.3.2</b> <code>janitor::compare_df_cols()</code></a></li>
+<li class="chapter" data-level="2.3.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#vetralike"><i class="fa fa-check"></i><b>2.3.3</b> <code>vetr::alike()</code></a></li>
+<li class="chapter" data-level="2.3.4" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#diffdfdiffdf"><i class="fa fa-check"></i><b>2.3.4</b> <code>diffdf::diffdf()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="tibble-exercise.html"><a href="tibble-exercise.html"><i class="fa fa-check"></i><b>2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="readr-data-import.html"><a href="readr-data-import.html"><i class="fa fa-check"></i><b>3</b> readr: Data import</a><ul>
+<li class="chapter" data-level="3.1" data-path="importing-data-in-base-r.html"><a href="importing-data-in-base-r.html"><i class="fa fa-check"></i><b>3.1</b> Importing data in base R</a></li>
+<li class="chapter" data-level="3.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html"><i class="fa fa-check"></i><b>3.2</b> Importing data in <code>readr</code></a><ul>
+<li class="chapter" data-level="3.2.1" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#introduction"><i class="fa fa-check"></i><b>3.2.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#writing-data"><i class="fa fa-check"></i><b>3.2.2</b> Writing data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#exercises-3"><i class="fa fa-check"></i><b>3.2.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html"><i class="fa fa-check"></i><b>3.3</b> Parsing a vector</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#numeric"><i class="fa fa-check"></i><b>3.3.1</b> Numeric</a></li>
+<li class="chapter" data-level="3.3.2" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#character"><i class="fa fa-check"></i><b>3.3.2</b> Character</a></li>
+<li class="chapter" data-level="3.3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#factor"><i class="fa fa-check"></i><b>3.3.3</b> Factor</a></li>
+<li class="chapter" data-level="3.3.4" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#date-and-time"><i class="fa fa-check"></i><b>3.3.4</b> Date and time</a></li>
+<li class="chapter" data-level="3.3.5" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#exercises-4"><i class="fa fa-check"></i><b>3.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html"><i class="fa fa-check"></i><b>3.4</b> Parsing a file</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parsing-a-file.html"><a href="parsing-a-file.html#strategies"><i class="fa fa-check"></i><b>3.4.1</b> Strategies</a></li>
+<li class="chapter" data-level="3.4.2" data-path="parsing-a-file.html"><a href="parsing-a-file.html#possible-challenges"><i class="fa fa-check"></i><b>3.4.2</b> Possible challenges</a></li>
+<li class="chapter" data-level="3.4.3" data-path="parsing-a-file.html"><a href="parsing-a-file.html#other-tips"><i class="fa fa-check"></i><b>3.4.3</b> Other tips</a></li>
+<li class="chapter" data-level="3.4.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-dealing-with-metadata"><i class="fa fa-check"></i><b>3.4.4</b> Example: Dealing with metadata</a></li>
+<li class="chapter" data-level="3.4.5" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-multi-row-headers"><i class="fa fa-check"></i><b>3.4.5</b> Example: multi-row headers</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="readxl.html"><a href="readxl.html"><i class="fa fa-check"></i><b>3.5</b> <code>readxl</code></a><ul>
+<li class="chapter" data-level="3.5.1" data-path="readxl.html"><a href="readxl.html#multi-row-headers-in-excel"><i class="fa fa-check"></i><b>3.5.1</b> Multi-row headers in Excel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="lubridate-dates-and-times.html"><a href="lubridate-dates-and-times.html"><i class="fa fa-check"></i><b>4</b> lubridate: Dates and times</a><ul>
+<li class="chapter" data-level="4.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html"><i class="fa fa-check"></i><b>4.1</b> Creating dates and times</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-strings"><i class="fa fa-check"></i><b>4.1.1</b> From strings</a></li>
+<li class="chapter" data-level="4.1.2" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-individual-components"><i class="fa fa-check"></i><b>4.1.2</b> From individual components</a></li>
+<li class="chapter" data-level="4.1.3" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-other-times"><i class="fa fa-check"></i><b>4.1.3</b> From other times</a></li>
+<li class="chapter" data-level="4.1.4" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#exercises-5"><i class="fa fa-check"></i><b>4.1.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="date-time-components.html"><a href="date-time-components.html"><i class="fa fa-check"></i><b>4.2</b> Date-time components</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="date-time-components.html"><a href="date-time-components.html#accessing-components"><i class="fa fa-check"></i><b>4.2.1</b> Accessing components</a></li>
+<li class="chapter" data-level="4.2.2" data-path="date-time-components.html"><a href="date-time-components.html#rounding"><i class="fa fa-check"></i><b>4.2.2</b> Rounding</a></li>
+<li class="chapter" data-level="4.2.3" data-path="date-time-components.html"><a href="date-time-components.html#setting-components"><i class="fa fa-check"></i><b>4.2.3</b> Setting components</a></li>
+<li class="chapter" data-level="4.2.4" data-path="date-time-components.html"><a href="date-time-components.html#exercises-6"><i class="fa fa-check"></i><b>4.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="time-span.html"><a href="time-span.html"><i class="fa fa-check"></i><b>4.3</b> Time span</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="time-span.html"><a href="time-span.html#时期-durations"><i class="fa fa-check"></i><b>4.3.1</b> 时期 Durations</a></li>
+<li class="chapter" data-level="4.3.2" data-path="time-span.html"><a href="time-span.html#阶段-periods"><i class="fa fa-check"></i><b>4.3.2</b> 阶段 Periods</a></li>
+<li class="chapter" data-level="4.3.3" data-path="time-span.html"><a href="time-span.html#区间-intervals"><i class="fa fa-check"></i><b>4.3.3</b> 区间 Intervals</a></li>
+<li class="chapter" data-level="4.3.4" data-path="time-span.html"><a href="time-span.html#conclusion"><i class="fa fa-check"></i><b>4.3.4</b> Conclusion</a></li>
+<li class="chapter" data-level="4.3.5" data-path="time-span.html"><a href="time-span.html#exercises-7"><i class="fa fa-check"></i><b>4.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="hms.html"><a href="hms.html"><i class="fa fa-check"></i><b>4.4</b> hms</a></li>
+<li class="chapter" data-level="4.5" data-path="dint.html"><a href="dint.html"><i class="fa fa-check"></i><b>4.5</b> dint</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="dint.html"><a href="dint.html#creation"><i class="fa fa-check"></i><b>4.5.1</b> Creation</a></li>
+<li class="chapter" data-level="4.5.2" data-path="dint.html"><a href="dint.html#arithmetic-and-sequences"><i class="fa fa-check"></i><b>4.5.2</b> Arithmetic and Sequences</a></li>
+<li class="chapter" data-level="4.5.3" data-path="dint.html"><a href="dint.html#accessors"><i class="fa fa-check"></i><b>4.5.3</b> Accessors</a></li>
+<li class="chapter" data-level="4.5.4" data-path="dint.html"><a href="dint.html#formatting"><i class="fa fa-check"></i><b>4.5.4</b> Formatting</a></li>
+<li class="chapter" data-level="4.5.5" data-path="dint.html"><a href="dint.html#labelling-functions-in-ggplot2"><i class="fa fa-check"></i><b>4.5.5</b> Labelling functions in ggplot2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="forcats-factor.html"><a href="forcats-factor.html"><i class="fa fa-check"></i><b>5</b> forcats: factor</a><ul>
+<li class="chapter" data-level="5.1" data-path="factor-basics.html"><a href="factor-basics.html"><i class="fa fa-check"></i><b>5.1</b> Factor basics</a></li>
+<li class="chapter" data-level="5.2" data-path="sorting.html"><a href="sorting.html"><i class="fa fa-check"></i><b>5.2</b> Sorting</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="sorting.html"><a href="sorting.html#sorting-by-frequency-appearance-or-numeric-order"><i class="fa fa-check"></i><b>5.2.1</b> Sorting by frequency, appearance, or numeric order</a></li>
+<li class="chapter" data-level="5.2.2" data-path="sorting.html"><a href="sorting.html#sorting-by-another-variable"><i class="fa fa-check"></i><b>5.2.2</b> Sorting by another variable</a></li>
+<li class="chapter" data-level="5.2.3" data-path="sorting.html"><a href="sorting.html#sorting-manually"><i class="fa fa-check"></i><b>5.2.3</b> Sorting manually</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html"><i class="fa fa-check"></i><b>5.3</b> Chaninge number of levels</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#lumping-levels"><i class="fa fa-check"></i><b>5.3.1</b> Lumping levels</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#expanding-levels"><i class="fa fa-check"></i><b>5.3.2</b> Expanding levels</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#dropping-levels"><i class="fa fa-check"></i><b>5.3.3</b> Dropping levels</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#transforming-na-levels"><i class="fa fa-check"></i><b>5.3.4</b> Transforming NA levels</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="recoding.html"><a href="recoding.html"><i class="fa fa-check"></i><b>5.4</b> Recoding</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="recoding.html"><a href="recoding.html#exercises-8"><i class="fa fa-check"></i><b>5.4.1</b> Exercises</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="tidyr-tidy-data.html"><a href="tidyr-tidy-data.html"><i class="fa fa-check"></i><b>6</b> tidyr: Tidy data</a><ul>
+<li class="chapter" data-level="6.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html"><i class="fa fa-check"></i><b>6.1</b> Tidy data</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html#exercises-9"><i class="fa fa-check"></i><b>6.1.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pivoting.html"><a href="pivoting.html"><i class="fa fa-check"></i><b>6.2</b> Pivoting</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="pivoting.html"><a href="pivoting.html#pivot_longer"><i class="fa fa-check"></i><b>6.2.1</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="pivoting.html"><a href="pivoting.html#pivot_wider"><i class="fa fa-check"></i><b>6.2.2</b> <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.3" data-path="pivoting.html"><a href="pivoting.html#combining-pivot_longer-and-pivot_wider"><i class="fa fa-check"></i><b>6.2.3</b> Combining <code>pivot_longer()</code> and <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.4" data-path="pivoting.html"><a href="pivoting.html#exercises-10"><i class="fa fa-check"></i><b>6.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="nesting.html"><a href="nesting.html"><i class="fa fa-check"></i><b>6.3</b> Nesting</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="nesting.html"><a href="nesting.html#example-managing-multiple-models"><i class="fa fa-check"></i><b>6.3.1</b> Example: Managing multiple models</a></li>
+<li class="chapter" data-level="6.3.2" data-path="nesting.html"><a href="nesting.html#multi-choice"><i class="fa fa-check"></i><b>6.3.2</b> Example: Multicple hoice data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="rectangling.html"><a href="rectangling.html"><i class="fa fa-check"></i><b>6.4</b> Rectangling</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="rectangling.html"><a href="rectangling.html#github-users"><i class="fa fa-check"></i><b>6.4.1</b> Github users</a></li>
+<li class="chapter" data-level="6.4.2" data-path="rectangling.html"><a href="rectangling.html#github-repos"><i class="fa fa-check"></i><b>6.4.2</b> Github repos</a></li>
+<li class="chapter" data-level="6.4.3" data-path="rectangling.html"><a href="rectangling.html#game-of-throne-characters"><i class="fa fa-check"></i><b>6.4.3</b> Game of Throne characters</a></li>
+<li class="chapter" data-level="6.4.4" data-path="rectangling.html"><a href="rectangling.html#sharla-gelfands-discography"><i class="fa fa-check"></i><b>6.4.4</b> Sharla Gelfand’s discography</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="separate-and-untie.html"><a href="separate-and-untie.html"><i class="fa fa-check"></i><b>6.5</b> <code>separate()</code> and <code>untie()</code></a><ul>
+<li class="chapter" data-level="6.5.1" data-path="separate-and-untie.html"><a href="separate-and-untie.html#separate"><i class="fa fa-check"></i><b>6.5.1</b> <code>separate()</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="separate-and-untie.html"><a href="separate-and-untie.html#unite"><i class="fa fa-check"></i><b>6.5.2</b> <code>unite()</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="separate-and-untie.html"><a href="separate-and-untie.html#exercises-11"><i class="fa fa-check"></i><b>6.5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="tidyr-missing.html"><a href="tidyr-missing.html"><i class="fa fa-check"></i><b>6.6</b> Handling missing values</a></li>
+<li class="chapter" data-level="6.7" data-path="tidyr-case.html"><a href="tidyr-case.html"><i class="fa fa-check"></i><b>6.7</b> Case Study</a></li>
+<li class="chapter" data-level="6.8" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html"><i class="fa fa-check"></i><b>6.8</b> Miscellaneous Functions</a><ul>
+<li class="chapter" data-level="6.8.1" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#chop-and-unchop"><i class="fa fa-check"></i><b>6.8.1</b> <code>chop()</code> and <code>unchop()</code></a></li>
+<li class="chapter" data-level="6.8.2" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#uncount"><i class="fa fa-check"></i><b>6.8.2</b> <code>uncount()</code></a></li>
+<li class="chapter" data-level="6.8.3" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#exercises-12"><i class="fa fa-check"></i><b>6.8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="non-tidy.html"><a href="non-tidy.html"><i class="fa fa-check"></i><b>6.9</b> None-tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="purrr-functional-programming.html"><a href="purrr-functional-programming.html"><i class="fa fa-check"></i><b>7</b> purrr: Functional programming</a><ul>
+<li class="chapter" data-level="7.1" data-path="map-family.html"><a href="map-family.html"><i class="fa fa-check"></i><b>7.1</b> <code>map()</code> family</a></li>
+<li class="chapter" data-level="7.2" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html"><i class="fa fa-check"></i><b>7.2</b> Producing atomic vectors</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html#purrr-style-anonymous-functions"><i class="fa fa-check"></i><b>7.2.1</b> purrr-style anonymous functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="predicate-functions.html"><a href="predicate-functions.html"><i class="fa fa-check"></i><b>7.3</b> Predicate functions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="predicate-functions.html"><a href="predicate-functions.html#basics"><i class="fa fa-check"></i><b>7.3.1</b> Basics</a></li>
+<li class="chapter" data-level="7.3.2" data-path="predicate-functions.html"><a href="predicate-functions.html#map-variants"><i class="fa fa-check"></i><b>7.3.2</b> Map variants</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="group-functions.html"><a href="group-functions.html"><i class="fa fa-check"></i><b>7.4</b> group functions</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="group-functions.html"><a href="group-functions.html#group_mapgroup_modify"><i class="fa fa-check"></i><b>7.4.1</b> group_map、group_modify</a></li>
+<li class="chapter" data-level="7.4.2" data-path="group-functions.html"><a href="group-functions.html#group_nestgroup_splitgroup_keysgroup_data"><i class="fa fa-check"></i><b>7.4.2</b> group_nest、group_split、group_keys、group_data</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="other-useful-tools.html"><a href="other-useful-tools.html"><i class="fa fa-check"></i><b>7.5</b> Other useful tools</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="other-useful-tools.html"><a href="other-useful-tools.html#imap"><i class="fa fa-check"></i><b>7.5.1</b> <code>imap()</code></a></li>
+<li class="chapter" data-level="7.5.2" data-path="other-useful-tools.html"><a href="other-useful-tools.html#adverbs"><i class="fa fa-check"></i><b>7.5.2</b> adverbs</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="relational-data.html"><a href="relational-data.html"><i class="fa fa-check"></i><b>8</b> Relational data</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="mutating-joins.html"><a href="mutating-joins.html"><i class="fa fa-check"></i><b>8.2</b> Mutating joins</a></li>
+<li class="chapter" data-level="8.3" data-path="filtering-join.html"><a href="filtering-join.html"><i class="fa fa-check"></i><b>8.3</b> Filtering join</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="broom-tidy-representation-of-models.html"><a href="broom-tidy-representation-of-models.html"><i class="fa fa-check"></i><b>9</b> broom: Tidy representation of models</a><ul>
+<li class="chapter" data-level="9.1" data-path="viz-many-models.html"><a href="viz-many-models.html"><i class="fa fa-check"></i><b>9.1</b> Visualizing many models</a></li>
+<li class="chapter" data-level="9.2" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9.2</b> Examples</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="examples.html"><a href="examples.html#pca"><i class="fa fa-check"></i><b>9.2.1</b> PCA</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="broomextra.html"><a href="broomextra.html"><i class="fa fa-check"></i><b>9.3</b> broomExtra</a></li>
+<li class="chapter" data-level="9.4" data-path="ggfortify.html"><a href="ggfortify.html"><i class="fa fa-check"></i><b>9.4</b> ggfortify</a></li>
+</ul></li>
+<li class="part"><span><b>II Importing</b></span></li>
+<li class="chapter" data-level="10" data-path="vroom-fast-reading-of-delimited-files.html"><a href="vroom-fast-reading-of-delimited-files.html"><i class="fa fa-check"></i><b>10</b> vroom: Fast reading of delimited files</a></li>
+<li class="chapter" data-level="11" data-path="reading-in-data-from-other-formats.html"><a href="reading-in-data-from-other-formats.html"><i class="fa fa-check"></i><b>11</b> Reading in data from other formats</a><ul>
+<li class="chapter" data-level="11.1" data-path="pdf.html"><a href="pdf.html"><i class="fa fa-check"></i><b>11.1</b> PDF</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="pdf.html"><a href="pdf.html#scraping-pdf-data"><i class="fa fa-check"></i><b>11.1.1</b> Scraping pdf data</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="office-documents.html"><a href="office-documents.html"><i class="fa fa-check"></i><b>11.2</b> Office documents</a></li>
+<li class="chapter" data-level="11.3" data-path="google-sheet.html"><a href="google-sheet.html"><i class="fa fa-check"></i><b>11.3</b> Google sheet</a></li>
+<li class="chapter" data-level="11.4" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i><b>11.4</b> Images</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="useful-apis.html"><a href="useful-apis.html"><i class="fa fa-check"></i><b>12</b> Useful APIs</a><ul>
+<li class="chapter" data-level="12.1" data-path="wdi.html"><a href="wdi.html"><i class="fa fa-check"></i><b>12.1</b> WDI</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="wdi.html"><a href="wdi.html#wdisearch"><i class="fa fa-check"></i><b>12.1.1</b> <code>WDIsearch()</code></a></li>
+<li class="chapter" data-level="12.1.2" data-path="wdi.html"><a href="wdi.html#wdi-1"><i class="fa fa-check"></i><b>12.1.2</b> <code>WDI</code></a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="ipumsr.html"><a href="ipumsr.html"><i class="fa fa-check"></i><b>12.2</b> ipumsr</a></li>
+</ul></li>
+<li class="part"><span><b>III Exploring and Wrangling</b></span></li>
+<li class="chapter" data-level="13" data-path="data-summary.html"><a href="data-summary.html"><i class="fa fa-check"></i><b>13</b> Data summary</a><ul>
+<li class="chapter" data-level="13.1" data-path="skimr.html"><a href="skimr.html"><i class="fa fa-check"></i><b>13.1</b> skimr</a></li>
+<li class="chapter" data-level="13.2" data-path="visdat.html"><a href="visdat.html"><i class="fa fa-check"></i><b>13.2</b> visdat</a></li>
+<li class="chapter" data-level="13.3" data-path="summarytools.html"><a href="summarytools.html"><i class="fa fa-check"></i><b>13.3</b> summarytools</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="summarytools.html"><a href="summarytools.html#freq"><i class="fa fa-check"></i><b>13.3.1</b> <code>freq</code></a></li>
+<li class="chapter" data-level="13.3.2" data-path="summarytools.html"><a href="summarytools.html#descr"><i class="fa fa-check"></i><b>13.3.2</b> <code>descr()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="gt-and-gtsummary.html"><a href="gt-and-gtsummary.html"><i class="fa fa-check"></i><b>13.4</b> gt and gtsummary</a></li>
+<li class="chapter" data-level="13.5" data-path="naniar.html"><a href="naniar.html"><i class="fa fa-check"></i><b>13.5</b> naniar</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="janitor.html"><a href="janitor.html"><i class="fa fa-check"></i><b>14</b> Janitor</a><ul>
+<li class="chapter" data-level="14.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html"><i class="fa fa-check"></i><b>14.1</b> cleaning</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html#clean_names"><i class="fa fa-check"></i><b>14.1.1</b> <code>clean_names</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="janitor-explore.html"><a href="janitor-explore.html"><i class="fa fa-check"></i><b>14.2</b> Exploring</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="janitor-explore.html"><a href="janitor-explore.html#tabyl"><i class="fa fa-check"></i><b>14.2.1</b> <code>tabyl</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="janitor-explore.html"><a href="janitor-explore.html#get_dupes"><i class="fa fa-check"></i><b>14.2.2</b> <code>get_dupes</code></a></li>
+<li class="chapter" data-level="14.2.3" data-path="janitor-explore.html"><a href="janitor-explore.html#remove_"><i class="fa fa-check"></i><b>14.2.3</b> <code>remove_</code></a></li>
+<li class="chapter" data-level="14.2.4" data-path="janitor-explore.html"><a href="janitor-explore.html#round_half_up"><i class="fa fa-check"></i><b>14.2.4</b> <code>round_half_up</code></a></li>
+<li class="chapter" data-level="14.2.5" data-path="janitor-explore.html"><a href="janitor-explore.html#excel_numeric_to_date"><i class="fa fa-check"></i><b>14.2.5</b> <code>excel_numeric_to_date</code></a></li>
+<li class="chapter" data-level="14.2.6" data-path="janitor-explore.html"><a href="janitor-explore.html#top_levels"><i class="fa fa-check"></i><b>14.2.6</b> <code>top_levels</code></a></li>
+<li class="chapter" data-level="14.2.7" data-path="janitor-explore.html"><a href="janitor-explore.html#row_to_names"><i class="fa fa-check"></i><b>14.2.7</b> <code>row_to_names</code></a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Miscellaneous tools</b></span></li>
+<li class="chapter" data-level="15" data-path="advanced-relational-data.html"><a href="advanced-relational-data.html"><i class="fa fa-check"></i><b>15</b> Advanced relational data</a><ul>
+<li class="chapter" data-level="15.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html"><i class="fa fa-check"></i><b>15.1</b> fuzzyjoin</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#inexact-matching"><i class="fa fa-check"></i><b>15.1.1</b> inexact matching</a></li>
+<li class="chapter" data-level="15.1.2" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#stringdist"><i class="fa fa-check"></i><b>15.1.2</b> stringdist</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="funneljoin.html"><a href="funneljoin.html"><i class="fa fa-check"></i><b>15.2</b> funneljoin</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="funneljoin.html"><a href="funneljoin.html#after_join"><i class="fa fa-check"></i><b>15.2.1</b> <code>after_join()</code></a></li>
+<li class="chapter" data-level="15.2.2" data-path="funneljoin.html"><a href="funneljoin.html#funnel-in-one-table"><i class="fa fa-check"></i><b>15.2.2</b> funnel in one table</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="dm.html"><a href="dm.html"><i class="fa fa-check"></i><b>15.3</b> dm</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="categorical-data-facotr.html"><a href="categorical-data-facotr.html"><i class="fa fa-check"></i><b>16</b> Categorical data (facotr)</a><ul>
+<li class="chapter" data-level="16.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html"><i class="fa fa-check"></i><b>16.1</b> Frequency and contingency table</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html#frq-and-flat_table"><i class="fa fa-check"></i><b>16.1.1</b> <code>frq()</code> and <code>flat_table()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="coding.html"><a href="coding.html"><i class="fa fa-check"></i><b>16.2</b> Coding</a><ul>
+<li class="chapter" data-level="16.2.1" data-path="coding.html"><a href="coding.html#rec"><i class="fa fa-check"></i><b>16.2.1</b> <code>rec()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="cutting.html"><a href="cutting.html"><i class="fa fa-check"></i><b>16.3</b> Cutting</a><ul>
+<li class="chapter" data-level="16.3.1" data-path="cutting.html"><a href="cutting.html#chop"><i class="fa fa-check"></i><b>16.3.1</b> <code>chop()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dealing-with-missing-values.html"><a href="dealing-with-missing-values.html"><i class="fa fa-check"></i><b>17</b> Dealing with missing values</a><ul>
+<li class="chapter" data-level="17.1" data-path="explore-missing.html"><a href="explore-missing.html"><i class="fa fa-check"></i><b>17.1</b> Exploring</a><ul>
+<li class="chapter" data-level="17.1.1" data-path="explore-missing.html"><a href="explore-missing.html#naniar-1"><i class="fa fa-check"></i><b>17.1.1</b> naniar</a></li>
+<li class="chapter" data-level="17.1.2" data-path="explore-missing.html"><a href="explore-missing.html#replace-a-value-with-na"><i class="fa fa-check"></i><b>17.1.2</b> Replace a value with NA</a></li>
+<li class="chapter" data-level="17.1.3" data-path="explore-missing.html"><a href="explore-missing.html#janitor-1"><i class="fa fa-check"></i><b>17.1.3</b> janitor</a></li>
+<li class="chapter" data-level="17.1.4" data-path="explore-missing.html"><a href="explore-missing.html#sjmisc"><i class="fa fa-check"></i><b>17.1.4</b> sjmisc</a></li>
+</ul></li>
+<li class="chapter" data-level="17.2" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>17.2</b> Wrangling</a><ul>
+<li class="chapter" data-level="17.2.1" data-path="wrangling.html"><a href="wrangling.html#tidyr"><i class="fa fa-check"></i><b>17.2.1</b> tidyr</a></li>
+<li class="chapter" data-level="17.2.2" data-path="wrangling.html"><a href="wrangling.html#janitor-2"><i class="fa fa-check"></i><b>17.2.2</b> janitor</a></li>
+<li class="chapter" data-level="17.2.3" data-path="wrangling.html"><a href="wrangling.html#visdat-1"><i class="fa fa-check"></i><b>17.2.3</b> visdat</a></li>
+</ul></li>
+<li class="chapter" data-level="17.3" data-path="imputation.html"><a href="imputation.html"><i class="fa fa-check"></i><b>17.3</b> Imputation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R for data science: tidyverse and beyond</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="tibble-data.frame" class="section level2">
+<h2><span class="header-section-number">2.2</span> Comparing tibble and data.frame</h2>
+<p><code>tibble</code> 和传统 <code>data.frame</code> 的机理主要有三处不同：创建、打印和取子集。</p>
+<div id="creating" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Creating</h3>
+<p><code>tibble()</code> 创建一个 <code>tibble</code></p>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb132-1" title="1">df &lt;-<span class="st"> </span><span class="kw">tibble</span>(</a>
+<a class="sourceLine" id="cb132-2" title="2">  <span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,</a>
+<a class="sourceLine" id="cb132-3" title="3">  <span class="dt">y =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span>,<span class="st">&quot;b&quot;</span>,<span class="st">&quot;c&quot;</span>)</a>
+<a class="sourceLine" id="cb132-4" title="4">)</a>
+<a class="sourceLine" id="cb132-5" title="5"></a>
+<a class="sourceLine" id="cb132-6" title="6">df</a>
+<a class="sourceLine" id="cb132-7" title="7"><span class="co">#&gt; # A tibble: 3 x 2</span></a>
+<a class="sourceLine" id="cb132-8" title="8"><span class="co">#&gt;       x y    </span></a>
+<a class="sourceLine" id="cb132-9" title="9"><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb132-10" title="10"><span class="co">#&gt; 1     1 a    </span></a>
+<a class="sourceLine" id="cb132-11" title="11"><span class="co">#&gt; 2     2 b    </span></a>
+<a class="sourceLine" id="cb132-12" title="12"><span class="co">#&gt; 3     3 c</span></a></code></pre></div>
+<p>可以发现 <code>tibble()</code> 不会默认更改 <code>y</code> 类型，它将原原本本地被当做一个字符向量处理。</p>
+<p>而 <code>data.frame()</code> 用于创建一个传统数据框：</p>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb133-1" title="1">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb133-2" title="2">  <span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, </a>
+<a class="sourceLine" id="cb133-3" title="3">  <span class="dt">y =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>)</a>
+<a class="sourceLine" id="cb133-4" title="4">)</a>
+<a class="sourceLine" id="cb133-5" title="5"></a>
+<a class="sourceLine" id="cb133-6" title="6"><span class="kw">str</span>(df)</a>
+<a class="sourceLine" id="cb133-7" title="7"><span class="co">#&gt; &#39;data.frame&#39;:    3 obs. of  2 variables:</span></a>
+<a class="sourceLine" id="cb133-8" title="8"><span class="co">#&gt;  $ x: int  1 2 3</span></a>
+<a class="sourceLine" id="cb133-9" title="9"><span class="co">#&gt;  $ y: Factor w/ 3 levels &quot;a&quot;,&quot;b&quot;,&quot;c&quot;: 1 2 3</span></a></code></pre></div>
+<div id="coersion" class="section level4">
+<h4><span class="header-section-number">2.2.1.1</span> Coersion</h4>
+<p>在 <code>data.frame</code> 中，为了防止 <code>y</code> 被强制转换为因子，必须设置 <code>stringAsFactors = FALSE</code></p>
+<div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb134-1" title="1">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb134-2" title="2">  <span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, </a>
+<a class="sourceLine" id="cb134-3" title="3">  <span class="dt">y =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>),</a>
+<a class="sourceLine" id="cb134-4" title="4">  <span class="dt">stringsAsFactors =</span> F</a>
+<a class="sourceLine" id="cb134-5" title="5">)</a>
+<a class="sourceLine" id="cb134-6" title="6"></a>
+<a class="sourceLine" id="cb134-7" title="7"><span class="kw">str</span>(df)</a>
+<a class="sourceLine" id="cb134-8" title="8"><span class="co">#&gt; &#39;data.frame&#39;:    3 obs. of  2 variables:</span></a>
+<a class="sourceLine" id="cb134-9" title="9"><span class="co">#&gt;  $ x: int  1 2 3</span></a>
+<a class="sourceLine" id="cb134-10" title="10"><span class="co">#&gt;  $ y: chr  &quot;a&quot; &quot;b&quot; &quot;c&quot;</span></a></code></pre></div>
+<p>By the way, 创建 <code>tibble</code> 的另一种方法是使用<code>tribble()</code>，transposed tibble 的缩写。<code>tribble()</code> 是高度定制化的，就像在 Markdown 中创建表格一样，一个一个填入元素：列标题以波浪线 <code>~</code> 开头，不同列的元素之间以逗号分隔，这样就可以用易读的方式对少量数据创建一个 <code>tibble</code> ：</p>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb135-1" title="1"><span class="kw">tribble</span>(</a>
+<a class="sourceLine" id="cb135-2" title="2">  <span class="op">~</span>x, <span class="op">~</span>y, <span class="op">~</span>z,</a>
+<a class="sourceLine" id="cb135-3" title="3">  <span class="st">&quot;a&quot;</span>, <span class="dv">1</span>, <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb135-4" title="4">  <span class="st">&quot;b&quot;</span>, <span class="dv">1</span>, <span class="fl">8.5</span></a>
+<a class="sourceLine" id="cb135-5" title="5">)</a>
+<a class="sourceLine" id="cb135-6" title="6"><span class="co">#&gt; # A tibble: 2 x 3</span></a>
+<a class="sourceLine" id="cb135-7" title="7"><span class="co">#&gt;   x         y     z</span></a>
+<a class="sourceLine" id="cb135-8" title="8"><span class="co">#&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb135-9" title="9"><span class="co">#&gt; 1 a         1   2  </span></a>
+<a class="sourceLine" id="cb135-10" title="10"><span class="co">#&gt; 2 b         1   8.5</span></a></code></pre></div>
+</div>
+<div id="row-labels" class="section level4">
+<h4><span class="header-section-number">2.2.1.2</span> Row labels</h4>
+<p><code>data.frame</code> 支持提供一个不包含重复元素的字符向量作为行标签：</p>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb136-1" title="1">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb136-2" title="2">  <span class="dt">age =</span> <span class="kw">c</span>(<span class="dv">35</span>, <span class="dv">27</span>, <span class="dv">18</span>),</a>
+<a class="sourceLine" id="cb136-3" title="3">  <span class="dt">hair =</span> <span class="kw">c</span>(<span class="st">&quot;blond&quot;</span>, <span class="st">&quot;brown&quot;</span>, <span class="st">&quot;black&quot;</span>),</a>
+<a class="sourceLine" id="cb136-4" title="4">  <span class="dt">row.names =</span> <span class="kw">c</span>(<span class="st">&quot;Bob&quot;</span>, <span class="st">&quot;Susan&quot;</span>, <span class="st">&quot;Sam&quot;</span>)</a>
+<a class="sourceLine" id="cb136-5" title="5">)</a>
+<a class="sourceLine" id="cb136-6" title="6"></a>
+<a class="sourceLine" id="cb136-7" title="7">df</a>
+<a class="sourceLine" id="cb136-8" title="8"><span class="co">#&gt;       age  hair</span></a>
+<a class="sourceLine" id="cb136-9" title="9"><span class="co">#&gt; Bob    35 blond</span></a>
+<a class="sourceLine" id="cb136-10" title="10"><span class="co">#&gt; Susan  27 brown</span></a>
+<a class="sourceLine" id="cb136-11" title="11"><span class="co">#&gt; Sam    18 black</span></a>
+<a class="sourceLine" id="cb136-12" title="12"><span class="kw">attributes</span>(df)</a>
+<a class="sourceLine" id="cb136-13" title="13"><span class="co">#&gt; $names</span></a>
+<a class="sourceLine" id="cb136-14" title="14"><span class="co">#&gt; [1] &quot;age&quot;  &quot;hair&quot;</span></a>
+<a class="sourceLine" id="cb136-15" title="15"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb136-16" title="16"><span class="co">#&gt; $class</span></a>
+<a class="sourceLine" id="cb136-17" title="17"><span class="co">#&gt; [1] &quot;data.frame&quot;</span></a>
+<a class="sourceLine" id="cb136-18" title="18"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb136-19" title="19"><span class="co">#&gt; $row.names</span></a>
+<a class="sourceLine" id="cb136-20" title="20"><span class="co">#&gt; [1] &quot;Bob&quot;   &quot;Susan&quot; &quot;Sam&quot;</span></a></code></pre></div>
+<p><code>row.names</code>参数为<code>data.frame</code>创建了一个同名的属性，<code>rownames()</code>函数可以提取这个属性：</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb137-1" title="1"><span class="kw">rownames</span>(df)</a>
+<a class="sourceLine" id="cb137-2" title="2"><span class="co">#&gt; [1] &quot;Bob&quot;   &quot;Susan&quot; &quot;Sam&quot;</span></a></code></pre></div>
+<p>如果我们认为数据框是二维矩阵的自然拓展(不止包含数值)，那么行标签的存在似乎是很自然的，毕竟矩阵有<code>i</code>、<code>j</code>两个索引。但是矩阵和数据框有本质区别，矩阵是添加了维度属性的原子向量，数据框则是列表，我们可以对矩阵取转置，因为它们的行和列可以互换，一个矩阵的转置是另一个矩阵。数据框则是不可转置的，它的行列互换之后就不再是数据框(一行未必能构成一个原子向量)。</p>
+<p>出于以下三个原因，我们不应该使用<code>row.names</code>这一属性，也不应该考虑在任何场合添加行标签：</p>
+<ol style="list-style-type: decimal">
+<li>元数据也是数据，所以把行标签从其他变量中抽出来单独对待不是个好主意。否则我们可能要对行标签单独发展出一套操作工具，而不能直接应用我们已经习惯的对变量的操作方法<br />
+</li>
+<li>行标签很多时候不能完成唯一标识观测的任务，因为 <code>row.names</code> 要求只能传入数值或者字符串向量。如果我们想要用时间日期型数据标识观测呢？或者需要传入不止一个向量(例如标识位置同时需要经度和纬度)<br />
+</li>
+<li>行标签中的元素必须是唯一的，但很多场合(比如bootstrapping)中同一个对象也可能有多条记录</li>
+</ol>
+<p>所以，<code>tibble</code> 的设计思想就是不支持添加行标签，且提供了一套很方便的、处理已有行标签的工具，要么移除它，要么把它直接变成<code>tibble</code>中的一列：</p>
+<p><strong>Tools for working with row names</strong><br />
+<em>Description</em><br />
+While a tibble can have row names (e.g., when converting from a regular data frame), they are removed when subsetting with the [ operator. A warning will be raised when attempting to assign non-NULL row names to a tibble. Generally, it is best to avoid row names, because they are basically a character column with different semantics to every other column. These functions allow to you detect if a data frame has row names (<code>has_rownames()</code>), remove them (<code>remove_rownames()</code>), or convert them back-and-forth between an explicit column (<code>rownames_to_column()</code> and <code>column_to_rownames()</code>). Also included is <code>rowid_to_column()</code> which adds a column at the start of the dataframe of ascending sequential row ids starting at 1. <strong>Note that this will remove any existing row names</strong>.</p>
+<p><em>Usage</em><br />
+<code>has_rownames(.data)</code></p>
+<p><code>remove_rownames(.data)</code></p>
+<p><code>rownames_to_column(.data, var = "rowname")</code></p>
+<p><code>rowid_to_column(.data, var = "rowid")</code></p>
+<p><code>column_to_rownames(.data, var = "rowname")</code></p>
+<p><em>Arguments</em><br />
+<code>.data</code><br />
+A data frame.</p>
+<p><em>var</em>
+Name of column to use for rownames.</p>
+<p><em>Value</em><br />
+<code>column_to_rownames()</code> always returns a data frame. <code>has_rownames()</code> returns a scalar logical. All other functions return an object of the same class as the input.</p>
+<p>一些示例：</p>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb138-1" title="1">mtcars <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb138-2" title="2"><span class="st">  </span><span class="kw">has_rownames</span>()</a>
+<a class="sourceLine" id="cb138-3" title="3"><span class="co">#&gt; [1] TRUE</span></a>
+<a class="sourceLine" id="cb138-4" title="4"></a>
+<a class="sourceLine" id="cb138-5" title="5">mtcars <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb138-6" title="6"><span class="st">  </span><span class="kw">remove_rownames</span>()</a>
+<a class="sourceLine" id="cb138-7" title="7"><span class="co">#&gt;     mpg cyl  disp  hp drat   wt qsec vs am gear carb</span></a>
+<a class="sourceLine" id="cb138-8" title="8"><span class="co">#&gt; 1  21.0   6 160.0 110 3.90 2.62 16.5  0  1    4    4</span></a>
+<a class="sourceLine" id="cb138-9" title="9"><span class="co">#&gt; 2  21.0   6 160.0 110 3.90 2.88 17.0  0  1    4    4</span></a>
+<a class="sourceLine" id="cb138-10" title="10"><span class="co">#&gt; 3  22.8   4 108.0  93 3.85 2.32 18.6  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-11" title="11"><span class="co">#&gt; 4  21.4   6 258.0 110 3.08 3.21 19.4  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-12" title="12"><span class="co">#&gt; 5  18.7   8 360.0 175 3.15 3.44 17.0  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-13" title="13"><span class="co">#&gt; 6  18.1   6 225.0 105 2.76 3.46 20.2  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-14" title="14"><span class="co">#&gt; 7  14.3   8 360.0 245 3.21 3.57 15.8  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-15" title="15"><span class="co">#&gt; 8  24.4   4 146.7  62 3.69 3.19 20.0  1  0    4    2</span></a>
+<a class="sourceLine" id="cb138-16" title="16"><span class="co">#&gt; 9  22.8   4 140.8  95 3.92 3.15 22.9  1  0    4    2</span></a>
+<a class="sourceLine" id="cb138-17" title="17"><span class="co">#&gt; 10 19.2   6 167.6 123 3.92 3.44 18.3  1  0    4    4</span></a>
+<a class="sourceLine" id="cb138-18" title="18"><span class="co">#&gt; 11 17.8   6 167.6 123 3.92 3.44 18.9  1  0    4    4</span></a>
+<a class="sourceLine" id="cb138-19" title="19"><span class="co">#&gt; 12 16.4   8 275.8 180 3.07 4.07 17.4  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-20" title="20"><span class="co">#&gt; 13 17.3   8 275.8 180 3.07 3.73 17.6  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-21" title="21"><span class="co">#&gt; 14 15.2   8 275.8 180 3.07 3.78 18.0  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-22" title="22"><span class="co">#&gt; 15 10.4   8 472.0 205 2.93 5.25 18.0  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-23" title="23"><span class="co">#&gt; 16 10.4   8 460.0 215 3.00 5.42 17.8  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-24" title="24"><span class="co">#&gt; 17 14.7   8 440.0 230 3.23 5.34 17.4  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-25" title="25"><span class="co">#&gt; 18 32.4   4  78.7  66 4.08 2.20 19.5  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-26" title="26"><span class="co">#&gt; 19 30.4   4  75.7  52 4.93 1.61 18.5  1  1    4    2</span></a>
+<a class="sourceLine" id="cb138-27" title="27"><span class="co">#&gt; 20 33.9   4  71.1  65 4.22 1.83 19.9  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-28" title="28"><span class="co">#&gt; 21 21.5   4 120.1  97 3.70 2.46 20.0  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-29" title="29"><span class="co">#&gt; 22 15.5   8 318.0 150 2.76 3.52 16.9  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-30" title="30"><span class="co">#&gt; 23 15.2   8 304.0 150 3.15 3.44 17.3  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-31" title="31"><span class="co">#&gt; 24 13.3   8 350.0 245 3.73 3.84 15.4  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-32" title="32"><span class="co">#&gt; 25 19.2   8 400.0 175 3.08 3.85 17.1  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-33" title="33"><span class="co">#&gt; 26 27.3   4  79.0  66 4.08 1.94 18.9  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-34" title="34"><span class="co">#&gt; 27 26.0   4 120.3  91 4.43 2.14 16.7  0  1    5    2</span></a>
+<a class="sourceLine" id="cb138-35" title="35"><span class="co">#&gt; 28 30.4   4  95.1 113 3.77 1.51 16.9  1  1    5    2</span></a>
+<a class="sourceLine" id="cb138-36" title="36"><span class="co">#&gt; 29 15.8   8 351.0 264 4.22 3.17 14.5  0  1    5    4</span></a>
+<a class="sourceLine" id="cb138-37" title="37"><span class="co">#&gt; 30 19.7   6 145.0 175 3.62 2.77 15.5  0  1    5    6</span></a>
+<a class="sourceLine" id="cb138-38" title="38"><span class="co">#&gt; 31 15.0   8 301.0 335 3.54 3.57 14.6  0  1    5    8</span></a>
+<a class="sourceLine" id="cb138-39" title="39"><span class="co">#&gt; 32 21.4   4 121.0 109 4.11 2.78 18.6  1  1    4    2</span></a>
+<a class="sourceLine" id="cb138-40" title="40"></a>
+<a class="sourceLine" id="cb138-41" title="41"></a>
+<a class="sourceLine" id="cb138-42" title="42">mtcars <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb138-43" title="43"><span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="dt">var =</span> <span class="st">&quot;car_type&quot;</span>)</a>
+<a class="sourceLine" id="cb138-44" title="44"><span class="co">#&gt;               car_type  mpg cyl  disp  hp drat   wt qsec vs am gear carb</span></a>
+<a class="sourceLine" id="cb138-45" title="45"><span class="co">#&gt; 1            Mazda RX4 21.0   6 160.0 110 3.90 2.62 16.5  0  1    4    4</span></a>
+<a class="sourceLine" id="cb138-46" title="46"><span class="co">#&gt; 2        Mazda RX4 Wag 21.0   6 160.0 110 3.90 2.88 17.0  0  1    4    4</span></a>
+<a class="sourceLine" id="cb138-47" title="47"><span class="co">#&gt; 3           Datsun 710 22.8   4 108.0  93 3.85 2.32 18.6  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-48" title="48"><span class="co">#&gt; 4       Hornet 4 Drive 21.4   6 258.0 110 3.08 3.21 19.4  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-49" title="49"><span class="co">#&gt; 5    Hornet Sportabout 18.7   8 360.0 175 3.15 3.44 17.0  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-50" title="50"><span class="co">#&gt; 6              Valiant 18.1   6 225.0 105 2.76 3.46 20.2  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-51" title="51"><span class="co">#&gt; 7           Duster 360 14.3   8 360.0 245 3.21 3.57 15.8  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-52" title="52"><span class="co">#&gt; 8            Merc 240D 24.4   4 146.7  62 3.69 3.19 20.0  1  0    4    2</span></a>
+<a class="sourceLine" id="cb138-53" title="53"><span class="co">#&gt; 9             Merc 230 22.8   4 140.8  95 3.92 3.15 22.9  1  0    4    2</span></a>
+<a class="sourceLine" id="cb138-54" title="54"><span class="co">#&gt; 10            Merc 280 19.2   6 167.6 123 3.92 3.44 18.3  1  0    4    4</span></a>
+<a class="sourceLine" id="cb138-55" title="55"><span class="co">#&gt; 11           Merc 280C 17.8   6 167.6 123 3.92 3.44 18.9  1  0    4    4</span></a>
+<a class="sourceLine" id="cb138-56" title="56"><span class="co">#&gt; 12          Merc 450SE 16.4   8 275.8 180 3.07 4.07 17.4  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-57" title="57"><span class="co">#&gt; 13          Merc 450SL 17.3   8 275.8 180 3.07 3.73 17.6  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-58" title="58"><span class="co">#&gt; 14         Merc 450SLC 15.2   8 275.8 180 3.07 3.78 18.0  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-59" title="59"><span class="co">#&gt; 15  Cadillac Fleetwood 10.4   8 472.0 205 2.93 5.25 18.0  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-60" title="60"><span class="co">#&gt; 16 Lincoln Continental 10.4   8 460.0 215 3.00 5.42 17.8  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-61" title="61"><span class="co">#&gt; 17   Chrysler Imperial 14.7   8 440.0 230 3.23 5.34 17.4  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-62" title="62"><span class="co">#&gt; 18            Fiat 128 32.4   4  78.7  66 4.08 2.20 19.5  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-63" title="63"><span class="co">#&gt; 19         Honda Civic 30.4   4  75.7  52 4.93 1.61 18.5  1  1    4    2</span></a>
+<a class="sourceLine" id="cb138-64" title="64"><span class="co">#&gt; 20      Toyota Corolla 33.9   4  71.1  65 4.22 1.83 19.9  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-65" title="65"><span class="co">#&gt; 21       Toyota Corona 21.5   4 120.1  97 3.70 2.46 20.0  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-66" title="66"><span class="co">#&gt; 22    Dodge Challenger 15.5   8 318.0 150 2.76 3.52 16.9  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-67" title="67"><span class="co">#&gt; 23         AMC Javelin 15.2   8 304.0 150 3.15 3.44 17.3  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-68" title="68"><span class="co">#&gt; 24          Camaro Z28 13.3   8 350.0 245 3.73 3.84 15.4  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-69" title="69"><span class="co">#&gt; 25    Pontiac Firebird 19.2   8 400.0 175 3.08 3.85 17.1  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-70" title="70"><span class="co">#&gt; 26           Fiat X1-9 27.3   4  79.0  66 4.08 1.94 18.9  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-71" title="71"><span class="co">#&gt; 27       Porsche 914-2 26.0   4 120.3  91 4.43 2.14 16.7  0  1    5    2</span></a>
+<a class="sourceLine" id="cb138-72" title="72"><span class="co">#&gt; 28        Lotus Europa 30.4   4  95.1 113 3.77 1.51 16.9  1  1    5    2</span></a>
+<a class="sourceLine" id="cb138-73" title="73"><span class="co">#&gt; 29      Ford Pantera L 15.8   8 351.0 264 4.22 3.17 14.5  0  1    5    4</span></a>
+<a class="sourceLine" id="cb138-74" title="74"><span class="co">#&gt; 30        Ferrari Dino 19.7   6 145.0 175 3.62 2.77 15.5  0  1    5    6</span></a>
+<a class="sourceLine" id="cb138-75" title="75"><span class="co">#&gt; 31       Maserati Bora 15.0   8 301.0 335 3.54 3.57 14.6  0  1    5    8</span></a>
+<a class="sourceLine" id="cb138-76" title="76"><span class="co">#&gt; 32          Volvo 142E 21.4   4 121.0 109 4.11 2.78 18.6  1  1    4    2</span></a>
+<a class="sourceLine" id="cb138-77" title="77"></a>
+<a class="sourceLine" id="cb138-78" title="78">mtcars <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb138-79" title="79"><span class="st">  </span><span class="kw">rowid_to_column</span>()</a>
+<a class="sourceLine" id="cb138-80" title="80"><span class="co">#&gt;    rowid  mpg cyl  disp  hp drat   wt qsec vs am gear carb</span></a>
+<a class="sourceLine" id="cb138-81" title="81"><span class="co">#&gt; 1      1 21.0   6 160.0 110 3.90 2.62 16.5  0  1    4    4</span></a>
+<a class="sourceLine" id="cb138-82" title="82"><span class="co">#&gt; 2      2 21.0   6 160.0 110 3.90 2.88 17.0  0  1    4    4</span></a>
+<a class="sourceLine" id="cb138-83" title="83"><span class="co">#&gt; 3      3 22.8   4 108.0  93 3.85 2.32 18.6  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-84" title="84"><span class="co">#&gt; 4      4 21.4   6 258.0 110 3.08 3.21 19.4  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-85" title="85"><span class="co">#&gt; 5      5 18.7   8 360.0 175 3.15 3.44 17.0  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-86" title="86"><span class="co">#&gt; 6      6 18.1   6 225.0 105 2.76 3.46 20.2  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-87" title="87"><span class="co">#&gt; 7      7 14.3   8 360.0 245 3.21 3.57 15.8  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-88" title="88"><span class="co">#&gt; 8      8 24.4   4 146.7  62 3.69 3.19 20.0  1  0    4    2</span></a>
+<a class="sourceLine" id="cb138-89" title="89"><span class="co">#&gt; 9      9 22.8   4 140.8  95 3.92 3.15 22.9  1  0    4    2</span></a>
+<a class="sourceLine" id="cb138-90" title="90"><span class="co">#&gt; 10    10 19.2   6 167.6 123 3.92 3.44 18.3  1  0    4    4</span></a>
+<a class="sourceLine" id="cb138-91" title="91"><span class="co">#&gt; 11    11 17.8   6 167.6 123 3.92 3.44 18.9  1  0    4    4</span></a>
+<a class="sourceLine" id="cb138-92" title="92"><span class="co">#&gt; 12    12 16.4   8 275.8 180 3.07 4.07 17.4  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-93" title="93"><span class="co">#&gt; 13    13 17.3   8 275.8 180 3.07 3.73 17.6  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-94" title="94"><span class="co">#&gt; 14    14 15.2   8 275.8 180 3.07 3.78 18.0  0  0    3    3</span></a>
+<a class="sourceLine" id="cb138-95" title="95"><span class="co">#&gt; 15    15 10.4   8 472.0 205 2.93 5.25 18.0  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-96" title="96"><span class="co">#&gt; 16    16 10.4   8 460.0 215 3.00 5.42 17.8  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-97" title="97"><span class="co">#&gt; 17    17 14.7   8 440.0 230 3.23 5.34 17.4  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-98" title="98"><span class="co">#&gt; 18    18 32.4   4  78.7  66 4.08 2.20 19.5  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-99" title="99"><span class="co">#&gt; 19    19 30.4   4  75.7  52 4.93 1.61 18.5  1  1    4    2</span></a>
+<a class="sourceLine" id="cb138-100" title="100"><span class="co">#&gt; 20    20 33.9   4  71.1  65 4.22 1.83 19.9  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-101" title="101"><span class="co">#&gt; 21    21 21.5   4 120.1  97 3.70 2.46 20.0  1  0    3    1</span></a>
+<a class="sourceLine" id="cb138-102" title="102"><span class="co">#&gt; 22    22 15.5   8 318.0 150 2.76 3.52 16.9  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-103" title="103"><span class="co">#&gt; 23    23 15.2   8 304.0 150 3.15 3.44 17.3  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-104" title="104"><span class="co">#&gt; 24    24 13.3   8 350.0 245 3.73 3.84 15.4  0  0    3    4</span></a>
+<a class="sourceLine" id="cb138-105" title="105"><span class="co">#&gt; 25    25 19.2   8 400.0 175 3.08 3.85 17.1  0  0    3    2</span></a>
+<a class="sourceLine" id="cb138-106" title="106"><span class="co">#&gt; 26    26 27.3   4  79.0  66 4.08 1.94 18.9  1  1    4    1</span></a>
+<a class="sourceLine" id="cb138-107" title="107"><span class="co">#&gt; 27    27 26.0   4 120.3  91 4.43 2.14 16.7  0  1    5    2</span></a>
+<a class="sourceLine" id="cb138-108" title="108"><span class="co">#&gt; 28    28 30.4   4  95.1 113 3.77 1.51 16.9  1  1    5    2</span></a>
+<a class="sourceLine" id="cb138-109" title="109"><span class="co">#&gt; 29    29 15.8   8 351.0 264 4.22 3.17 14.5  0  1    5    4</span></a>
+<a class="sourceLine" id="cb138-110" title="110"><span class="co">#&gt; 30    30 19.7   6 145.0 175 3.62 2.77 15.5  0  1    5    6</span></a>
+<a class="sourceLine" id="cb138-111" title="111"><span class="co">#&gt; 31    31 15.0   8 301.0 335 3.54 3.57 14.6  0  1    5    8</span></a>
+<a class="sourceLine" id="cb138-112" title="112"><span class="co">#&gt; 32    32 21.4   4 121.0 109 4.11 2.78 18.6  1  1    4    2</span></a></code></pre></div>
+</div>
+<div id="recycling" class="section level4">
+<h4><span class="header-section-number">2.2.1.3</span> Recycling</h4>
+<p><code>tibble()</code>会循环使用那些长度为1的列，将其自动扩展到最长的列的长度。而长度不为1，且和其他列元素个数不同的列不会被循环 ； <code>data.frame()</code>会自动循环长度可被最长一列的长度整除的列：</p>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb139-1" title="1"><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">y =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb139-2" title="2"><span class="co">#&gt; # A tibble: 4 x 2</span></a>
+<a class="sourceLine" id="cb139-3" title="3"><span class="co">#&gt;       x     y</span></a>
+<a class="sourceLine" id="cb139-4" title="4"><span class="co">#&gt;   &lt;int&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb139-5" title="5"><span class="co">#&gt; 1     1     1</span></a>
+<a class="sourceLine" id="cb139-6" title="6"><span class="co">#&gt; 2     2     1</span></a>
+<a class="sourceLine" id="cb139-7" title="7"><span class="co">#&gt; 3     3     1</span></a>
+<a class="sourceLine" id="cb139-8" title="8"><span class="co">#&gt; 4     4     1</span></a>
+<a class="sourceLine" id="cb139-9" title="9"><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">y =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb139-10" title="10"><span class="co">#&gt; Error: Tibble columns must have compatible sizes.</span></a>
+<a class="sourceLine" id="cb139-11" title="11"><span class="co">#&gt; * Size 4: Existing data.</span></a>
+<a class="sourceLine" id="cb139-12" title="12"><span class="co">#&gt; * Size 2: Column `y`.</span></a>
+<a class="sourceLine" id="cb139-13" title="13"><span class="co">#&gt; i Only values of size one are recycled.</span></a>
+<a class="sourceLine" id="cb139-14" title="14"></a>
+<a class="sourceLine" id="cb139-15" title="15"><span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">y =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb139-16" title="16"><span class="co">#&gt;   x y</span></a>
+<a class="sourceLine" id="cb139-17" title="17"><span class="co">#&gt; 1 1 1</span></a>
+<a class="sourceLine" id="cb139-18" title="18"><span class="co">#&gt; 2 2 2</span></a>
+<a class="sourceLine" id="cb139-19" title="19"><span class="co">#&gt; 3 3 1</span></a>
+<a class="sourceLine" id="cb139-20" title="20"><span class="co">#&gt; 4 4 2</span></a>
+<a class="sourceLine" id="cb139-21" title="21"><span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">y =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb139-22" title="22"><span class="co">#&gt; Error in data.frame(x = 1:4, y = 1:3): arguments imply differing number of rows: 4, 3</span></a></code></pre></div>
+</div>
+<div id="invalid-column-names" class="section level4">
+<h4><span class="header-section-number">2.2.1.4</span> Invalid column names</h4>
+<p><code>tibble</code>的一个很大特色是可以使用在 R 中无效的变量名称，即不符合变量命名规定的名称可以在 tibble 中成为列名，实际上这个规则约束了 R 中所有“名称”的设定。R 规定名称只能包含字母、数字、点<code>.</code>和下划线<code>_</code>，必须以字母开头，数字不能跟在<code>.</code>之后，也不能和R中保留的关键字重名(see <code>?Reserved</code>)。</p>
+<p>如果想创建不合法的列名，可以用反引号```将它们括起来：</p>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb140-1" title="1">tb &lt;-<span class="st"> </span><span class="kw">tibble</span>(</a>
+<a class="sourceLine" id="cb140-2" title="2">  <span class="st">`</span><span class="dt">:)</span><span class="st">`</span> =<span class="st"> &quot;smile&quot;</span>,</a>
+<a class="sourceLine" id="cb140-3" title="3">  <span class="st">`</span><span class="dt"> </span><span class="st">`</span> =<span class="st"> &quot;space&quot;</span>,</a>
+<a class="sourceLine" id="cb140-4" title="4">  <span class="st">`</span><span class="dt">2000</span><span class="st">`</span> =<span class="st"> &quot;number&quot;</span></a>
+<a class="sourceLine" id="cb140-5" title="5">)</a>
+<a class="sourceLine" id="cb140-6" title="6">tb</a>
+<a class="sourceLine" id="cb140-7" title="7"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
+<a class="sourceLine" id="cb140-8" title="8"><span class="co">#&gt;   `:)`  ` `   `2000`</span></a>
+<a class="sourceLine" id="cb140-9" title="9"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; </span></a>
+<a class="sourceLine" id="cb140-10" title="10"><span class="co">#&gt; 1 smile space number</span></a></code></pre></div>
+<p>类似地，如果想要在 <code>ggolot2</code> 或者其他<code>tidyverse</code>包中使用这些名称特殊的变量，也需要用反引号括起来。</p>
+<p>相比之下，<code>data.frame()</code>会依据<code>make.names()</code>的规则自行更改无效的列名称(除非设置<code>check.names = FALSE</code>)。如果你的名称不以字母开头(字母的界定依据当前电脑的地域设置，但不能超越ASCII字符集)，这个函数会地添加<code>X</code>作为前缀；如果包含特殊字符，用<code>.</code>代替；未给出的名称用<code>NA</code>代替；与R的保留关键字重名的，在后面添加<code>.</code>:</p>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb141-1" title="1"><span class="kw">names</span>(<span class="kw">data.frame</span>(<span class="st">`</span><span class="dt">1</span><span class="st">`</span> =<span class="st"> </span><span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb141-2" title="2"><span class="co">#&gt; [1] &quot;X1&quot;</span></a>
+<a class="sourceLine" id="cb141-3" title="3"><span class="kw">names</span>(<span class="kw">data.frame</span>(<span class="st">`</span><span class="dt">1</span><span class="st">`</span> =<span class="st"> </span><span class="dv">1</span>,<span class="dt">check.names =</span> F))</a>
+<a class="sourceLine" id="cb141-4" title="4"><span class="co">#&gt; [1] &quot;1&quot;</span></a></code></pre></div>
+</div>
+<div id="referencing-a-column" class="section level4">
+<h4><span class="header-section-number">2.2.1.5</span> Referencing a column</h4>
+<p>最后，我们可以在创建 tibble 创建过程中就引用其中的变量，因为变量在 tibble 中是被从左到右依次添加的(而 <code>data.frame()</code> 不支持这一点)：</p>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb142-1" title="1"><span class="kw">tibble</span>(</a>
+<a class="sourceLine" id="cb142-2" title="2">  <span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,</a>
+<a class="sourceLine" id="cb142-3" title="3">  <span class="dt">y =</span> x <span class="op">*</span><span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb142-4" title="4">)</a>
+<a class="sourceLine" id="cb142-5" title="5"><span class="co">#&gt; # A tibble: 3 x 2</span></a>
+<a class="sourceLine" id="cb142-6" title="6"><span class="co">#&gt;       x     y</span></a>
+<a class="sourceLine" id="cb142-7" title="7"><span class="co">#&gt;   &lt;int&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb142-8" title="8"><span class="co">#&gt; 1     1     2</span></a>
+<a class="sourceLine" id="cb142-9" title="9"><span class="co">#&gt; 2     2     4</span></a>
+<a class="sourceLine" id="cb142-10" title="10"><span class="co">#&gt; 3     3     6</span></a></code></pre></div>
+</div>
+</div>
+<div id="printing" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Printing</h3>
+<p>tibble 的打印方法进行了优化，只显示前 10 行结果，显示列的数目将自动适应屏幕的宽度，这种打印方式非常适合大数据集。除了打印列名，tibble 还会第一行的下面打印出列的类型，这项功能有些类似于 <code>str()</code> 函数</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb143-1" title="1"><span class="kw">tibble</span>(</a>
+<a class="sourceLine" id="cb143-2" title="2">  <span class="dt">a =</span> lubridate<span class="op">::</span><span class="kw">now</span>() <span class="op">+</span><span class="st"> </span><span class="kw">runif</span>(<span class="fl">1e3</span>) <span class="op">*</span><span class="st"> </span><span class="dv">96400</span>,</a>
+<a class="sourceLine" id="cb143-3" title="3">  <span class="dt">b =</span> lubridate<span class="op">::</span><span class="kw">today</span>() <span class="op">+</span><span class="st"> </span><span class="kw">runif</span>(<span class="fl">1e3</span>) <span class="op">*</span><span class="st"> </span><span class="dv">30</span>,</a>
+<a class="sourceLine" id="cb143-4" title="4">  <span class="dt">c =</span> <span class="dv">1</span><span class="op">:</span><span class="fl">1e3</span>,</a>
+<a class="sourceLine" id="cb143-5" title="5">  <span class="dt">d =</span> <span class="kw">runif</span>(<span class="fl">1e3</span>),</a>
+<a class="sourceLine" id="cb143-6" title="6">  <span class="dt">e =</span> <span class="kw">sample</span>(letters,<span class="fl">1e3</span>, <span class="dt">replace =</span> T)</a>
+<a class="sourceLine" id="cb143-7" title="7">)</a>
+<a class="sourceLine" id="cb143-8" title="8"><span class="co">#&gt; # A tibble: 1,000 x 5</span></a>
+<a class="sourceLine" id="cb143-9" title="9"><span class="co">#&gt;   a                   b              c     d e    </span></a>
+<a class="sourceLine" id="cb143-10" title="10"><span class="co">#&gt;   &lt;dttm&gt;              &lt;date&gt;     &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb143-11" title="11"><span class="co">#&gt; 1 2020-04-30 12:00:25 2020-05-01     1 0.392 i    </span></a>
+<a class="sourceLine" id="cb143-12" title="12"><span class="co">#&gt; 2 2020-04-30 05:03:59 2020-05-03     2 0.409 p    </span></a>
+<a class="sourceLine" id="cb143-13" title="13"><span class="co">#&gt; 3 2020-04-30 00:00:33 2020-05-14     3 0.944 t    </span></a>
+<a class="sourceLine" id="cb143-14" title="14"><span class="co">#&gt; 4 2020-04-30 04:45:02 2020-05-23     4 0.614 z    </span></a>
+<a class="sourceLine" id="cb143-15" title="15"><span class="co">#&gt; 5 2020-04-30 04:59:41 2020-05-15     5 0.672 f    </span></a>
+<a class="sourceLine" id="cb143-16" title="16"><span class="co">#&gt; 6 2020-04-30 05:54:30 2020-05-09     6 0.113 q    </span></a>
+<a class="sourceLine" id="cb143-17" title="17"><span class="co">#&gt; # ... with 994 more rows</span></a></code></pre></div>
+<p>在打印大数据框时，<code>tibble</code>的这种设计避免了输出一下子占据控制台的很多行。</p>
+<p>有时需要比默认显示更多的输出，这是要设置几个参数。<br />
+首先，可以明确使用<code>print()</code>函数来打印数据框（实际上是<code>print.tbl()</code>)，并控制打印的行数（n）和显示的宽度（width）。<code>width = Inf</code>可以显示出所有列:</p>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb144-1" title="1">nycflights13<span class="op">::</span>flights <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb144-2" title="2"><span class="st">  </span><span class="kw">print</span>(<span class="dt">n =</span> <span class="dv">10</span>, <span class="dt">width =</span> <span class="ot">Inf</span>)</a>
+<a class="sourceLine" id="cb144-3" title="3"><span class="co">#&gt; # A tibble: 336,776 x 19</span></a>
+<a class="sourceLine" id="cb144-4" title="4"><span class="co">#&gt;     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time</span></a>
+<a class="sourceLine" id="cb144-5" title="5"><span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb144-6" title="6"><span class="co">#&gt;  1  2013     1     1      517            515         2      830            819</span></a>
+<a class="sourceLine" id="cb144-7" title="7"><span class="co">#&gt;  2  2013     1     1      533            529         4      850            830</span></a>
+<a class="sourceLine" id="cb144-8" title="8"><span class="co">#&gt;  3  2013     1     1      542            540         2      923            850</span></a>
+<a class="sourceLine" id="cb144-9" title="9"><span class="co">#&gt;  4  2013     1     1      544            545        -1     1004           1022</span></a>
+<a class="sourceLine" id="cb144-10" title="10"><span class="co">#&gt;  5  2013     1     1      554            600        -6      812            837</span></a>
+<a class="sourceLine" id="cb144-11" title="11"><span class="co">#&gt;  6  2013     1     1      554            558        -4      740            728</span></a>
+<a class="sourceLine" id="cb144-12" title="12"><span class="co">#&gt;  7  2013     1     1      555            600        -5      913            854</span></a>
+<a class="sourceLine" id="cb144-13" title="13"><span class="co">#&gt;  8  2013     1     1      557            600        -3      709            723</span></a>
+<a class="sourceLine" id="cb144-14" title="14"><span class="co">#&gt;  9  2013     1     1      557            600        -3      838            846</span></a>
+<a class="sourceLine" id="cb144-15" title="15"><span class="co">#&gt; 10  2013     1     1      558            600        -2      753            745</span></a>
+<a class="sourceLine" id="cb144-16" title="16"><span class="co">#&gt;    arr_delay carrier flight tailnum origin dest  air_time distance  hour minute</span></a>
+<a class="sourceLine" id="cb144-17" title="17"><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb144-18" title="18"><span class="co">#&gt;  1        11 UA        1545 N14228  EWR    IAH        227     1400     5     15</span></a>
+<a class="sourceLine" id="cb144-19" title="19"><span class="co">#&gt;  2        20 UA        1714 N24211  LGA    IAH        227     1416     5     29</span></a>
+<a class="sourceLine" id="cb144-20" title="20"><span class="co">#&gt;  3        33 AA        1141 N619AA  JFK    MIA        160     1089     5     40</span></a>
+<a class="sourceLine" id="cb144-21" title="21"><span class="co">#&gt;  4       -18 B6         725 N804JB  JFK    BQN        183     1576     5     45</span></a>
+<a class="sourceLine" id="cb144-22" title="22"><span class="co">#&gt;  5       -25 DL         461 N668DN  LGA    ATL        116      762     6      0</span></a>
+<a class="sourceLine" id="cb144-23" title="23"><span class="co">#&gt;  6        12 UA        1696 N39463  EWR    ORD        150      719     5     58</span></a>
+<a class="sourceLine" id="cb144-24" title="24"><span class="co">#&gt;  7        19 B6         507 N516JB  EWR    FLL        158     1065     6      0</span></a>
+<a class="sourceLine" id="cb144-25" title="25"><span class="co">#&gt;  8       -14 EV        5708 N829AS  LGA    IAD         53      229     6      0</span></a>
+<a class="sourceLine" id="cb144-26" title="26"><span class="co">#&gt;  9        -8 B6          79 N593JB  JFK    MCO        140      944     6      0</span></a>
+<a class="sourceLine" id="cb144-27" title="27"><span class="co">#&gt; 10         8 AA         301 N3ALAA  LGA    ORD        138      733     6      0</span></a>
+<a class="sourceLine" id="cb144-28" title="28"><span class="co">#&gt;    time_hour          </span></a>
+<a class="sourceLine" id="cb144-29" title="29"><span class="co">#&gt;    &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb144-30" title="30"><span class="co">#&gt;  1 2013-01-01 05:00:00</span></a>
+<a class="sourceLine" id="cb144-31" title="31"><span class="co">#&gt;  2 2013-01-01 05:00:00</span></a>
+<a class="sourceLine" id="cb144-32" title="32"><span class="co">#&gt;  3 2013-01-01 05:00:00</span></a>
+<a class="sourceLine" id="cb144-33" title="33"><span class="co">#&gt;  4 2013-01-01 05:00:00</span></a>
+<a class="sourceLine" id="cb144-34" title="34"><span class="co">#&gt;  5 2013-01-01 06:00:00</span></a>
+<a class="sourceLine" id="cb144-35" title="35"><span class="co">#&gt;  6 2013-01-01 05:00:00</span></a>
+<a class="sourceLine" id="cb144-36" title="36"><span class="co">#&gt;  7 2013-01-01 06:00:00</span></a>
+<a class="sourceLine" id="cb144-37" title="37"><span class="co">#&gt;  8 2013-01-01 06:00:00</span></a>
+<a class="sourceLine" id="cb144-38" title="38"><span class="co">#&gt;  9 2013-01-01 06:00:00</span></a>
+<a class="sourceLine" id="cb144-39" title="39"><span class="co">#&gt; 10 2013-01-01 06:00:00</span></a>
+<a class="sourceLine" id="cb144-40" title="40"><span class="co">#&gt; # ... with 336,766 more rows</span></a></code></pre></div>
+</div>
+<div id="subsetting" class="section level3">
+<h3><span class="header-section-number">2.2.3</span> Subsetting</h3>
+<p>取子集(Subsetting)时的行为又是区分 <code>data.frame</code> 和 <code>tibble</code> 很重要的一个特性。简单来讲，R中有两种取子集的系统。一种是用<code>[</code>在原子向量、列表、矩阵、数组和数据框中提取<strong>任意数量</strong>的元素，一种是用 <code>[[</code> 或者 <code>$</code> 在以上对象中提取<strong>单个元素</strong>。</p>
+<p>传统的数据框 <code>data.frame</code> 在这两种方式上均有缺陷：</p>
+<ul>
+<li>当想用<code>df[, vars]</code> 在 <code>data.frame</code> 中提取列时，如果<code>vars</code>包含多个变量，则返回一个数据框；如果<code>vars</code>只包含一个变量，则返回一个向量(因为<code>[</code>不要求必须提取多于一个元素)。这种不一致性有时这会导致很多bug，因为很多函数不能作用于向量。</li>
+</ul>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb145-1" title="1">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb145-2" title="2">  <span class="dt">x =</span> <span class="kw">rnorm</span>(<span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb145-3" title="3">  <span class="dt">y =</span> <span class="kw">rnorm</span>(<span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb145-4" title="4">  <span class="dt">z =</span> <span class="kw">rnorm</span>(<span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb145-5" title="5">)</a>
+<a class="sourceLine" id="cb145-6" title="6"></a>
+<a class="sourceLine" id="cb145-7" title="7"><span class="co">## 向量</span></a>
+<a class="sourceLine" id="cb145-8" title="8">df[,<span class="st">&quot;x&quot;</span>]</a>
+<a class="sourceLine" id="cb145-9" title="9"><span class="co">#&gt;  [1] -1.5723  0.8783 -0.0461 -0.0778  0.1201  0.7874 -0.7307 -0.3133 -0.6744</span></a>
+<a class="sourceLine" id="cb145-10" title="10"><span class="co">#&gt; [10] -0.9759</span></a>
+<a class="sourceLine" id="cb145-11" title="11"><span class="co">## 数据框</span></a>
+<a class="sourceLine" id="cb145-12" title="12">df[,<span class="kw">c</span>(<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>)]</a>
+<a class="sourceLine" id="cb145-13" title="13"><span class="co">#&gt;          x      y</span></a>
+<a class="sourceLine" id="cb145-14" title="14"><span class="co">#&gt; 1  -1.5723  1.442</span></a>
+<a class="sourceLine" id="cb145-15" title="15"><span class="co">#&gt; 2   0.8783 -0.738</span></a>
+<a class="sourceLine" id="cb145-16" title="16"><span class="co">#&gt; 3  -0.0461 -0.280</span></a>
+<a class="sourceLine" id="cb145-17" title="17"><span class="co">#&gt; 4  -0.0778  0.451</span></a>
+<a class="sourceLine" id="cb145-18" title="18"><span class="co">#&gt; 5   0.1201  1.437</span></a>
+<a class="sourceLine" id="cb145-19" title="19"><span class="co">#&gt; 6   0.7874  1.531</span></a>
+<a class="sourceLine" id="cb145-20" title="20"><span class="co">#&gt; 7  -0.7307  0.728</span></a>
+<a class="sourceLine" id="cb145-21" title="21"><span class="co">#&gt; 8  -0.3133  0.018</span></a>
+<a class="sourceLine" id="cb145-22" title="22"><span class="co">#&gt; 9  -0.6744 -0.108</span></a>
+<a class="sourceLine" id="cb145-23" title="23"><span class="co">#&gt; 10 -0.9759  1.533</span></a>
+<a class="sourceLine" id="cb145-24" title="24"><span class="co">## drop = FALSE始终返回数据框</span></a>
+<a class="sourceLine" id="cb145-25" title="25">df[,<span class="st">&quot;x&quot;</span>, drop =<span class="st"> </span><span class="ot">FALSE</span>]</a>
+<a class="sourceLine" id="cb145-26" title="26"><span class="co">#&gt;          x</span></a>
+<a class="sourceLine" id="cb145-27" title="27"><span class="co">#&gt; 1  -1.5723</span></a>
+<a class="sourceLine" id="cb145-28" title="28"><span class="co">#&gt; 2   0.8783</span></a>
+<a class="sourceLine" id="cb145-29" title="29"><span class="co">#&gt; 3  -0.0461</span></a>
+<a class="sourceLine" id="cb145-30" title="30"><span class="co">#&gt; 4  -0.0778</span></a>
+<a class="sourceLine" id="cb145-31" title="31"><span class="co">#&gt; 5   0.1201</span></a>
+<a class="sourceLine" id="cb145-32" title="32"><span class="co">#&gt; 6   0.7874</span></a>
+<a class="sourceLine" id="cb145-33" title="33"><span class="co">#&gt; 7  -0.7307</span></a>
+<a class="sourceLine" id="cb145-34" title="34"><span class="co">#&gt; 8  -0.3133</span></a>
+<a class="sourceLine" id="cb145-35" title="35"><span class="co">#&gt; 9  -0.6744</span></a>
+<a class="sourceLine" id="cb145-36" title="36"><span class="co">#&gt; 10 -0.9759</span></a></code></pre></div>
+<ul>
+<li>当想用<code>df$x</code>提取出变量<code>x</code>时，如果<code>x</code>不在<code>data.frame</code>中，<code>data.frame</code>会返回一个名字以<code>x</code>开始的变量(这种行为被称为部分匹配(partial matching))，如果不存在这样的变量，则返回<code>NULL</code>。这使得我们很容易选取到错误的变量</li>
+</ul>
+<p><code>tibble</code> 在这两点缺陷上做了改进。首先，当 <code>df[, vars]</code>作用于<code>tibble</code> 时，无论 <code>vars</code> 包含多少个变量，返回值总是一个<code>tibble</code>:</p>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb146-1" title="1">df &lt;-<span class="st"> </span><span class="kw">tibble</span>(</a>
+<a class="sourceLine" id="cb146-2" title="2">  <span class="dt">x =</span> <span class="kw">runif</span>(<span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb146-3" title="3">  <span class="dt">y =</span> <span class="kw">rnorm</span>(<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb146-4" title="4">)</a>
+<a class="sourceLine" id="cb146-5" title="5"></a>
+<a class="sourceLine" id="cb146-6" title="6">df[, <span class="kw">c</span>(<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>)]</a>
+<a class="sourceLine" id="cb146-7" title="7"><span class="co">#&gt; # A tibble: 5 x 2</span></a>
+<a class="sourceLine" id="cb146-8" title="8"><span class="co">#&gt;       x      y</span></a>
+<a class="sourceLine" id="cb146-9" title="9"><span class="co">#&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb146-10" title="10"><span class="co">#&gt; 1 0.548  0.281</span></a>
+<a class="sourceLine" id="cb146-11" title="11"><span class="co">#&gt; 2 0.804 -0.272</span></a>
+<a class="sourceLine" id="cb146-12" title="12"><span class="co">#&gt; 3 0.837  0.388</span></a>
+<a class="sourceLine" id="cb146-13" title="13"><span class="co">#&gt; 4 0.930  1.79 </span></a>
+<a class="sourceLine" id="cb146-14" title="14"><span class="co">#&gt; 5 0.785 -0.308</span></a>
+<a class="sourceLine" id="cb146-15" title="15">df[, <span class="st">&quot;x&quot;</span>]</a>
+<a class="sourceLine" id="cb146-16" title="16"><span class="co">#&gt; # A tibble: 5 x 1</span></a>
+<a class="sourceLine" id="cb146-17" title="17"><span class="co">#&gt;       x</span></a>
+<a class="sourceLine" id="cb146-18" title="18"><span class="co">#&gt;   &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb146-19" title="19"><span class="co">#&gt; 1 0.548</span></a>
+<a class="sourceLine" id="cb146-20" title="20"><span class="co">#&gt; 2 0.804</span></a>
+<a class="sourceLine" id="cb146-21" title="21"><span class="co">#&gt; 3 0.837</span></a>
+<a class="sourceLine" id="cb146-22" title="22"><span class="co">#&gt; 4 0.930</span></a>
+<a class="sourceLine" id="cb146-23" title="23"><span class="co">#&gt; 5 0.785</span></a></code></pre></div>
+<p>其次，使用<code>$</code>或者<code>[[]]</code>时,<code>tibble</code>不会进行部分匹配，如果该变量不存在，直接报错：</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" title="1">df_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">xyz =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb147-2" title="2">df_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">xyz =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb147-3" title="3"></a>
+<a class="sourceLine" id="cb147-4" title="4">df_<span class="dv">1</span><span class="op">$</span>xy</a>
+<a class="sourceLine" id="cb147-5" title="5"><span class="co">#&gt; [1] 1</span></a>
+<a class="sourceLine" id="cb147-6" title="6">df_<span class="dv">2</span><span class="op">$</span>xy</a>
+<a class="sourceLine" id="cb147-7" title="7"><span class="co">#&gt; NULL</span></a></code></pre></div>
+<p>另外，<code>[[</code>可以按名称和位置提取变量，<code>$</code>只能按名称提取变量，但可以减少一些输入：</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb148-1" title="1"><span class="co">## 按名称提取</span></a>
+<a class="sourceLine" id="cb148-2" title="2">df<span class="op">$</span>x</a>
+<a class="sourceLine" id="cb148-3" title="3"><span class="co">#&gt; [1] 0.548 0.804 0.837 0.930 0.785</span></a>
+<a class="sourceLine" id="cb148-4" title="4">df[[<span class="st">&quot;x&quot;</span>]]</a>
+<a class="sourceLine" id="cb148-5" title="5"><span class="co">#&gt; [1] 0.548 0.804 0.837 0.930 0.785</span></a>
+<a class="sourceLine" id="cb148-6" title="6"></a>
+<a class="sourceLine" id="cb148-7" title="7"><span class="co">## 按位置提取</span></a>
+<a class="sourceLine" id="cb148-8" title="8">df[[<span class="dv">1</span>]]  <span class="co">## 提取第一列</span></a>
+<a class="sourceLine" id="cb148-9" title="9"><span class="co">#&gt; [1] 0.548 0.804 0.837 0.930 0.785</span></a></code></pre></div>
+
+<div class="rmdtip">
+如果想在管道中使用这些取子集操作，需要使用特殊的占位符 <strong>.</strong>
+</div>
+
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb149-1" title="1">df <span class="op">%&gt;%</span><span class="st"> </span>.[, <span class="st">&quot;x&quot;</span>]</a>
+<a class="sourceLine" id="cb149-2" title="2"><span class="co">#&gt; # A tibble: 5 x 1</span></a>
+<a class="sourceLine" id="cb149-3" title="3"><span class="co">#&gt;       x</span></a>
+<a class="sourceLine" id="cb149-4" title="4"><span class="co">#&gt;   &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb149-5" title="5"><span class="co">#&gt; 1 0.548</span></a>
+<a class="sourceLine" id="cb149-6" title="6"><span class="co">#&gt; 2 0.804</span></a>
+<a class="sourceLine" id="cb149-7" title="7"><span class="co">#&gt; 3 0.837</span></a>
+<a class="sourceLine" id="cb149-8" title="8"><span class="co">#&gt; 4 0.930</span></a>
+<a class="sourceLine" id="cb149-9" title="9"><span class="co">#&gt; 5 0.785</span></a>
+<a class="sourceLine" id="cb149-10" title="10">df <span class="op">%&gt;%</span><span class="st"> </span>.<span class="op">$</span>x</a>
+<a class="sourceLine" id="cb149-11" title="11"><span class="co">#&gt; [1] 0.548 0.804 0.837 0.930 0.785</span></a>
+<a class="sourceLine" id="cb149-12" title="12">df <span class="op">%&gt;%</span><span class="st"> </span>.[[<span class="st">&quot;x&quot;</span>]]</a>
+<a class="sourceLine" id="cb149-13" title="13"><span class="co">#&gt; [1] 0.548 0.804 0.837 0.930 0.785</span></a></code></pre></div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="tibble-intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="comparing-two-data-frames-tibbles.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/enixam/rfordatascience/edit/master/tibble.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

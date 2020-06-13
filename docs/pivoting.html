@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6.2 Pivoting | R for data science: tidyverse and beyond</title>
+  <meta name="description" content="6.2 Pivoting | R for data science: tidyverse and beyond" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6.2 Pivoting | R for data science: tidyverse and beyond" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="enixam/rfordatascience" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6.2 Pivoting | R for data science: tidyverse and beyond" />
+  
+  
+  
+
+<meta name="author" content="Maxine" />
+
+
+<meta name="date" content="2020-05-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="tidyr-intro.html"/>
+<link rel="next" href="nesting.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/jsoneditor-5.25.6/jsoneditor.min.css" rel="stylesheet" />
+<script src="libs/jsoneditor-5.25.6/jsoneditor.min.js"></script>
+<script src="libs/jsonedit-binding-3.0.0/jsonedit.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R4DS: tidyverse and beyond</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a></li>
+<li class="part"><span><b>I R for data science</b></span></li>
+<li class="chapter" data-level="1" data-path="dplyr-data-transformation.html"><a href="dplyr-data-transformation.html"><i class="fa fa-check"></i><b>1</b> dplyr: Data transformation</a><ul>
+<li class="chapter" data-level="1.1" data-path="filter.html"><a href="filter.html"><i class="fa fa-check"></i><b>1.1</b> <code>filter()</code></a><ul>
+<li class="chapter" data-level="1.1.1" data-path="filter.html"><a href="filter.html#operators"><i class="fa fa-check"></i><b>1.1.1</b> Operators</a></li>
+<li class="chapter" data-level="1.1.2" data-path="filter.html"><a href="filter.html#missing-values"><i class="fa fa-check"></i><b>1.1.2</b> Missing values</a></li>
+<li class="chapter" data-level="1.1.3" data-path="filter.html"><a href="filter.html#exercises"><i class="fa fa-check"></i><b>1.1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.1.4" data-path="filter.html"><a href="filter.html#slice"><i class="fa fa-check"></i><b>1.1.4</b> <code>slice()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="arrange.html"><a href="arrange.html"><i class="fa fa-check"></i><b>1.2</b> <code>arrange()</code></a><ul>
+<li class="chapter" data-level="1.2.1" data-path="arrange.html"><a href="arrange.html#exercises-1"><i class="fa fa-check"></i><b>1.2.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="select.html"><a href="select.html"><i class="fa fa-check"></i><b>1.3</b> <code>select()</code></a><ul>
+<li class="chapter" data-level="1.3.1" data-path="select.html"><a href="select.html#练习"><i class="fa fa-check"></i><b>1.3.1</b> 练习</a></li>
+<li class="chapter" data-level="1.3.2" data-path="select.html"><a href="select.html#常用创建函数"><i class="fa fa-check"></i><b>1.3.2</b> 常用创建函数</a></li>
+<li class="chapter" data-level="1.3.3" data-path="select.html"><a href="select.html#exercises-2"><i class="fa fa-check"></i><b>1.3.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="summarize.html"><a href="summarize.html"><i class="fa fa-check"></i><b>1.4</b> <code>summarize()</code></a><ul>
+<li class="chapter" data-level="1.4.1" data-path="summarize.html"><a href="summarize.html#missing-values-in-summarize"><i class="fa fa-check"></i><b>1.4.1</b> Missing values in <code>summarize()</code></a></li>
+<li class="chapter" data-level="1.4.2" data-path="summarize.html"><a href="summarize.html#计数函数"><i class="fa fa-check"></i><b>1.4.2</b> 计数函数</a></li>
+<li class="chapter" data-level="1.4.3" data-path="summarize.html"><a href="summarize.html#逻辑值的计数和比例sumx-10-和-meany-0"><i class="fa fa-check"></i><b>1.4.3</b> 逻辑值的计数和比例:<code>sum(x &gt; 10) 和 mean(y == 0)</code></a></li>
+<li class="chapter" data-level="1.4.4" data-path="summarize.html"><a href="summarize.html#其他常用的摘要函数"><i class="fa fa-check"></i><b>1.4.4</b> 其他常用的摘要函数</a></li>
+<li class="chapter" data-level="1.4.5" data-path="summarize.html"><a href="summarize.html#多个分组变量的消耗"><i class="fa fa-check"></i><b>1.4.5</b> 多个分组变量的消耗</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="group-by-combined-with-other-functions.html"><a href="group-by-combined-with-other-functions.html"><i class="fa fa-check"></i><b>1.5</b> <code>group_by()</code> combined with other functions</a></li>
+<li class="chapter" data-level="1.6" data-path="dplyr-exercise.html"><a href="dplyr-exercise.html"><i class="fa fa-check"></i><b>1.6</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="tibble-modern-data-frames.html"><a href="tibble-modern-data-frames.html"><i class="fa fa-check"></i><b>2</b> tibble: Modern data frames</a><ul>
+<li class="chapter" data-level="2.1" data-path="tibble-intro.html"><a href="tibble-intro.html"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html"><i class="fa fa-check"></i><b>2.2</b> Comparing tibble and data.frame</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#creating"><i class="fa fa-check"></i><b>2.2.1</b> Creating</a></li>
+<li class="chapter" data-level="2.2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#printing"><i class="fa fa-check"></i><b>2.2.2</b> Printing</a></li>
+<li class="chapter" data-level="2.2.3" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#subsetting"><i class="fa fa-check"></i><b>2.2.3</b> Subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html"><i class="fa fa-check"></i><b>2.3</b> Comparing two data frames (tibbles)</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#dplyrall_equal"><i class="fa fa-check"></i><b>2.3.1</b> <code>dplyr::all_equal()</code></a></li>
+<li class="chapter" data-level="2.3.2" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#janitorcompare_df_cols"><i class="fa fa-check"></i><b>2.3.2</b> <code>janitor::compare_df_cols()</code></a></li>
+<li class="chapter" data-level="2.3.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#vetralike"><i class="fa fa-check"></i><b>2.3.3</b> <code>vetr::alike()</code></a></li>
+<li class="chapter" data-level="2.3.4" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#diffdfdiffdf"><i class="fa fa-check"></i><b>2.3.4</b> <code>diffdf::diffdf()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="tibble-exercise.html"><a href="tibble-exercise.html"><i class="fa fa-check"></i><b>2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="readr-data-import.html"><a href="readr-data-import.html"><i class="fa fa-check"></i><b>3</b> readr: Data import</a><ul>
+<li class="chapter" data-level="3.1" data-path="importing-data-in-base-r.html"><a href="importing-data-in-base-r.html"><i class="fa fa-check"></i><b>3.1</b> Importing data in base R</a></li>
+<li class="chapter" data-level="3.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html"><i class="fa fa-check"></i><b>3.2</b> Importing data in <code>readr</code></a><ul>
+<li class="chapter" data-level="3.2.1" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#introduction"><i class="fa fa-check"></i><b>3.2.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#writing-data"><i class="fa fa-check"></i><b>3.2.2</b> Writing data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#exercises-3"><i class="fa fa-check"></i><b>3.2.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html"><i class="fa fa-check"></i><b>3.3</b> Parsing a vector</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#numeric"><i class="fa fa-check"></i><b>3.3.1</b> Numeric</a></li>
+<li class="chapter" data-level="3.3.2" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#character"><i class="fa fa-check"></i><b>3.3.2</b> Character</a></li>
+<li class="chapter" data-level="3.3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#factor"><i class="fa fa-check"></i><b>3.3.3</b> Factor</a></li>
+<li class="chapter" data-level="3.3.4" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#date-and-time"><i class="fa fa-check"></i><b>3.3.4</b> Date and time</a></li>
+<li class="chapter" data-level="3.3.5" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#exercises-4"><i class="fa fa-check"></i><b>3.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html"><i class="fa fa-check"></i><b>3.4</b> Parsing a file</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parsing-a-file.html"><a href="parsing-a-file.html#strategies"><i class="fa fa-check"></i><b>3.4.1</b> Strategies</a></li>
+<li class="chapter" data-level="3.4.2" data-path="parsing-a-file.html"><a href="parsing-a-file.html#possible-challenges"><i class="fa fa-check"></i><b>3.4.2</b> Possible challenges</a></li>
+<li class="chapter" data-level="3.4.3" data-path="parsing-a-file.html"><a href="parsing-a-file.html#other-tips"><i class="fa fa-check"></i><b>3.4.3</b> Other tips</a></li>
+<li class="chapter" data-level="3.4.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-dealing-with-metadata"><i class="fa fa-check"></i><b>3.4.4</b> Example: Dealing with metadata</a></li>
+<li class="chapter" data-level="3.4.5" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-multi-row-headers"><i class="fa fa-check"></i><b>3.4.5</b> Example: multi-row headers</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="readxl.html"><a href="readxl.html"><i class="fa fa-check"></i><b>3.5</b> <code>readxl</code></a><ul>
+<li class="chapter" data-level="3.5.1" data-path="readxl.html"><a href="readxl.html#multi-row-headers-in-excel"><i class="fa fa-check"></i><b>3.5.1</b> Multi-row headers in Excel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="lubridate-dates-and-times.html"><a href="lubridate-dates-and-times.html"><i class="fa fa-check"></i><b>4</b> lubridate: Dates and times</a><ul>
+<li class="chapter" data-level="4.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html"><i class="fa fa-check"></i><b>4.1</b> Creating dates and times</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-strings"><i class="fa fa-check"></i><b>4.1.1</b> From strings</a></li>
+<li class="chapter" data-level="4.1.2" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-individual-components"><i class="fa fa-check"></i><b>4.1.2</b> From individual components</a></li>
+<li class="chapter" data-level="4.1.3" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-other-times"><i class="fa fa-check"></i><b>4.1.3</b> From other times</a></li>
+<li class="chapter" data-level="4.1.4" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#exercises-5"><i class="fa fa-check"></i><b>4.1.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="date-time-components.html"><a href="date-time-components.html"><i class="fa fa-check"></i><b>4.2</b> Date-time components</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="date-time-components.html"><a href="date-time-components.html#accessing-components"><i class="fa fa-check"></i><b>4.2.1</b> Accessing components</a></li>
+<li class="chapter" data-level="4.2.2" data-path="date-time-components.html"><a href="date-time-components.html#rounding"><i class="fa fa-check"></i><b>4.2.2</b> Rounding</a></li>
+<li class="chapter" data-level="4.2.3" data-path="date-time-components.html"><a href="date-time-components.html#setting-components"><i class="fa fa-check"></i><b>4.2.3</b> Setting components</a></li>
+<li class="chapter" data-level="4.2.4" data-path="date-time-components.html"><a href="date-time-components.html#exercises-6"><i class="fa fa-check"></i><b>4.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="time-span.html"><a href="time-span.html"><i class="fa fa-check"></i><b>4.3</b> Time span</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="time-span.html"><a href="time-span.html#时期-durations"><i class="fa fa-check"></i><b>4.3.1</b> 时期 Durations</a></li>
+<li class="chapter" data-level="4.3.2" data-path="time-span.html"><a href="time-span.html#阶段-periods"><i class="fa fa-check"></i><b>4.3.2</b> 阶段 Periods</a></li>
+<li class="chapter" data-level="4.3.3" data-path="time-span.html"><a href="time-span.html#区间-intervals"><i class="fa fa-check"></i><b>4.3.3</b> 区间 Intervals</a></li>
+<li class="chapter" data-level="4.3.4" data-path="time-span.html"><a href="time-span.html#conclusion"><i class="fa fa-check"></i><b>4.3.4</b> Conclusion</a></li>
+<li class="chapter" data-level="4.3.5" data-path="time-span.html"><a href="time-span.html#exercises-7"><i class="fa fa-check"></i><b>4.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="hms.html"><a href="hms.html"><i class="fa fa-check"></i><b>4.4</b> hms</a></li>
+<li class="chapter" data-level="4.5" data-path="dint.html"><a href="dint.html"><i class="fa fa-check"></i><b>4.5</b> dint</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="dint.html"><a href="dint.html#creation"><i class="fa fa-check"></i><b>4.5.1</b> Creation</a></li>
+<li class="chapter" data-level="4.5.2" data-path="dint.html"><a href="dint.html#arithmetic-and-sequences"><i class="fa fa-check"></i><b>4.5.2</b> Arithmetic and Sequences</a></li>
+<li class="chapter" data-level="4.5.3" data-path="dint.html"><a href="dint.html#accessors"><i class="fa fa-check"></i><b>4.5.3</b> Accessors</a></li>
+<li class="chapter" data-level="4.5.4" data-path="dint.html"><a href="dint.html#formatting"><i class="fa fa-check"></i><b>4.5.4</b> Formatting</a></li>
+<li class="chapter" data-level="4.5.5" data-path="dint.html"><a href="dint.html#labelling-functions-in-ggplot2"><i class="fa fa-check"></i><b>4.5.5</b> Labelling functions in ggplot2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="forcats-factor.html"><a href="forcats-factor.html"><i class="fa fa-check"></i><b>5</b> forcats: factor</a><ul>
+<li class="chapter" data-level="5.1" data-path="factor-basics.html"><a href="factor-basics.html"><i class="fa fa-check"></i><b>5.1</b> Factor basics</a></li>
+<li class="chapter" data-level="5.2" data-path="sorting.html"><a href="sorting.html"><i class="fa fa-check"></i><b>5.2</b> Sorting</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="sorting.html"><a href="sorting.html#sorting-by-frequency-appearance-or-numeric-order"><i class="fa fa-check"></i><b>5.2.1</b> Sorting by frequency, appearance, or numeric order</a></li>
+<li class="chapter" data-level="5.2.2" data-path="sorting.html"><a href="sorting.html#sorting-by-another-variable"><i class="fa fa-check"></i><b>5.2.2</b> Sorting by another variable</a></li>
+<li class="chapter" data-level="5.2.3" data-path="sorting.html"><a href="sorting.html#sorting-manually"><i class="fa fa-check"></i><b>5.2.3</b> Sorting manually</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html"><i class="fa fa-check"></i><b>5.3</b> Chaninge number of levels</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#lumping-levels"><i class="fa fa-check"></i><b>5.3.1</b> Lumping levels</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#expanding-levels"><i class="fa fa-check"></i><b>5.3.2</b> Expanding levels</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#dropping-levels"><i class="fa fa-check"></i><b>5.3.3</b> Dropping levels</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#transforming-na-levels"><i class="fa fa-check"></i><b>5.3.4</b> Transforming NA levels</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="recoding.html"><a href="recoding.html"><i class="fa fa-check"></i><b>5.4</b> Recoding</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="recoding.html"><a href="recoding.html#exercises-8"><i class="fa fa-check"></i><b>5.4.1</b> Exercises</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="tidyr-tidy-data.html"><a href="tidyr-tidy-data.html"><i class="fa fa-check"></i><b>6</b> tidyr: Tidy data</a><ul>
+<li class="chapter" data-level="6.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html"><i class="fa fa-check"></i><b>6.1</b> Tidy data</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html#exercises-9"><i class="fa fa-check"></i><b>6.1.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pivoting.html"><a href="pivoting.html"><i class="fa fa-check"></i><b>6.2</b> Pivoting</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="pivoting.html"><a href="pivoting.html#pivot_longer"><i class="fa fa-check"></i><b>6.2.1</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="pivoting.html"><a href="pivoting.html#pivot_wider"><i class="fa fa-check"></i><b>6.2.2</b> <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.3" data-path="pivoting.html"><a href="pivoting.html#combining-pivot_longer-and-pivot_wider"><i class="fa fa-check"></i><b>6.2.3</b> Combining <code>pivot_longer()</code> and <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.4" data-path="pivoting.html"><a href="pivoting.html#exercises-10"><i class="fa fa-check"></i><b>6.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="nesting.html"><a href="nesting.html"><i class="fa fa-check"></i><b>6.3</b> Nesting</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="nesting.html"><a href="nesting.html#example-managing-multiple-models"><i class="fa fa-check"></i><b>6.3.1</b> Example: Managing multiple models</a></li>
+<li class="chapter" data-level="6.3.2" data-path="nesting.html"><a href="nesting.html#multi-choice"><i class="fa fa-check"></i><b>6.3.2</b> Example: Multicple hoice data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="rectangling.html"><a href="rectangling.html"><i class="fa fa-check"></i><b>6.4</b> Rectangling</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="rectangling.html"><a href="rectangling.html#github-users"><i class="fa fa-check"></i><b>6.4.1</b> Github users</a></li>
+<li class="chapter" data-level="6.4.2" data-path="rectangling.html"><a href="rectangling.html#github-repos"><i class="fa fa-check"></i><b>6.4.2</b> Github repos</a></li>
+<li class="chapter" data-level="6.4.3" data-path="rectangling.html"><a href="rectangling.html#game-of-throne-characters"><i class="fa fa-check"></i><b>6.4.3</b> Game of Throne characters</a></li>
+<li class="chapter" data-level="6.4.4" data-path="rectangling.html"><a href="rectangling.html#sharla-gelfands-discography"><i class="fa fa-check"></i><b>6.4.4</b> Sharla Gelfand’s discography</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="separate-and-untie.html"><a href="separate-and-untie.html"><i class="fa fa-check"></i><b>6.5</b> <code>separate()</code> and <code>untie()</code></a><ul>
+<li class="chapter" data-level="6.5.1" data-path="separate-and-untie.html"><a href="separate-and-untie.html#separate"><i class="fa fa-check"></i><b>6.5.1</b> <code>separate()</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="separate-and-untie.html"><a href="separate-and-untie.html#unite"><i class="fa fa-check"></i><b>6.5.2</b> <code>unite()</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="separate-and-untie.html"><a href="separate-and-untie.html#exercises-11"><i class="fa fa-check"></i><b>6.5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="tidyr-missing.html"><a href="tidyr-missing.html"><i class="fa fa-check"></i><b>6.6</b> Handling missing values</a></li>
+<li class="chapter" data-level="6.7" data-path="tidyr-case.html"><a href="tidyr-case.html"><i class="fa fa-check"></i><b>6.7</b> Case Study</a></li>
+<li class="chapter" data-level="6.8" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html"><i class="fa fa-check"></i><b>6.8</b> Miscellaneous Functions</a><ul>
+<li class="chapter" data-level="6.8.1" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#chop-and-unchop"><i class="fa fa-check"></i><b>6.8.1</b> <code>chop()</code> and <code>unchop()</code></a></li>
+<li class="chapter" data-level="6.8.2" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#uncount"><i class="fa fa-check"></i><b>6.8.2</b> <code>uncount()</code></a></li>
+<li class="chapter" data-level="6.8.3" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#exercises-12"><i class="fa fa-check"></i><b>6.8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="non-tidy.html"><a href="non-tidy.html"><i class="fa fa-check"></i><b>6.9</b> None-tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="purrr-functional-programming.html"><a href="purrr-functional-programming.html"><i class="fa fa-check"></i><b>7</b> purrr: Functional programming</a><ul>
+<li class="chapter" data-level="7.1" data-path="map-family.html"><a href="map-family.html"><i class="fa fa-check"></i><b>7.1</b> <code>map()</code> family</a></li>
+<li class="chapter" data-level="7.2" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html"><i class="fa fa-check"></i><b>7.2</b> Producing atomic vectors</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html#purrr-style-anonymous-functions"><i class="fa fa-check"></i><b>7.2.1</b> purrr-style anonymous functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="predicate-functions.html"><a href="predicate-functions.html"><i class="fa fa-check"></i><b>7.3</b> Predicate functions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="predicate-functions.html"><a href="predicate-functions.html#basics"><i class="fa fa-check"></i><b>7.3.1</b> Basics</a></li>
+<li class="chapter" data-level="7.3.2" data-path="predicate-functions.html"><a href="predicate-functions.html#map-variants"><i class="fa fa-check"></i><b>7.3.2</b> Map variants</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="group-functions.html"><a href="group-functions.html"><i class="fa fa-check"></i><b>7.4</b> group functions</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="group-functions.html"><a href="group-functions.html#group_mapgroup_modify"><i class="fa fa-check"></i><b>7.4.1</b> group_map、group_modify</a></li>
+<li class="chapter" data-level="7.4.2" data-path="group-functions.html"><a href="group-functions.html#group_nestgroup_splitgroup_keysgroup_data"><i class="fa fa-check"></i><b>7.4.2</b> group_nest、group_split、group_keys、group_data</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="other-useful-tools.html"><a href="other-useful-tools.html"><i class="fa fa-check"></i><b>7.5</b> Other useful tools</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="other-useful-tools.html"><a href="other-useful-tools.html#imap"><i class="fa fa-check"></i><b>7.5.1</b> <code>imap()</code></a></li>
+<li class="chapter" data-level="7.5.2" data-path="other-useful-tools.html"><a href="other-useful-tools.html#adverbs"><i class="fa fa-check"></i><b>7.5.2</b> adverbs</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="relational-data.html"><a href="relational-data.html"><i class="fa fa-check"></i><b>8</b> Relational data</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="mutating-joins.html"><a href="mutating-joins.html"><i class="fa fa-check"></i><b>8.2</b> Mutating joins</a></li>
+<li class="chapter" data-level="8.3" data-path="filtering-join.html"><a href="filtering-join.html"><i class="fa fa-check"></i><b>8.3</b> Filtering join</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="broom-tidy-representation-of-models.html"><a href="broom-tidy-representation-of-models.html"><i class="fa fa-check"></i><b>9</b> broom: Tidy representation of models</a><ul>
+<li class="chapter" data-level="9.1" data-path="viz-many-models.html"><a href="viz-many-models.html"><i class="fa fa-check"></i><b>9.1</b> Visualizing many models</a></li>
+<li class="chapter" data-level="9.2" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9.2</b> Examples</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="examples.html"><a href="examples.html#pca"><i class="fa fa-check"></i><b>9.2.1</b> PCA</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="broomextra.html"><a href="broomextra.html"><i class="fa fa-check"></i><b>9.3</b> broomExtra</a></li>
+<li class="chapter" data-level="9.4" data-path="ggfortify.html"><a href="ggfortify.html"><i class="fa fa-check"></i><b>9.4</b> ggfortify</a></li>
+</ul></li>
+<li class="part"><span><b>II Importing</b></span></li>
+<li class="chapter" data-level="10" data-path="vroom-fast-reading-of-delimited-files.html"><a href="vroom-fast-reading-of-delimited-files.html"><i class="fa fa-check"></i><b>10</b> vroom: Fast reading of delimited files</a></li>
+<li class="chapter" data-level="11" data-path="reading-in-data-from-other-formats.html"><a href="reading-in-data-from-other-formats.html"><i class="fa fa-check"></i><b>11</b> Reading in data from other formats</a><ul>
+<li class="chapter" data-level="11.1" data-path="pdf.html"><a href="pdf.html"><i class="fa fa-check"></i><b>11.1</b> PDF</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="pdf.html"><a href="pdf.html#scraping-pdf-data"><i class="fa fa-check"></i><b>11.1.1</b> Scraping pdf data</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="office-documents.html"><a href="office-documents.html"><i class="fa fa-check"></i><b>11.2</b> Office documents</a></li>
+<li class="chapter" data-level="11.3" data-path="google-sheet.html"><a href="google-sheet.html"><i class="fa fa-check"></i><b>11.3</b> Google sheet</a></li>
+<li class="chapter" data-level="11.4" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i><b>11.4</b> Images</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="useful-apis.html"><a href="useful-apis.html"><i class="fa fa-check"></i><b>12</b> Useful APIs</a><ul>
+<li class="chapter" data-level="12.1" data-path="wdi.html"><a href="wdi.html"><i class="fa fa-check"></i><b>12.1</b> WDI</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="wdi.html"><a href="wdi.html#wdisearch"><i class="fa fa-check"></i><b>12.1.1</b> <code>WDIsearch()</code></a></li>
+<li class="chapter" data-level="12.1.2" data-path="wdi.html"><a href="wdi.html#wdi-1"><i class="fa fa-check"></i><b>12.1.2</b> <code>WDI</code></a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="ipumsr.html"><a href="ipumsr.html"><i class="fa fa-check"></i><b>12.2</b> ipumsr</a></li>
+</ul></li>
+<li class="part"><span><b>III Exploring and Wrangling</b></span></li>
+<li class="chapter" data-level="13" data-path="data-summary.html"><a href="data-summary.html"><i class="fa fa-check"></i><b>13</b> Data summary</a><ul>
+<li class="chapter" data-level="13.1" data-path="skimr.html"><a href="skimr.html"><i class="fa fa-check"></i><b>13.1</b> skimr</a></li>
+<li class="chapter" data-level="13.2" data-path="visdat.html"><a href="visdat.html"><i class="fa fa-check"></i><b>13.2</b> visdat</a></li>
+<li class="chapter" data-level="13.3" data-path="summarytools.html"><a href="summarytools.html"><i class="fa fa-check"></i><b>13.3</b> summarytools</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="summarytools.html"><a href="summarytools.html#freq"><i class="fa fa-check"></i><b>13.3.1</b> <code>freq</code></a></li>
+<li class="chapter" data-level="13.3.2" data-path="summarytools.html"><a href="summarytools.html#descr"><i class="fa fa-check"></i><b>13.3.2</b> <code>descr()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="gt-and-gtsummary.html"><a href="gt-and-gtsummary.html"><i class="fa fa-check"></i><b>13.4</b> gt and gtsummary</a></li>
+<li class="chapter" data-level="13.5" data-path="naniar.html"><a href="naniar.html"><i class="fa fa-check"></i><b>13.5</b> naniar</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="janitor.html"><a href="janitor.html"><i class="fa fa-check"></i><b>14</b> Janitor</a><ul>
+<li class="chapter" data-level="14.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html"><i class="fa fa-check"></i><b>14.1</b> cleaning</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html#clean_names"><i class="fa fa-check"></i><b>14.1.1</b> <code>clean_names</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="janitor-explore.html"><a href="janitor-explore.html"><i class="fa fa-check"></i><b>14.2</b> Exploring</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="janitor-explore.html"><a href="janitor-explore.html#tabyl"><i class="fa fa-check"></i><b>14.2.1</b> <code>tabyl</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="janitor-explore.html"><a href="janitor-explore.html#get_dupes"><i class="fa fa-check"></i><b>14.2.2</b> <code>get_dupes</code></a></li>
+<li class="chapter" data-level="14.2.3" data-path="janitor-explore.html"><a href="janitor-explore.html#remove_"><i class="fa fa-check"></i><b>14.2.3</b> <code>remove_</code></a></li>
+<li class="chapter" data-level="14.2.4" data-path="janitor-explore.html"><a href="janitor-explore.html#round_half_up"><i class="fa fa-check"></i><b>14.2.4</b> <code>round_half_up</code></a></li>
+<li class="chapter" data-level="14.2.5" data-path="janitor-explore.html"><a href="janitor-explore.html#excel_numeric_to_date"><i class="fa fa-check"></i><b>14.2.5</b> <code>excel_numeric_to_date</code></a></li>
+<li class="chapter" data-level="14.2.6" data-path="janitor-explore.html"><a href="janitor-explore.html#top_levels"><i class="fa fa-check"></i><b>14.2.6</b> <code>top_levels</code></a></li>
+<li class="chapter" data-level="14.2.7" data-path="janitor-explore.html"><a href="janitor-explore.html#row_to_names"><i class="fa fa-check"></i><b>14.2.7</b> <code>row_to_names</code></a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Miscellaneous tools</b></span></li>
+<li class="chapter" data-level="15" data-path="advanced-relational-data.html"><a href="advanced-relational-data.html"><i class="fa fa-check"></i><b>15</b> Advanced relational data</a><ul>
+<li class="chapter" data-level="15.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html"><i class="fa fa-check"></i><b>15.1</b> fuzzyjoin</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#inexact-matching"><i class="fa fa-check"></i><b>15.1.1</b> inexact matching</a></li>
+<li class="chapter" data-level="15.1.2" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#stringdist"><i class="fa fa-check"></i><b>15.1.2</b> stringdist</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="funneljoin.html"><a href="funneljoin.html"><i class="fa fa-check"></i><b>15.2</b> funneljoin</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="funneljoin.html"><a href="funneljoin.html#after_join"><i class="fa fa-check"></i><b>15.2.1</b> <code>after_join()</code></a></li>
+<li class="chapter" data-level="15.2.2" data-path="funneljoin.html"><a href="funneljoin.html#funnel-in-one-table"><i class="fa fa-check"></i><b>15.2.2</b> funnel in one table</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="dm.html"><a href="dm.html"><i class="fa fa-check"></i><b>15.3</b> dm</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="categorical-data-facotr.html"><a href="categorical-data-facotr.html"><i class="fa fa-check"></i><b>16</b> Categorical data (facotr)</a><ul>
+<li class="chapter" data-level="16.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html"><i class="fa fa-check"></i><b>16.1</b> Frequency and contingency table</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html#frq-and-flat_table"><i class="fa fa-check"></i><b>16.1.1</b> <code>frq()</code> and <code>flat_table()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="coding.html"><a href="coding.html"><i class="fa fa-check"></i><b>16.2</b> Coding</a><ul>
+<li class="chapter" data-level="16.2.1" data-path="coding.html"><a href="coding.html#rec"><i class="fa fa-check"></i><b>16.2.1</b> <code>rec()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="cutting.html"><a href="cutting.html"><i class="fa fa-check"></i><b>16.3</b> Cutting</a><ul>
+<li class="chapter" data-level="16.3.1" data-path="cutting.html"><a href="cutting.html#chop"><i class="fa fa-check"></i><b>16.3.1</b> <code>chop()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dealing-with-missing-values.html"><a href="dealing-with-missing-values.html"><i class="fa fa-check"></i><b>17</b> Dealing with missing values</a><ul>
+<li class="chapter" data-level="17.1" data-path="explore-missing.html"><a href="explore-missing.html"><i class="fa fa-check"></i><b>17.1</b> Exploring</a><ul>
+<li class="chapter" data-level="17.1.1" data-path="explore-missing.html"><a href="explore-missing.html#naniar-1"><i class="fa fa-check"></i><b>17.1.1</b> naniar</a></li>
+<li class="chapter" data-level="17.1.2" data-path="explore-missing.html"><a href="explore-missing.html#replace-a-value-with-na"><i class="fa fa-check"></i><b>17.1.2</b> Replace a value with NA</a></li>
+<li class="chapter" data-level="17.1.3" data-path="explore-missing.html"><a href="explore-missing.html#janitor-1"><i class="fa fa-check"></i><b>17.1.3</b> janitor</a></li>
+<li class="chapter" data-level="17.1.4" data-path="explore-missing.html"><a href="explore-missing.html#sjmisc"><i class="fa fa-check"></i><b>17.1.4</b> sjmisc</a></li>
+</ul></li>
+<li class="chapter" data-level="17.2" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>17.2</b> Wrangling</a><ul>
+<li class="chapter" data-level="17.2.1" data-path="wrangling.html"><a href="wrangling.html#tidyr"><i class="fa fa-check"></i><b>17.2.1</b> tidyr</a></li>
+<li class="chapter" data-level="17.2.2" data-path="wrangling.html"><a href="wrangling.html#janitor-2"><i class="fa fa-check"></i><b>17.2.2</b> janitor</a></li>
+<li class="chapter" data-level="17.2.3" data-path="wrangling.html"><a href="wrangling.html#visdat-1"><i class="fa fa-check"></i><b>17.2.3</b> visdat</a></li>
+</ul></li>
+<li class="chapter" data-level="17.3" data-path="imputation.html"><a href="imputation.html"><i class="fa fa-check"></i><b>17.3</b> Imputation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R for data science: tidyverse and beyond</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="pivoting" class="section level2">
+<h2><span class="header-section-number">6.2</span> Pivoting</h2>
+<center>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-10"></span>
+<img src="images/12.png" alt="Taken from https://www.garrickadenbuie.com/project/tidyexplain/#spread-and-gather" width="1050" />
+<p class="caption">
+Figure 6.1: Taken from <a href="https://www.garrickadenbuie.com/project/tidyexplain/#spread-and-gather" class="uri">https://www.garrickadenbuie.com/project/tidyexplain/#spread-and-gather</a>
+</p>
+</div>
+</center>
+<p>细看两表，不难发现它们实质上相同的数据(相对于第二张表，第一张是以 id 为行字段，key 为列字段，val 为值的数据透视表)。第一种称为<strong>宽数据 (wide data,Cartesian data,笛卡尔型数据)</strong>，需要看行和列的交叉点来找到对应的值。而第二种形式称为<strong>长数据(long data,indexed data，指标型数据)</strong>，在长数据（指标型）数据汇总，你需要看指标来找到需要变量的数值（变量x，y，z的值）。。很难简单地说哪一种格式更优，因为两种形式都有可能是整洁的，这取决于值“A”、“B”、“C”、“D”的含义。</p>
+<p>数据整理常需要化宽为长，但偶尔也需要化长为宽, <strong>tidyr</strong> 分别提供了c<code>pivot_longer()</code> 和 <code>pivot_wider()</code> 来实现以上两种形式的转换操作(统称为 <strong>pivoting</strong>)。在 <a href="https://www.tidyverse.org/articles/2019/09/tidyr-1-0-0/">tidyr 1.0.0</a> 及更早的版本中，<code>gather()</code> 和 <code>spread()</code> 分别承担相同的工作，实际效果与 <code>pivot_</code> 函数一样，但后者有更易理解的命名和 api。</p>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb331-1" title="1"><span class="kw">pivot_longer</span>(data, </a>
+<a class="sourceLine" id="cb331-2" title="2">  cols,</a>
+<a class="sourceLine" id="cb331-3" title="3">  <span class="dt">names_to =</span> <span class="st">&quot;name&quot;</span>,</a>
+<a class="sourceLine" id="cb331-4" title="4">  <span class="dt">values_to =</span> <span class="st">&quot;value&quot;</span>,)</a></code></pre></div>
+<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb332-1" title="1"><span class="kw">pivot_wider</span>(data, </a>
+<a class="sourceLine" id="cb332-2" title="2">  <span class="dt">names_from =</span> name,</a>
+<a class="sourceLine" id="cb332-3" title="3">  <span class="dt">values_from =</span> value)</a></code></pre></div>
+<p><code>names_to</code> 和 <code>values_to</code> 参数相当于原来 <code>gather()</code> 中的 <code>key</code> 和 <code>value</code>，其中 “键” 列的默认名称变为 “name”<br />
+同理, <code>names_from</code> 和 <code>values_from</code> 相当于原来 <code>spread()</code> 中的 <code>key</code> 和 <code>value</code></p>
+<p><img src="images/gather-spread.gif" style="display: block; margin: auto;" /></p>
+<div id="pivot_longer" class="section level3">
+<h3><span class="header-section-number">6.2.1</span> <code>pivot_longer()</code></h3>
+<p><code>tidyr::relig_income</code> 是一个典型的宽数据，除第一列以外的所有列表示收入的不同水平，值表示对应的人数：</p>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb333-1" title="1">relig_income </a>
+<a class="sourceLine" id="cb333-2" title="2"><span class="co">#&gt; # A tibble: 18 x 11</span></a>
+<a class="sourceLine" id="cb333-3" title="3"><span class="co">#&gt;   religion `&lt;$10k` `$10-20k` `$20-30k` `$30-40k` `$40-50k` `$50-75k` `$75-100k`</span></a>
+<a class="sourceLine" id="cb333-4" title="4"><span class="co">#&gt;   &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb333-5" title="5"><span class="co">#&gt; 1 Agnostic      27        34        60        81        76       137        122</span></a>
+<a class="sourceLine" id="cb333-6" title="6"><span class="co">#&gt; 2 Atheist       12        27        37        52        35        70         73</span></a>
+<a class="sourceLine" id="cb333-7" title="7"><span class="co">#&gt; 3 Buddhist      27        21        30        34        33        58         62</span></a>
+<a class="sourceLine" id="cb333-8" title="8"><span class="co">#&gt; 4 Catholic     418       617       732       670       638      1116        949</span></a>
+<a class="sourceLine" id="cb333-9" title="9"><span class="co">#&gt; 5 Don’t k~      15        14        15        11        10        35         21</span></a>
+<a class="sourceLine" id="cb333-10" title="10"><span class="co">#&gt; 6 Evangel~     575       869      1064       982       881      1486        949</span></a>
+<a class="sourceLine" id="cb333-11" title="11"><span class="co">#&gt; # ... with 12 more rows, and 3 more variables: `$100-150k` &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb333-12" title="12"><span class="co">#&gt; #   `&gt;150k` &lt;dbl&gt;, `Don&#39;t know/refused` &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb333-13" title="13">relig_income <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pivot_longer</span>(<span class="op">-</span>religion, </a>
+<a class="sourceLine" id="cb333-14" title="14">                              <span class="dt">names_to =</span> <span class="st">&quot;income&quot;</span>, </a>
+<a class="sourceLine" id="cb333-15" title="15">                              <span class="dt">values_to =</span> <span class="st">&quot;population&quot;</span>)</a>
+<a class="sourceLine" id="cb333-16" title="16"><span class="co">#&gt; pivot_longer: reorganized (&lt;$10k, $10-20k, $20-30k, $30-40k, $40-50k, …) into (income, population) [was 18x11, now 180x3]</span></a>
+<a class="sourceLine" id="cb333-17" title="17"><span class="co">#&gt; # A tibble: 180 x 3</span></a>
+<a class="sourceLine" id="cb333-18" title="18"><span class="co">#&gt;   religion income  population</span></a>
+<a class="sourceLine" id="cb333-19" title="19"><span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb333-20" title="20"><span class="co">#&gt; 1 Agnostic &lt;$10k           27</span></a>
+<a class="sourceLine" id="cb333-21" title="21"><span class="co">#&gt; 2 Agnostic $10-20k         34</span></a>
+<a class="sourceLine" id="cb333-22" title="22"><span class="co">#&gt; 3 Agnostic $20-30k         60</span></a>
+<a class="sourceLine" id="cb333-23" title="23"><span class="co">#&gt; 4 Agnostic $30-40k         81</span></a>
+<a class="sourceLine" id="cb333-24" title="24"><span class="co">#&gt; 5 Agnostic $40-50k         76</span></a>
+<a class="sourceLine" id="cb333-25" title="25"><span class="co">#&gt; 6 Agnostic $50-75k        137</span></a>
+<a class="sourceLine" id="cb333-26" title="26"><span class="co">#&gt; # ... with 174 more rows</span></a></code></pre></div>
+<p>另一个例子：美国劳工市场的月度数据，首先创建一个 messy data：</p>
+<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb334-1" title="1">ec2 &lt;-<span class="st"> </span>economics <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb334-2" title="2"><span class="st">  </span><span class="kw">transmute</span>(<span class="dt">year =</span>  <span class="kw">year</span>(date),</a>
+<a class="sourceLine" id="cb334-3" title="3">            <span class="dt">month =</span> <span class="kw">month</span>(date),</a>
+<a class="sourceLine" id="cb334-4" title="4">            <span class="dt">rate =</span> unemploy) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb334-5" title="5"><span class="st">  </span><span class="kw">filter</span>(year <span class="op">&gt;</span><span class="st"> </span><span class="dv">2005</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb334-6" title="6"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> <span class="st">&quot;month&quot;</span>, <span class="dt">values_from =</span> <span class="st">&quot;rate&quot;</span>)</a>
+<a class="sourceLine" id="cb334-7" title="7"><span class="co">#&gt; transmute: dropped 6 variables (date, pce, pop, psavert, uempmed, …)</span></a>
+<a class="sourceLine" id="cb334-8" title="8"><span class="co">#&gt;            new variable &#39;year&#39; with 49 unique values and 0% NA</span></a>
+<a class="sourceLine" id="cb334-9" title="9"><span class="co">#&gt;            new variable &#39;month&#39; with 12 unique values and 0% NA</span></a>
+<a class="sourceLine" id="cb334-10" title="10"><span class="co">#&gt;            new variable &#39;rate&#39; with 550 unique values and 0% NA</span></a>
+<a class="sourceLine" id="cb334-11" title="11"><span class="co">#&gt; filter: removed 462 rows (80%), 112 rows remaining</span></a>
+<a class="sourceLine" id="cb334-12" title="12"><span class="co">#&gt; pivot_wider: reorganized (month, rate) into (1, 2, 3, 4, 5, …) [was 112x3, now 10x13]</span></a>
+<a class="sourceLine" id="cb334-13" title="13">ec2</a>
+<a class="sourceLine" id="cb334-14" title="14"><span class="co">#&gt; # A tibble: 10 x 13</span></a>
+<a class="sourceLine" id="cb334-15" title="15"><span class="co">#&gt;    year   `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8`   `9`  `10`  `11`  `12`</span></a>
+<a class="sourceLine" id="cb334-16" title="16"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb334-17" title="17"><span class="co">#&gt; 1  2006  7064  7184  7072  7120  6980  7001  7175  7091  6847  6727  6872  6762</span></a>
+<a class="sourceLine" id="cb334-18" title="18"><span class="co">#&gt; 2  2007  7116  6927  6731  6850  6766  6979  7149  7067  7170  7237  7240  7645</span></a>
+<a class="sourceLine" id="cb334-19" title="19"><span class="co">#&gt; 3  2008  7685  7497  7822  7637  8395  8575  8937  9438  9494 10074 10538 11286</span></a>
+<a class="sourceLine" id="cb334-20" title="20"><span class="co">#&gt; 4  2009 12058 12898 13426 13853 14499 14707 14601 14814 15009 15352 15219 15098</span></a>
+<a class="sourceLine" id="cb334-21" title="21"><span class="co">#&gt; 5  2010 15046 15113 15202 15325 14849 14474 14512 14648 14579 14516 15081 14348</span></a>
+<a class="sourceLine" id="cb334-22" title="22"><span class="co">#&gt; 6  2011 14013 13820 13737 13957 13855 13962 13763 13818 13948 13594 13302 13093</span></a>
+<a class="sourceLine" id="cb334-23" title="23"><span class="co">#&gt; # ... with 4 more rows</span></a></code></pre></div>
+<p>化宽为长：</p>
+<div class="sourceCode" id="cb335"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb335-1" title="1">ec2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb335-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">-</span>year, <span class="dt">names_to =</span> <span class="st">&quot;month&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;value&quot;</span>)</a>
+<a class="sourceLine" id="cb335-3" title="3"><span class="co">#&gt; pivot_longer: reorganized (1, 2, 3, 4, 5, …) into (month, value) [was 10x13, now 120x3]</span></a>
+<a class="sourceLine" id="cb335-4" title="4"><span class="co">#&gt; # A tibble: 120 x 3</span></a>
+<a class="sourceLine" id="cb335-5" title="5"><span class="co">#&gt;    year month value</span></a>
+<a class="sourceLine" id="cb335-6" title="6"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb335-7" title="7"><span class="co">#&gt; 1  2006 1      7064</span></a>
+<a class="sourceLine" id="cb335-8" title="8"><span class="co">#&gt; 2  2006 2      7184</span></a>
+<a class="sourceLine" id="cb335-9" title="9"><span class="co">#&gt; 3  2006 3      7072</span></a>
+<a class="sourceLine" id="cb335-10" title="10"><span class="co">#&gt; 4  2006 4      7120</span></a>
+<a class="sourceLine" id="cb335-11" title="11"><span class="co">#&gt; 5  2006 5      6980</span></a>
+<a class="sourceLine" id="cb335-12" title="12"><span class="co">#&gt; 6  2006 6      7001</span></a>
+<a class="sourceLine" id="cb335-13" title="13"><span class="co">#&gt; # ... with 114 more rows</span></a></code></pre></div>
+<p>以上就是 <code>pviot_longer</code> 的基本用法，下面来处理一些更复杂的情况。</p>
+<div id="numeric-data-in-column-names" class="section level4">
+<h4><span class="header-section-number">6.2.1.1</span> Numeric data in column names</h4>
+<p><code>pivot_longer()</code> 提供了 <code>names_ptype</code> 和 <code>values_ptypes</code> 调整数据集变长后键列和值列的数据类型。看一下 <code>billboard</code> 数据集：</p>
+<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb336-1" title="1">billboard</a>
+<a class="sourceLine" id="cb336-2" title="2"><span class="co">#&gt; # A tibble: 317 x 79</span></a>
+<a class="sourceLine" id="cb336-3" title="3"><span class="co">#&gt;   artist track date.entered   wk1   wk2   wk3   wk4   wk5   wk6   wk7   wk8</span></a>
+<a class="sourceLine" id="cb336-4" title="4"><span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;date&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb336-5" title="5"><span class="co">#&gt; 1 2 Pac  Baby~ 2000-02-26      87    82    72    77    87    94    99    NA</span></a>
+<a class="sourceLine" id="cb336-6" title="6"><span class="co">#&gt; 2 2Ge+h~ The ~ 2000-09-02      91    87    92    NA    NA    NA    NA    NA</span></a>
+<a class="sourceLine" id="cb336-7" title="7"><span class="co">#&gt; 3 3 Doo~ Kryp~ 2000-04-08      81    70    68    67    66    57    54    53</span></a>
+<a class="sourceLine" id="cb336-8" title="8"><span class="co">#&gt; 4 3 Doo~ Loser 2000-10-21      76    76    72    69    67    65    55    59</span></a>
+<a class="sourceLine" id="cb336-9" title="9"><span class="co">#&gt; 5 504 B~ Wobb~ 2000-04-15      57    34    25    17    17    31    36    49</span></a>
+<a class="sourceLine" id="cb336-10" title="10"><span class="co">#&gt; 6 98^0   Give~ 2000-08-19      51    39    34    26    26    19     2     2</span></a>
+<a class="sourceLine" id="cb336-11" title="11"><span class="co">#&gt; # ... with 311 more rows, and 68 more variables: wk9 &lt;dbl&gt;, wk10 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-12" title="12"><span class="co">#&gt; #   wk11 &lt;dbl&gt;, wk12 &lt;dbl&gt;, wk13 &lt;dbl&gt;, wk14 &lt;dbl&gt;, wk15 &lt;dbl&gt;, wk16 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-13" title="13"><span class="co">#&gt; #   wk17 &lt;dbl&gt;, wk18 &lt;dbl&gt;, wk19 &lt;dbl&gt;, wk20 &lt;dbl&gt;, wk21 &lt;dbl&gt;, wk22 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-14" title="14"><span class="co">#&gt; #   wk23 &lt;dbl&gt;, wk24 &lt;dbl&gt;, wk25 &lt;dbl&gt;, wk26 &lt;dbl&gt;, wk27 &lt;dbl&gt;, wk28 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-15" title="15"><span class="co">#&gt; #   wk29 &lt;dbl&gt;, wk30 &lt;dbl&gt;, wk31 &lt;dbl&gt;, wk32 &lt;dbl&gt;, wk33 &lt;dbl&gt;, wk34 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-16" title="16"><span class="co">#&gt; #   wk35 &lt;dbl&gt;, wk36 &lt;dbl&gt;, wk37 &lt;dbl&gt;, wk38 &lt;dbl&gt;, wk39 &lt;dbl&gt;, wk40 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-17" title="17"><span class="co">#&gt; #   wk41 &lt;dbl&gt;, wk42 &lt;dbl&gt;, wk43 &lt;dbl&gt;, wk44 &lt;dbl&gt;, wk45 &lt;dbl&gt;, wk46 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-18" title="18"><span class="co">#&gt; #   wk47 &lt;dbl&gt;, wk48 &lt;dbl&gt;, wk49 &lt;dbl&gt;, wk50 &lt;dbl&gt;, wk51 &lt;dbl&gt;, wk52 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-19" title="19"><span class="co">#&gt; #   wk53 &lt;dbl&gt;, wk54 &lt;dbl&gt;, wk55 &lt;dbl&gt;, wk56 &lt;dbl&gt;, wk57 &lt;dbl&gt;, wk58 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-20" title="20"><span class="co">#&gt; #   wk59 &lt;dbl&gt;, wk60 &lt;dbl&gt;, wk61 &lt;dbl&gt;, wk62 &lt;dbl&gt;, wk63 &lt;dbl&gt;, wk64 &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb336-21" title="21"><span class="co">#&gt; #   wk65 &lt;dbl&gt;, wk66 &lt;lgl&gt;, wk67 &lt;lgl&gt;, wk68 &lt;lgl&gt;, wk69 &lt;lgl&gt;, wk70 &lt;lgl&gt;,</span></a>
+<a class="sourceLine" id="cb336-22" title="22"><span class="co">#&gt; #   wk71 &lt;lgl&gt;, wk72 &lt;lgl&gt;, wk73 &lt;lgl&gt;, wk74 &lt;lgl&gt;, wk75 &lt;lgl&gt;, wk76 &lt;lgl&gt;</span></a></code></pre></div>
+<p>显然，我们希望将所有以 <code>"wk"</code>开头的列聚合以得到整洁数据，键列和值列分别命名为 “week” 和 “rank”。另外要考虑的一点是，我们很可能之后想计算歌曲保持在榜单上的周数，故需要将 “week” 列转换为数值类型：</p>
+<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb337-1" title="1">billboard_tidy &lt;-<span class="st"> </span>billboard <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb337-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="dt">cols =</span> <span class="kw">starts_with</span>(<span class="st">&quot;wk&quot;</span>),</a>
+<a class="sourceLine" id="cb337-3" title="3">               <span class="dt">names_to =</span> <span class="st">&quot;week&quot;</span>,</a>
+<a class="sourceLine" id="cb337-4" title="4">               <span class="dt">values_to =</span> <span class="st">&quot;rank&quot;</span>,</a>
+<a class="sourceLine" id="cb337-5" title="5">               <span class="dt">names_prefix =</span> <span class="st">&quot;wk&quot;</span>,</a>
+<a class="sourceLine" id="cb337-6" title="6">               <span class="dt">names_ptypes =</span> <span class="kw">list</span>(<span class="dt">week =</span> <span class="kw">integer</span>()),</a>
+<a class="sourceLine" id="cb337-7" title="7">               <span class="dt">values_drop_na =</span> T)</a>
+<a class="sourceLine" id="cb337-8" title="8"><span class="co">#&gt; pivot_longer: reorganized (wk1, wk2, wk3, wk4, wk5, …) into (week, rank) [was 317x79, now 5307x5]</span></a></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb338-1" title="1">billboard_tidy</a>
+<a class="sourceLine" id="cb338-2" title="2"><span class="co">#&gt; # A tibble: 5,307 x 5</span></a>
+<a class="sourceLine" id="cb338-3" title="3"><span class="co">#&gt;   artist track                   date.entered  week  rank</span></a>
+<a class="sourceLine" id="cb338-4" title="4"><span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;int&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb338-5" title="5"><span class="co">#&gt; 1 2 Pac  Baby Don&#39;t Cry (Keep... 2000-02-26       1    87</span></a>
+<a class="sourceLine" id="cb338-6" title="6"><span class="co">#&gt; 2 2 Pac  Baby Don&#39;t Cry (Keep... 2000-02-26       2    82</span></a>
+<a class="sourceLine" id="cb338-7" title="7"><span class="co">#&gt; 3 2 Pac  Baby Don&#39;t Cry (Keep... 2000-02-26       3    72</span></a>
+<a class="sourceLine" id="cb338-8" title="8"><span class="co">#&gt; 4 2 Pac  Baby Don&#39;t Cry (Keep... 2000-02-26       4    77</span></a>
+<a class="sourceLine" id="cb338-9" title="9"><span class="co">#&gt; 5 2 Pac  Baby Don&#39;t Cry (Keep... 2000-02-26       5    87</span></a>
+<a class="sourceLine" id="cb338-10" title="10"><span class="co">#&gt; 6 2 Pac  Baby Don&#39;t Cry (Keep... 2000-02-26       6    94</span></a>
+<a class="sourceLine" id="cb338-11" title="11"><span class="co">#&gt; # ... with 5,301 more rows</span></a></code></pre></div>
+<p><code>names_prefix</code> 去除前缀 “wk”(否则无法从字符串转换为数值)，<code>names_ptype</code> 以列表的形式转换键列的数据类型。同理, <code>values_ptype</code> 可以转换值列的数据类型。</p>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb339-1" title="1"><span class="co">## 计算保持周数</span></a>
+<a class="sourceLine" id="cb339-2" title="2">billboard_tidy <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb339-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(track) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb339-4" title="4"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">stay =</span> <span class="kw">max</span>(week) <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(week) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb339-5" title="5"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(stay))</a>
+<a class="sourceLine" id="cb339-6" title="6"><span class="co">#&gt; group_by: one grouping variable (track)</span></a>
+<a class="sourceLine" id="cb339-7" title="7"><span class="co">#&gt; summarise: now 316 rows and 2 columns, ungrouped</span></a>
+<a class="sourceLine" id="cb339-8" title="8"><span class="co">#&gt; # A tibble: 316 x 2</span></a>
+<a class="sourceLine" id="cb339-9" title="9"><span class="co">#&gt;   track                stay</span></a>
+<a class="sourceLine" id="cb339-10" title="10"><span class="co">#&gt;   &lt;chr&gt;               &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb339-11" title="11"><span class="co">#&gt; 1 Higher                 65</span></a>
+<a class="sourceLine" id="cb339-12" title="12"><span class="co">#&gt; 2 Amazed                 64</span></a>
+<a class="sourceLine" id="cb339-13" title="13"><span class="co">#&gt; 3 Breathe                53</span></a>
+<a class="sourceLine" id="cb339-14" title="14"><span class="co">#&gt; 4 Kryptonite             53</span></a>
+<a class="sourceLine" id="cb339-15" title="15"><span class="co">#&gt; 5 With Arms Wide Open    47</span></a>
+<a class="sourceLine" id="cb339-16" title="16"><span class="co">#&gt; 6 I Wanna Know           44</span></a>
+<a class="sourceLine" id="cb339-17" title="17"><span class="co">#&gt; # ... with 310 more rows</span></a></code></pre></div>
+</div>
+<div id="many-variables-in-column-names" class="section level4">
+<h4><span class="header-section-number">6.2.1.2</span> Many variables in column names</h4>
+<p>在 tidyr 1.0.0 之前，当进行一定处理后发现多个变量被糅合到一列中时，可能会考虑使用 <code>separate()</code> 或者 <code>extract()</code>:</p>
+<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb340-1" title="1">who</a>
+<a class="sourceLine" id="cb340-2" title="2"><span class="co">#&gt; # A tibble: 7,240 x 60</span></a>
+<a class="sourceLine" id="cb340-3" title="3"><span class="co">#&gt;   country iso2  iso3   year new_sp_m014 new_sp_m1524 new_sp_m2534 new_sp_m3544</span></a>
+<a class="sourceLine" id="cb340-4" title="4"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;int&gt;       &lt;int&gt;        &lt;int&gt;        &lt;int&gt;        &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb340-5" title="5"><span class="co">#&gt; 1 Afghan~ AF    AFG    1980          NA           NA           NA           NA</span></a>
+<a class="sourceLine" id="cb340-6" title="6"><span class="co">#&gt; 2 Afghan~ AF    AFG    1981          NA           NA           NA           NA</span></a>
+<a class="sourceLine" id="cb340-7" title="7"><span class="co">#&gt; 3 Afghan~ AF    AFG    1982          NA           NA           NA           NA</span></a>
+<a class="sourceLine" id="cb340-8" title="8"><span class="co">#&gt; 4 Afghan~ AF    AFG    1983          NA           NA           NA           NA</span></a>
+<a class="sourceLine" id="cb340-9" title="9"><span class="co">#&gt; 5 Afghan~ AF    AFG    1984          NA           NA           NA           NA</span></a>
+<a class="sourceLine" id="cb340-10" title="10"><span class="co">#&gt; 6 Afghan~ AF    AFG    1985          NA           NA           NA           NA</span></a>
+<a class="sourceLine" id="cb340-11" title="11"><span class="co">#&gt; # ... with 7,234 more rows, and 52 more variables: new_sp_m4554 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-12" title="12"><span class="co">#&gt; #   new_sp_m5564 &lt;int&gt;, new_sp_m65 &lt;int&gt;, new_sp_f014 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-13" title="13"><span class="co">#&gt; #   new_sp_f1524 &lt;int&gt;, new_sp_f2534 &lt;int&gt;, new_sp_f3544 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-14" title="14"><span class="co">#&gt; #   new_sp_f4554 &lt;int&gt;, new_sp_f5564 &lt;int&gt;, new_sp_f65 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-15" title="15"><span class="co">#&gt; #   new_sn_m014 &lt;int&gt;, new_sn_m1524 &lt;int&gt;, new_sn_m2534 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-16" title="16"><span class="co">#&gt; #   new_sn_m3544 &lt;int&gt;, new_sn_m4554 &lt;int&gt;, new_sn_m5564 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-17" title="17"><span class="co">#&gt; #   new_sn_m65 &lt;int&gt;, new_sn_f014 &lt;int&gt;, new_sn_f1524 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-18" title="18"><span class="co">#&gt; #   new_sn_f2534 &lt;int&gt;, new_sn_f3544 &lt;int&gt;, new_sn_f4554 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-19" title="19"><span class="co">#&gt; #   new_sn_f5564 &lt;int&gt;, new_sn_f65 &lt;int&gt;, new_ep_m014 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-20" title="20"><span class="co">#&gt; #   new_ep_m1524 &lt;int&gt;, new_ep_m2534 &lt;int&gt;, new_ep_m3544 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-21" title="21"><span class="co">#&gt; #   new_ep_m4554 &lt;int&gt;, new_ep_m5564 &lt;int&gt;, new_ep_m65 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-22" title="22"><span class="co">#&gt; #   new_ep_f014 &lt;int&gt;, new_ep_f1524 &lt;int&gt;, new_ep_f2534 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-23" title="23"><span class="co">#&gt; #   new_ep_f3544 &lt;int&gt;, new_ep_f4554 &lt;int&gt;, new_ep_f5564 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-24" title="24"><span class="co">#&gt; #   new_ep_f65 &lt;int&gt;, newrel_m014 &lt;int&gt;, newrel_m1524 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-25" title="25"><span class="co">#&gt; #   newrel_m2534 &lt;int&gt;, newrel_m3544 &lt;int&gt;, newrel_m4554 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-26" title="26"><span class="co">#&gt; #   newrel_m5564 &lt;int&gt;, newrel_m65 &lt;int&gt;, newrel_f014 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-27" title="27"><span class="co">#&gt; #   newrel_f1524 &lt;int&gt;, newrel_f2534 &lt;int&gt;, newrel_f3544 &lt;int&gt;,</span></a>
+<a class="sourceLine" id="cb340-28" title="28"><span class="co">#&gt; #   newrel_f4554 &lt;int&gt;, newrel_f5564 &lt;int&gt;, newrel_f65 &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb340-29" title="29"><span class="co">## 原书 tidyr 一章中使用的方法</span></a>
+<a class="sourceLine" id="cb340-30" title="30">who <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb340-31" title="31"><span class="st">  </span><span class="kw">gather</span>(<span class="kw">starts_with</span>(<span class="st">&quot;new&quot;</span>), </a>
+<a class="sourceLine" id="cb340-32" title="32">         <span class="dt">key =</span> key, </a>
+<a class="sourceLine" id="cb340-33" title="33">         <span class="dt">value =</span> value,</a>
+<a class="sourceLine" id="cb340-34" title="34">         <span class="dt">na.rm =</span> T) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb340-35" title="35"><span class="st">  </span><span class="kw">extract</span>(key,</a>
+<a class="sourceLine" id="cb340-36" title="36">          <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&quot;diagnosis&quot;</span>, <span class="st">&quot;gender&quot;</span>, <span class="st">&quot;age&quot;</span>),</a>
+<a class="sourceLine" id="cb340-37" title="37">          <span class="dt">regex =</span> <span class="st">&quot;new_?(.*)_(.)(.*)&quot;</span>)</a>
+<a class="sourceLine" id="cb340-38" title="38"><span class="co">#&gt; gather: reorganized (new_sp_m014, new_sp_m1524, new_sp_m2534, new_sp_m3544, new_sp_m4554, …) into (key, value) [was 7240x60, now 76046x6]</span></a>
+<a class="sourceLine" id="cb340-39" title="39"><span class="co">#&gt; # A tibble: 76,046 x 8</span></a>
+<a class="sourceLine" id="cb340-40" title="40"><span class="co">#&gt;   country     iso2  iso3   year diagnosis gender age   value</span></a>
+<a class="sourceLine" id="cb340-41" title="41"><span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb340-42" title="42"><span class="co">#&gt; 1 Afghanistan AF    AFG    1997 sp        m      014       0</span></a>
+<a class="sourceLine" id="cb340-43" title="43"><span class="co">#&gt; 2 Afghanistan AF    AFG    1998 sp        m      014      30</span></a>
+<a class="sourceLine" id="cb340-44" title="44"><span class="co">#&gt; 3 Afghanistan AF    AFG    1999 sp        m      014       8</span></a>
+<a class="sourceLine" id="cb340-45" title="45"><span class="co">#&gt; 4 Afghanistan AF    AFG    2000 sp        m      014      52</span></a>
+<a class="sourceLine" id="cb340-46" title="46"><span class="co">#&gt; 5 Afghanistan AF    AFG    2001 sp        m      014     129</span></a>
+<a class="sourceLine" id="cb340-47" title="47"><span class="co">#&gt; 6 Afghanistan AF    AFG    2002 sp        m      014      90</span></a>
+<a class="sourceLine" id="cb340-48" title="48"><span class="co">#&gt; # ... with 76,040 more rows</span></a></code></pre></div>
+<p>现在，<code>pivot_longer()</code> 现在可以在化宽为长的下一步直接完成拆分任务，可以直接在 <code>names_to</code> 中传入一个向量表示分裂后的各个键列，并在 <code>names_sep</code>(分隔符) 或者 <code>names_pattern</code> 中(正则表达式)指定分裂的模式：</p>
+<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb341-1" title="1">who <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb341-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="kw">starts_with</span>(<span class="st">&quot;new&quot;</span>),</a>
+<a class="sourceLine" id="cb341-3" title="3">               <span class="dt">names_to =</span> <span class="kw">c</span>(<span class="st">&quot;diagonosis&quot;</span>, <span class="st">&quot;gender&quot;</span>, <span class="st">&quot;age&quot;</span>),</a>
+<a class="sourceLine" id="cb341-4" title="4">               <span class="dt">names_pattern =</span> <span class="st">&quot;new_?(.*)_(.)(.*)&quot;</span>,</a>
+<a class="sourceLine" id="cb341-5" title="5">               <span class="dt">values_to =</span> <span class="st">&quot;count&quot;</span>,</a>
+<a class="sourceLine" id="cb341-6" title="6">               <span class="dt">values_drop_na =</span> T)</a>
+<a class="sourceLine" id="cb341-7" title="7"><span class="co">#&gt; pivot_longer: reorganized (new_sp_m014, new_sp_m1524, new_sp_m2534, new_sp_m3544, new_sp_m4554, …) into (diagonosis, gender, age, count) [was 7240x60, now 76046x8]</span></a>
+<a class="sourceLine" id="cb341-8" title="8"><span class="co">#&gt; # A tibble: 76,046 x 8</span></a>
+<a class="sourceLine" id="cb341-9" title="9"><span class="co">#&gt;   country     iso2  iso3   year diagonosis gender age   count</span></a>
+<a class="sourceLine" id="cb341-10" title="10"><span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb341-11" title="11"><span class="co">#&gt; 1 Afghanistan AF    AFG    1997 sp         m      014       0</span></a>
+<a class="sourceLine" id="cb341-12" title="12"><span class="co">#&gt; 2 Afghanistan AF    AFG    1997 sp         m      1524     10</span></a>
+<a class="sourceLine" id="cb341-13" title="13"><span class="co">#&gt; 3 Afghanistan AF    AFG    1997 sp         m      2534      6</span></a>
+<a class="sourceLine" id="cb341-14" title="14"><span class="co">#&gt; 4 Afghanistan AF    AFG    1997 sp         m      3544      3</span></a>
+<a class="sourceLine" id="cb341-15" title="15"><span class="co">#&gt; 5 Afghanistan AF    AFG    1997 sp         m      4554      5</span></a>
+<a class="sourceLine" id="cb341-16" title="16"><span class="co">#&gt; 6 Afghanistan AF    AFG    1997 sp         m      5564      2</span></a>
+<a class="sourceLine" id="cb341-17" title="17"><span class="co">#&gt; # ... with 76,040 more rows</span></a></code></pre></div>
+<p>更进一步，顺便设定好整理后 <code>gender</code> 和 <code>age</code> 的类型：</p>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb342-1" title="1">who <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb342-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="dt">cols =</span> <span class="kw">starts_with</span>(<span class="st">&quot;new&quot;</span>),</a>
+<a class="sourceLine" id="cb342-3" title="3">               <span class="dt">names_to =</span> <span class="kw">c</span>(<span class="st">&quot;diagonosis&quot;</span>, <span class="st">&quot;gender&quot;</span>, <span class="st">&quot;age&quot;</span>),</a>
+<a class="sourceLine" id="cb342-4" title="4">               <span class="dt">names_pattern =</span> <span class="st">&quot;new_?(.*)_(.)(.*)&quot;</span>,</a>
+<a class="sourceLine" id="cb342-5" title="5">               <span class="dt">names_ptypes =</span> <span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb342-6" title="6">                 <span class="dt">gender =</span> <span class="kw">factor</span>(<span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;f&quot;</span>, <span class="st">&quot;m&quot;</span>)),</a>
+<a class="sourceLine" id="cb342-7" title="7">                 <span class="dt">age =</span> <span class="kw">factor</span>(</a>
+<a class="sourceLine" id="cb342-8" title="8">                        <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;014&quot;</span>, <span class="st">&quot;1524&quot;</span>, <span class="st">&quot;2534&quot;</span>, <span class="st">&quot;3544&quot;</span>, <span class="st">&quot;4554&quot;</span>, <span class="st">&quot;5564&quot;</span>, <span class="st">&quot;65&quot;</span>), </a>
+<a class="sourceLine" id="cb342-9" title="9">                        <span class="dt">ordered =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb342-10" title="10">               ),</a>
+<a class="sourceLine" id="cb342-11" title="11">               <span class="dt">values_to =</span> <span class="st">&quot;count&quot;</span>,</a>
+<a class="sourceLine" id="cb342-12" title="12">               <span class="dt">values_drop_na =</span> T)</a>
+<a class="sourceLine" id="cb342-13" title="13"><span class="co">#&gt; pivot_longer: reorganized (new_sp_m014, new_sp_m1524, new_sp_m2534, new_sp_m3544, new_sp_m4554, …) into (diagonosis, gender, age, count) [was 7240x60, now 76046x8]</span></a>
+<a class="sourceLine" id="cb342-14" title="14"><span class="co">#&gt; # A tibble: 76,046 x 8</span></a>
+<a class="sourceLine" id="cb342-15" title="15"><span class="co">#&gt;   country     iso2  iso3   year diagonosis gender age   count</span></a>
+<a class="sourceLine" id="cb342-16" title="16"><span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt;      &lt;fct&gt;  &lt;ord&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb342-17" title="17"><span class="co">#&gt; 1 Afghanistan AF    AFG    1997 sp         m      014       0</span></a>
+<a class="sourceLine" id="cb342-18" title="18"><span class="co">#&gt; 2 Afghanistan AF    AFG    1997 sp         m      1524     10</span></a>
+<a class="sourceLine" id="cb342-19" title="19"><span class="co">#&gt; 3 Afghanistan AF    AFG    1997 sp         m      2534      6</span></a>
+<a class="sourceLine" id="cb342-20" title="20"><span class="co">#&gt; 4 Afghanistan AF    AFG    1997 sp         m      3544      3</span></a>
+<a class="sourceLine" id="cb342-21" title="21"><span class="co">#&gt; 5 Afghanistan AF    AFG    1997 sp         m      4554      5</span></a>
+<a class="sourceLine" id="cb342-22" title="22"><span class="co">#&gt; 6 Afghanistan AF    AFG    1997 sp         m      5564      2</span></a>
+<a class="sourceLine" id="cb342-23" title="23"><span class="co">#&gt; # ... with 76,040 more rows</span></a></code></pre></div>
+</div>
+<div id="multiple-observations-per-row" class="section level4">
+<h4><span class="header-section-number">6.2.1.3</span> Multiple observations per row</h4>
+<p>(多个值列)</p>
+<p>So far, we have been working with data frames that have one observation per row, but many important pivotting problems involve multiple observations per row. You can usually recognise this case because <strong>name of the column that you want to appear in the output is part of the column name in the input</strong>. In this section, you’ll learn how to pivot this sort of data.</p>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb343-1" title="1">family &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
+<a class="sourceLine" id="cb343-2" title="2">  <span class="op">~</span>family,  <span class="op">~</span>dob_child1,  <span class="op">~</span>dob_child2, <span class="op">~</span>gender_child1, <span class="op">~</span>gender_child2,</a>
+<a class="sourceLine" id="cb343-3" title="3">       1L, <span class="st">&quot;1998-11-26&quot;</span>, <span class="st">&quot;2000-01-29&quot;</span>,             1L,             2L,</a>
+<a class="sourceLine" id="cb343-4" title="4">       2L, <span class="st">&quot;1996-06-22&quot;</span>,           <span class="ot">NA</span>,             2L,             <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb343-5" title="5">       3L, <span class="st">&quot;2002-07-11&quot;</span>, <span class="st">&quot;2004-04-05&quot;</span>,             2L,             2L,</a>
+<a class="sourceLine" id="cb343-6" title="6">       4L, <span class="st">&quot;2004-10-10&quot;</span>, <span class="st">&quot;2009-08-27&quot;</span>,             1L,             1L,</a>
+<a class="sourceLine" id="cb343-7" title="7">       5L, <span class="st">&quot;2000-12-05&quot;</span>, <span class="st">&quot;2005-02-28&quot;</span>,             2L,             1L,</a>
+<a class="sourceLine" id="cb343-8" title="8">)</a>
+<a class="sourceLine" id="cb343-9" title="9">family &lt;-<span class="st"> </span>family <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate_at</span>(<span class="kw">vars</span>(<span class="kw">starts_with</span>(<span class="st">&quot;dob&quot;</span>)), ymd)</a>
+<a class="sourceLine" id="cb343-10" title="10"><span class="co">#&gt; mutate_at: converted &#39;dob_child1&#39; from character to Date (0 new NA)</span></a>
+<a class="sourceLine" id="cb343-11" title="11"><span class="co">#&gt;            converted &#39;dob_child2&#39; from character to Date (0 new NA)</span></a>
+<a class="sourceLine" id="cb343-12" title="12">family</a>
+<a class="sourceLine" id="cb343-13" title="13"><span class="co">#&gt; # A tibble: 5 x 5</span></a>
+<a class="sourceLine" id="cb343-14" title="14"><span class="co">#&gt;   family dob_child1 dob_child2 gender_child1 gender_child2</span></a>
+<a class="sourceLine" id="cb343-15" title="15"><span class="co">#&gt;    &lt;int&gt; &lt;date&gt;     &lt;date&gt;             &lt;int&gt;         &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb343-16" title="16"><span class="co">#&gt; 1      1 1998-11-26 2000-01-29             1             2</span></a>
+<a class="sourceLine" id="cb343-17" title="17"><span class="co">#&gt; 2      2 1996-06-22 NA                     2            NA</span></a>
+<a class="sourceLine" id="cb343-18" title="18"><span class="co">#&gt; 3      3 2002-07-11 2004-04-05             2             2</span></a>
+<a class="sourceLine" id="cb343-19" title="19"><span class="co">#&gt; 4      4 2004-10-10 2009-08-27             1             1</span></a>
+<a class="sourceLine" id="cb343-20" title="20"><span class="co">#&gt; 5      5 2000-12-05 2005-02-28             2             1</span></a></code></pre></div>
+<p>理想中的数据格式(两个值列)</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">family</th>
+<th align="center">child</th>
+<th align="center">dob</th>
+<th align="center">gender</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1998-11-26</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">2000-01-29</td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">1996-06-22</td>
+<td align="center">2</td>
+</tr>
+<tr class="even">
+<td align="center">3</td>
+<td align="center">1</td>
+<td align="center">2002-07-11</td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">2004-04-05</td>
+<td align="center">2</td>
+</tr>
+<tr class="even">
+<td align="center">4</td>
+<td align="center">1</td>
+<td align="center">2004-10-10</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center">4</td>
+<td align="center">2</td>
+<td align="center">2009-08-27</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">5</td>
+<td align="center">1</td>
+<td align="center">2000-12-05</td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">5</td>
+<td align="center">2</td>
+<td align="center">2005-02-28</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<p>Note that we have two pieces of information (or values) for each child: their <code>gender</code> and their <code>dob</code> (date of birth). These need to go into separate columns in the result. Again we supply multiple variables to <code>names_to</code>, using <code>names_sep</code> to split up each variable name. Note the special name <code>.value</code>: this tells <code>pivot_longer()</code> that that part of the column name specifies the “value” being measured (which will become a variable in the output)</p>
+<p><code>.value</code> 在这里指代 <code>dob</code> 和 <code>gender</code> 两个值列</p>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb344-1" title="1">family <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb344-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(</a>
+<a class="sourceLine" id="cb344-3" title="3">    <span class="op">-</span>family, </a>
+<a class="sourceLine" id="cb344-4" title="4">    <span class="dt">names_to =</span> <span class="kw">c</span>(<span class="st">&quot;.value&quot;</span>, <span class="st">&quot;child&quot;</span>),   <span class="co">## child 为每个 family 中的标识变量</span></a>
+<a class="sourceLine" id="cb344-5" title="5">    <span class="dt">names_sep =</span> <span class="st">&quot;_&quot;</span>, </a>
+<a class="sourceLine" id="cb344-6" title="6">    <span class="dt">values_drop_na =</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb344-7" title="7">  )</a>
+<a class="sourceLine" id="cb344-8" title="8"><span class="co">#&gt; pivot_longer: reorganized (dob_child1, dob_child2, gender_child1, gender_child2) into (child, dob, gender) [was 5x5, now 9x4]</span></a>
+<a class="sourceLine" id="cb344-9" title="9"><span class="co">#&gt; # A tibble: 9 x 4</span></a>
+<a class="sourceLine" id="cb344-10" title="10"><span class="co">#&gt;   family child  dob        gender</span></a>
+<a class="sourceLine" id="cb344-11" title="11"><span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;  &lt;date&gt;      &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb344-12" title="12"><span class="co">#&gt; 1      1 child1 1998-11-26      1</span></a>
+<a class="sourceLine" id="cb344-13" title="13"><span class="co">#&gt; 2      1 child2 2000-01-29      2</span></a>
+<a class="sourceLine" id="cb344-14" title="14"><span class="co">#&gt; 3      2 child1 1996-06-22      2</span></a>
+<a class="sourceLine" id="cb344-15" title="15"><span class="co">#&gt; 4      3 child1 2002-07-11      2</span></a>
+<a class="sourceLine" id="cb344-16" title="16"><span class="co">#&gt; 5      3 child2 2004-04-05      2</span></a>
+<a class="sourceLine" id="cb344-17" title="17"><span class="co">#&gt; 6      4 child1 2004-10-10      1</span></a>
+<a class="sourceLine" id="cb344-18" title="18"><span class="co">#&gt; # ... with 3 more rows</span></a></code></pre></div>
+<p>在这里，<code>dob_child1</code>、<code>dob_child2</code>、<code>gender_child1</code>、<code>gender_child2</code>四个列名的<strong>后半部分</strong>被当做键列的值。例如，可以认为对于 <code>family == 1</code>的观测，首先生成了如下的结构：</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">family</th>
+<th align="center">child</th>
+<th align="center">dob</th>
+<th align="center">dob</th>
+<th align="center">gender</th>
+<th align="center">gender</th>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">child1</td>
+<td align="center">1998-11-16</td>
+<td align="center">2000-01-29</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">2</td>
+<td align="center">child2</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+<p>而后名称相同的值列合并：</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">family</th>
+<th align="center">child</th>
+<th align="center">dob</th>
+<th align="center">gender</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">child1</td>
+<td align="center">1998-11-26</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">child2</td>
+<td align="center">2000-01-29</td>
+<td align="center">2</td>
+</tr>
+</tbody>
+</table>
+<p>另一个例子：</p>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb345-1" title="1">anscombe </a>
+<a class="sourceLine" id="cb345-2" title="2"><span class="co">#&gt;    x1 x2 x3 x4    y1   y2    y3    y4</span></a>
+<a class="sourceLine" id="cb345-3" title="3"><span class="co">#&gt; 1  10 10 10  8  8.04 9.14  7.46  6.58</span></a>
+<a class="sourceLine" id="cb345-4" title="4"><span class="co">#&gt; 2   8  8  8  8  6.95 8.14  6.77  5.76</span></a>
+<a class="sourceLine" id="cb345-5" title="5"><span class="co">#&gt; 3  13 13 13  8  7.58 8.74 12.74  7.71</span></a>
+<a class="sourceLine" id="cb345-6" title="6"><span class="co">#&gt; 4   9  9  9  8  8.81 8.77  7.11  8.84</span></a>
+<a class="sourceLine" id="cb345-7" title="7"><span class="co">#&gt; 5  11 11 11  8  8.33 9.26  7.81  8.47</span></a>
+<a class="sourceLine" id="cb345-8" title="8"><span class="co">#&gt; 6  14 14 14  8  9.96 8.10  8.84  7.04</span></a>
+<a class="sourceLine" id="cb345-9" title="9"><span class="co">#&gt; 7   6  6  6  8  7.24 6.13  6.08  5.25</span></a>
+<a class="sourceLine" id="cb345-10" title="10"><span class="co">#&gt; 8   4  4  4 19  4.26 3.10  5.39 12.50</span></a>
+<a class="sourceLine" id="cb345-11" title="11"><span class="co">#&gt; 9  12 12 12  8 10.84 9.13  8.15  5.56</span></a>
+<a class="sourceLine" id="cb345-12" title="12"><span class="co">#&gt; 10  7  7  7  8  4.82 7.26  6.42  7.91</span></a>
+<a class="sourceLine" id="cb345-13" title="13"><span class="co">#&gt; 11  5  5  5  8  5.68 4.74  5.73  6.89</span></a>
+<a class="sourceLine" id="cb345-14" title="14">anscombe <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb345-15" title="15"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="kw">everything</span>(),</a>
+<a class="sourceLine" id="cb345-16" title="16">               <span class="dt">names_to =</span> <span class="kw">c</span>(<span class="st">&quot;.value&quot;</span>, <span class="st">&quot;set&quot;</span>),</a>
+<a class="sourceLine" id="cb345-17" title="17">               <span class="dt">names_pattern =</span> <span class="st">&quot;([xy])([1234])&quot;</span>)</a>
+<a class="sourceLine" id="cb345-18" title="18"><span class="co">#&gt; pivot_longer: reorganized (x1, x2, x3, x4, y1, …) into (set, x, y) [was 11x8, now 44x3]</span></a>
+<a class="sourceLine" id="cb345-19" title="19"><span class="co">#&gt; # A tibble: 44 x 3</span></a>
+<a class="sourceLine" id="cb345-20" title="20"><span class="co">#&gt;   set       x     y</span></a>
+<a class="sourceLine" id="cb345-21" title="21"><span class="co">#&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb345-22" title="22"><span class="co">#&gt; 1 1        10  8.04</span></a>
+<a class="sourceLine" id="cb345-23" title="23"><span class="co">#&gt; 2 2        10  9.14</span></a>
+<a class="sourceLine" id="cb345-24" title="24"><span class="co">#&gt; 3 3        10  7.46</span></a>
+<a class="sourceLine" id="cb345-25" title="25"><span class="co">#&gt; 4 4         8  6.58</span></a>
+<a class="sourceLine" id="cb345-26" title="26"><span class="co">#&gt; 5 1         8  6.95</span></a>
+<a class="sourceLine" id="cb345-27" title="27"><span class="co">#&gt; 6 2         8  8.14</span></a>
+<a class="sourceLine" id="cb345-28" title="28"><span class="co">#&gt; # ... with 38 more rows</span></a></code></pre></div>
+<p>叕一个例子：</p>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb346-1" title="1">pnl &lt;-<span class="st"> </span><span class="kw">tibble</span>(</a>
+<a class="sourceLine" id="cb346-2" title="2">  <span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb346-3" title="3">  <span class="dt">a =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">0</span>, <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb346-4" title="4">  <span class="dt">b =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb346-5" title="5">  <span class="dt">y1 =</span> <span class="kw">rnorm</span>(<span class="dv">4</span>),</a>
+<a class="sourceLine" id="cb346-6" title="6">  <span class="dt">y2 =</span> <span class="kw">rnorm</span>(<span class="dv">4</span>),</a>
+<a class="sourceLine" id="cb346-7" title="7">  <span class="dt">z1 =</span> <span class="kw">rep</span>(<span class="dv">3</span>, <span class="dv">4</span>),</a>
+<a class="sourceLine" id="cb346-8" title="8">  <span class="dt">z2 =</span> <span class="kw">rep</span>(<span class="op">-</span><span class="dv">2</span>, <span class="dv">4</span>),</a>
+<a class="sourceLine" id="cb346-9" title="9">)</a>
+<a class="sourceLine" id="cb346-10" title="10">pnl</a>
+<a class="sourceLine" id="cb346-11" title="11"><span class="co">#&gt; # A tibble: 4 x 7</span></a>
+<a class="sourceLine" id="cb346-12" title="12"><span class="co">#&gt;       x     a     b      y1     y2    z1    z2</span></a>
+<a class="sourceLine" id="cb346-13" title="13"><span class="co">#&gt;   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb346-14" title="14"><span class="co">#&gt; 1     1     1     0  0.788  -1.59      3    -2</span></a>
+<a class="sourceLine" id="cb346-15" title="15"><span class="co">#&gt; 2     2     1     1 -0.422   0.597     3    -2</span></a>
+<a class="sourceLine" id="cb346-16" title="16"><span class="co">#&gt; 3     3     0     1  0.0569  1.22      3    -2</span></a>
+<a class="sourceLine" id="cb346-17" title="17"><span class="co">#&gt; 4     4     0     1  0.711  -0.312     3    -2</span></a></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb347-1" title="1">pnl <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb347-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">-</span>(x<span class="op">:</span>b),</a>
+<a class="sourceLine" id="cb347-3" title="3">               <span class="dt">names_to =</span> <span class="kw">c</span>(<span class="st">&quot;.value&quot;</span>, <span class="st">&quot;time&quot;</span>),</a>
+<a class="sourceLine" id="cb347-4" title="4">               <span class="dt">names_pattern =</span> <span class="st">&quot;([yz])([12])&quot;</span>)</a>
+<a class="sourceLine" id="cb347-5" title="5"><span class="co">#&gt; pivot_longer: reorganized (y1, y2, z1, z2) into (time, y, z) [was 4x7, now 8x6]</span></a>
+<a class="sourceLine" id="cb347-6" title="6"><span class="co">#&gt; # A tibble: 8 x 6</span></a>
+<a class="sourceLine" id="cb347-7" title="7"><span class="co">#&gt;       x     a     b time        y     z</span></a>
+<a class="sourceLine" id="cb347-8" title="8"><span class="co">#&gt;   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb347-9" title="9"><span class="co">#&gt; 1     1     1     0 1      0.788      3</span></a>
+<a class="sourceLine" id="cb347-10" title="10"><span class="co">#&gt; 2     1     1     0 2     -1.59      -2</span></a>
+<a class="sourceLine" id="cb347-11" title="11"><span class="co">#&gt; 3     2     1     1 1     -0.422      3</span></a>
+<a class="sourceLine" id="cb347-12" title="12"><span class="co">#&gt; 4     2     1     1 2      0.597     -2</span></a>
+<a class="sourceLine" id="cb347-13" title="13"><span class="co">#&gt; 5     3     0     1 1      0.0569     3</span></a>
+<a class="sourceLine" id="cb347-14" title="14"><span class="co">#&gt; 6     3     0     1 2      1.22      -2</span></a>
+<a class="sourceLine" id="cb347-15" title="15"><span class="co">#&gt; # ... with 2 more rows</span></a></code></pre></div>
+</div>
+<div id="duplicated-column-names" class="section level4">
+<h4><span class="header-section-number">6.2.1.4</span> Duplicated column names</h4>
+<p>如果某个数据框中各列有重复的名字，用 <code>gather()</code> 聚合这些变量所在的列时会返回一条错误：</p>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb348-1" title="1">Error<span class="op">:</span><span class="st"> </span>Can<span class="st">&#39;t bind data because some arguments have the same name</span></a></code></pre></div>
+<p>这是因为被聚合的列名被当做 <code>key</code> 列的值，又因这些值是重复的，故不能唯一标识一条记录。<code>pivot_longer()</code> 针对这一点做了优化，尝试聚合这些列时，会自动生成一个标识列：</p>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb349-1" title="1"><span class="co">#  To create a tibble with duplicated names</span></a>
+<a class="sourceLine" id="cb349-2" title="2"><span class="co"># you have to explicitly opt out of the name repair </span></a>
+<a class="sourceLine" id="cb349-3" title="3"><span class="co"># that usually prevents you from creating such a dataset:</span></a>
+<a class="sourceLine" id="cb349-4" title="4">(df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> <span class="dv">4</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">y =</span> <span class="dv">5</span><span class="op">:</span><span class="dv">7</span>, <span class="dt">y =</span> <span class="dv">7</span><span class="op">:</span><span class="dv">9</span>, <span class="dt">.name_repair =</span> <span class="st">&quot;minimal&quot;</span>)) </a>
+<a class="sourceLine" id="cb349-5" title="5"><span class="co">#&gt; # A tibble: 3 x 4</span></a>
+<a class="sourceLine" id="cb349-6" title="6"><span class="co">#&gt;       x     y     y     y</span></a>
+<a class="sourceLine" id="cb349-7" title="7"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb349-8" title="8"><span class="co">#&gt; 1     1     4     5     7</span></a>
+<a class="sourceLine" id="cb349-9" title="9"><span class="co">#&gt; 2     2     5     6     8</span></a>
+<a class="sourceLine" id="cb349-10" title="10"><span class="co">#&gt; 3     3     6     7     9</span></a></code></pre></div>
+<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb350-1" title="1">df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb350-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">-</span>x, <span class="dt">names_to =</span> <span class="st">&quot;y&quot;</span>)</a>
+<a class="sourceLine" id="cb350-3" title="3"><span class="co">#&gt; pivot_longer: reorganized () into (.copy, value) [was 3x4, now 9x4]</span></a>
+<a class="sourceLine" id="cb350-4" title="4"><span class="co">#&gt; # A tibble: 9 x 4</span></a>
+<a class="sourceLine" id="cb350-5" title="5"><span class="co">#&gt;       x y     .copy value</span></a>
+<a class="sourceLine" id="cb350-6" title="6"><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb350-7" title="7"><span class="co">#&gt; 1     1 y         1     4</span></a>
+<a class="sourceLine" id="cb350-8" title="8"><span class="co">#&gt; 2     1 y         2     5</span></a>
+<a class="sourceLine" id="cb350-9" title="9"><span class="co">#&gt; 3     1 y         3     7</span></a>
+<a class="sourceLine" id="cb350-10" title="10"><span class="co">#&gt; 4     2 y         1     5</span></a>
+<a class="sourceLine" id="cb350-11" title="11"><span class="co">#&gt; 5     2 y         2     6</span></a>
+<a class="sourceLine" id="cb350-12" title="12"><span class="co">#&gt; 6     2 y         3     8</span></a>
+<a class="sourceLine" id="cb350-13" title="13"><span class="co">#&gt; # ... with 3 more rows</span></a></code></pre></div>
+</div>
+</div>
+<div id="pivot_wider" class="section level3">
+<h3><span class="header-section-number">6.2.2</span> <code>pivot_wider()</code></h3>
+<p><code>pivot_wider()</code> 是 <code>pivot_longer()</code> 的逆操作，虽然在获得 tidy data 上，前者没有后者常用，但它经常被用来创建一些 summary table。</p>
+<p><code>fish_encounters</code> 数据记录了一些沿河观测站对一批鱼群的观测情况(<code>seen</code> 为发现次数)：</p>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb351-1" title="1">fish_encounters</a>
+<a class="sourceLine" id="cb351-2" title="2"><span class="co">#&gt; # A tibble: 114 x 3</span></a>
+<a class="sourceLine" id="cb351-3" title="3"><span class="co">#&gt;   fish  station  seen</span></a>
+<a class="sourceLine" id="cb351-4" title="4"><span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;   &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb351-5" title="5"><span class="co">#&gt; 1 4842  Release     1</span></a>
+<a class="sourceLine" id="cb351-6" title="6"><span class="co">#&gt; 2 4842  I80_1       1</span></a>
+<a class="sourceLine" id="cb351-7" title="7"><span class="co">#&gt; 3 4842  Lisbon      1</span></a>
+<a class="sourceLine" id="cb351-8" title="8"><span class="co">#&gt; 4 4842  Rstr        1</span></a>
+<a class="sourceLine" id="cb351-9" title="9"><span class="co">#&gt; 5 4842  Base_TD     1</span></a>
+<a class="sourceLine" id="cb351-10" title="10"><span class="co">#&gt; 6 4842  BCE         1</span></a>
+<a class="sourceLine" id="cb351-11" title="11"><span class="co">#&gt; # ... with 108 more rows</span></a></code></pre></div>
+<p>很多后续分析工具需要每个观测站的观测情况单独成一列，使用 <code>pivot_wider()</code>:</p>
+<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb352-1" title="1"><span class="co"># 数据中已有的列不需要引号便可引用</span></a>
+<a class="sourceLine" id="cb352-2" title="2">fish_encounters <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb352-3" title="3"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> station, <span class="dt">values_from =</span> seen)</a>
+<a class="sourceLine" id="cb352-4" title="4"><span class="co">#&gt; pivot_wider: reorganized (station, seen) into (Release, I80_1, Lisbon, Rstr, Base_TD, …) [was 114x3, now 19x12]</span></a>
+<a class="sourceLine" id="cb352-5" title="5"><span class="co">#&gt; # A tibble: 19 x 12</span></a>
+<a class="sourceLine" id="cb352-6" title="6"><span class="co">#&gt;   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2   MAE   MAW</span></a>
+<a class="sourceLine" id="cb352-7" title="7"><span class="co">#&gt;   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb352-8" title="8"><span class="co">#&gt; 1 4842        1     1      1     1       1     1     1     1     1     1     1</span></a>
+<a class="sourceLine" id="cb352-9" title="9"><span class="co">#&gt; 2 4843        1     1      1     1       1     1     1     1     1     1     1</span></a>
+<a class="sourceLine" id="cb352-10" title="10"><span class="co">#&gt; 3 4844        1     1      1     1       1     1     1     1     1     1     1</span></a>
+<a class="sourceLine" id="cb352-11" title="11"><span class="co">#&gt; 4 4845        1     1      1     1       1    NA    NA    NA    NA    NA    NA</span></a>
+<a class="sourceLine" id="cb352-12" title="12"><span class="co">#&gt; 5 4847        1     1      1    NA      NA    NA    NA    NA    NA    NA    NA</span></a>
+<a class="sourceLine" id="cb352-13" title="13"><span class="co">#&gt; 6 4848        1     1      1     1      NA    NA    NA    NA    NA    NA    NA</span></a>
+<a class="sourceLine" id="cb352-14" title="14"><span class="co">#&gt; # ... with 13 more rows</span></a></code></pre></div>
+<p>关于 <code>pivot_wider()</code>，很重要的一点是它会暴露出数据中的隐式缺失值(implicit missing value)。这些没有出现在原数据中的 NA 值不是源自于记录错误或者遗失，只是没有对应的观测而已（观测站只能记录发生了的观测）。参数 <strong>values_fill</strong> 可以以一个列表填充 <code>pivot_wider()</code> 结果中的 NA， 当然如何处理这些隐式缺失值要按具体情境而定，在鱼群的例子里，用 0 填充是合适的：</p>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb353-1" title="1">fish_encounters <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb353-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> station, <span class="dt">values_from =</span> seen,</a>
+<a class="sourceLine" id="cb353-3" title="3">              <span class="dt">values_fill =</span> <span class="kw">list</span>(<span class="dt">seen =</span> <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb353-4" title="4"><span class="co">#&gt; pivot_wider: reorganized (station, seen) into (Release, I80_1, Lisbon, Rstr, Base_TD, …) [was 114x3, now 19x12]</span></a>
+<a class="sourceLine" id="cb353-5" title="5"><span class="co">#&gt; # A tibble: 19 x 12</span></a>
+<a class="sourceLine" id="cb353-6" title="6"><span class="co">#&gt;   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2   MAE   MAW</span></a>
+<a class="sourceLine" id="cb353-7" title="7"><span class="co">#&gt;   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb353-8" title="8"><span class="co">#&gt; 1 4842        1     1      1     1       1     1     1     1     1     1     1</span></a>
+<a class="sourceLine" id="cb353-9" title="9"><span class="co">#&gt; 2 4843        1     1      1     1       1     1     1     1     1     1     1</span></a>
+<a class="sourceLine" id="cb353-10" title="10"><span class="co">#&gt; 3 4844        1     1      1     1       1     1     1     1     1     1     1</span></a>
+<a class="sourceLine" id="cb353-11" title="11"><span class="co">#&gt; 4 4845        1     1      1     1       1     0     0     0     0     0     0</span></a>
+<a class="sourceLine" id="cb353-12" title="12"><span class="co">#&gt; 5 4847        1     1      1     0       0     0     0     0     0     0     0</span></a>
+<a class="sourceLine" id="cb353-13" title="13"><span class="co">#&gt; 6 4848        1     1      1     1       0     0     0     0     0     0     0</span></a>
+<a class="sourceLine" id="cb353-14" title="14"><span class="co">#&gt; # ... with 13 more rows</span></a></code></pre></div>
+
+<div class="todo">
+<code>fish_encoutners</code> 的贡献者 <a href="https://fishsciences.github.io/post/visualizing-fish-encounter-histories/">Myfanwy Johnston</a> 在个人网站上有一篇相关的文章
+</div>
+
+<div id="aggregation" class="section level4">
+<h4><span class="header-section-number">6.2.2.1</span> Aggregation</h4>
+<p><code>pivot_wider()</code> 可以用来执行一些简单的聚合操作。<code>warpbreaks</code> 是一个关于经纱强度的控制试验，每个处理 <code>(wool, tension)</code> 上进行了 9 次试验：</p>
+<div class="sourceCode" id="cb354"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb354-1" title="1">(warpbreaks &lt;-<span class="st"> </span>warpbreaks <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(wool, tension, breaks))</a>
+<a class="sourceLine" id="cb354-2" title="2"><span class="co">#&gt; select: columns reordered (wool, tension, breaks)</span></a>
+<a class="sourceLine" id="cb354-3" title="3"><span class="co">#&gt; # A tibble: 54 x 3</span></a>
+<a class="sourceLine" id="cb354-4" title="4"><span class="co">#&gt;   wool  tension breaks</span></a>
+<a class="sourceLine" id="cb354-5" title="5"><span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb354-6" title="6"><span class="co">#&gt; 1 A     L           26</span></a>
+<a class="sourceLine" id="cb354-7" title="7"><span class="co">#&gt; 2 A     L           30</span></a>
+<a class="sourceLine" id="cb354-8" title="8"><span class="co">#&gt; 3 A     L           54</span></a>
+<a class="sourceLine" id="cb354-9" title="9"><span class="co">#&gt; 4 A     L           25</span></a>
+<a class="sourceLine" id="cb354-10" title="10"><span class="co">#&gt; 5 A     L           70</span></a>
+<a class="sourceLine" id="cb354-11" title="11"><span class="co">#&gt; 6 A     L           52</span></a>
+<a class="sourceLine" id="cb354-12" title="12"><span class="co">#&gt; # ... with 48 more rows</span></a>
+<a class="sourceLine" id="cb354-13" title="13">warpbreaks <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">count</span>(wool, tension)</a>
+<a class="sourceLine" id="cb354-14" title="14"><span class="co">#&gt; count: now 6 rows and 3 columns, ungrouped</span></a>
+<a class="sourceLine" id="cb354-15" title="15"><span class="co">#&gt; # A tibble: 6 x 3</span></a>
+<a class="sourceLine" id="cb354-16" title="16"><span class="co">#&gt;   wool  tension     n</span></a>
+<a class="sourceLine" id="cb354-17" title="17"><span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;   &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb354-18" title="18"><span class="co">#&gt; 1 A     L           9</span></a>
+<a class="sourceLine" id="cb354-19" title="19"><span class="co">#&gt; 2 A     M           9</span></a>
+<a class="sourceLine" id="cb354-20" title="20"><span class="co">#&gt; 3 A     H           9</span></a>
+<a class="sourceLine" id="cb354-21" title="21"><span class="co">#&gt; 4 B     L           9</span></a>
+<a class="sourceLine" id="cb354-22" title="22"><span class="co">#&gt; 5 B     M           9</span></a>
+<a class="sourceLine" id="cb354-23" title="23"><span class="co">#&gt; 6 B     H           9</span></a></code></pre></div>
+<p>现在想知道每个处理下的平均断头次数，只需展开 <code>wool</code> 或 <code>tension</code> 中的任意一个：</p>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb355-1" title="1">warpbreaks <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb355-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> wool, <span class="dt">values_from =</span> breaks)</a>
+<a class="sourceLine" id="cb355-3" title="3"><span class="co">#&gt; Warning: Values in `breaks` are not uniquely identified; output will contain list-cols.</span></a>
+<a class="sourceLine" id="cb355-4" title="4"><span class="co">#&gt; * Use `values_fn = list(breaks = list)` to suppress this warning.</span></a>
+<a class="sourceLine" id="cb355-5" title="5"><span class="co">#&gt; * Use `values_fn = list(breaks = length)` to identify where the duplicates arise</span></a>
+<a class="sourceLine" id="cb355-6" title="6"><span class="co">#&gt; * Use `values_fn = list(breaks = summary_fun)` to summarise duplicates</span></a>
+<a class="sourceLine" id="cb355-7" title="7"><span class="co">#&gt; pivot_wider: reorganized (wool, breaks) into (A, B) [was 54x3, now 3x3]</span></a>
+<a class="sourceLine" id="cb355-8" title="8"><span class="co">#&gt; # A tibble: 3 x 3</span></a>
+<a class="sourceLine" id="cb355-9" title="9"><span class="co">#&gt;   tension A         B        </span></a>
+<a class="sourceLine" id="cb355-10" title="10"><span class="co">#&gt;   &lt;fct&gt;   &lt;list&gt;    &lt;list&gt;   </span></a>
+<a class="sourceLine" id="cb355-11" title="11"><span class="co">#&gt; 1 L       &lt;dbl [9]&gt; &lt;dbl [9]&gt;</span></a>
+<a class="sourceLine" id="cb355-12" title="12"><span class="co">#&gt; 2 M       &lt;dbl [9]&gt; &lt;dbl [9]&gt;</span></a>
+<a class="sourceLine" id="cb355-13" title="13"><span class="co">#&gt; 3 H       &lt;dbl [9]&gt; &lt;dbl [9]&gt;</span></a></code></pre></div>
+<p>由于 <code>(wool, tension)</code> 不能唯一确认一个观测，多个观测被压缩至一个列表中，<code>values_fn(breaks = mean)</code> 求得平均值：</p>
+<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb356-1" title="1">warpbreaks <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb356-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> wool, <span class="dt">values_from =</span> breaks,</a>
+<a class="sourceLine" id="cb356-3" title="3">              <span class="dt">values_fn =</span> <span class="kw">list</span>(<span class="dt">breaks =</span> mean))</a>
+<a class="sourceLine" id="cb356-4" title="4"><span class="co">#&gt; pivot_wider: reorganized (wool, breaks) into (A, B) [was 54x3, now 3x3]</span></a>
+<a class="sourceLine" id="cb356-5" title="5"><span class="co">#&gt; # A tibble: 3 x 3</span></a>
+<a class="sourceLine" id="cb356-6" title="6"><span class="co">#&gt;   tension     A     B</span></a>
+<a class="sourceLine" id="cb356-7" title="7"><span class="co">#&gt;   &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb356-8" title="8"><span class="co">#&gt; 1 L        44.6  28.2</span></a>
+<a class="sourceLine" id="cb356-9" title="9"><span class="co">#&gt; 2 M        24    28.8</span></a>
+<a class="sourceLine" id="cb356-10" title="10"><span class="co">#&gt; 3 H        24.6  18.8</span></a></code></pre></div>
+<p>For more complex summary operations, I recommend summarising before reshaping, but for simple cases it’s often convenient to summarise within <code>pivot_wider()</code></p>
+</div>
+<div id="generate-column-name-from-multiple-variables" class="section level4">
+<h4><span class="header-section-number">6.2.2.2</span> Generate column name from multiple variables</h4>
+<p>现有一个数据集存储了关于产品、生产国家、生产年份和产量的水平组合：</p>
+<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb357-1" title="1">production &lt;-<span class="st"> </span><span class="kw">expand_grid</span>(</a>
+<a class="sourceLine" id="cb357-2" title="2">    <span class="dt">product =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>), </a>
+<a class="sourceLine" id="cb357-3" title="3">    <span class="dt">country =</span> <span class="kw">c</span>(<span class="st">&quot;AI&quot;</span>, <span class="st">&quot;EI&quot;</span>), </a>
+<a class="sourceLine" id="cb357-4" title="4">    <span class="dt">year =</span> <span class="dv">2000</span><span class="op">:</span><span class="dv">2014</span></a>
+<a class="sourceLine" id="cb357-5" title="5">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb357-6" title="6"><span class="st">  </span><span class="kw">filter</span>((product <span class="op">==</span><span class="st"> &quot;A&quot;</span> <span class="op">&amp;</span><span class="st"> </span>country <span class="op">==</span><span class="st"> &quot;AI&quot;</span>) <span class="op">|</span><span class="st"> </span>product <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb357-7" title="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">production =</span> <span class="kw">rnorm</span>(<span class="kw">nrow</span>(.)))</a>
+<a class="sourceLine" id="cb357-8" title="8"><span class="co">#&gt; filter: removed 15 rows (25%), 45 rows remaining</span></a>
+<a class="sourceLine" id="cb357-9" title="9"><span class="co">#&gt; mutate: new variable &#39;production&#39; with 45 unique values and 0% NA</span></a>
+<a class="sourceLine" id="cb357-10" title="10"></a>
+<a class="sourceLine" id="cb357-11" title="11">production</a>
+<a class="sourceLine" id="cb357-12" title="12"><span class="co">#&gt; # A tibble: 45 x 4</span></a>
+<a class="sourceLine" id="cb357-13" title="13"><span class="co">#&gt;   product country  year production</span></a>
+<a class="sourceLine" id="cb357-14" title="14"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;int&gt;      &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb357-15" title="15"><span class="co">#&gt; 1 A       AI       2000     -0.209</span></a>
+<a class="sourceLine" id="cb357-16" title="16"><span class="co">#&gt; 2 A       AI       2001     -0.369</span></a>
+<a class="sourceLine" id="cb357-17" title="17"><span class="co">#&gt; 3 A       AI       2002      0.330</span></a>
+<a class="sourceLine" id="cb357-18" title="18"><span class="co">#&gt; 4 A       AI       2003      1.88 </span></a>
+<a class="sourceLine" id="cb357-19" title="19"><span class="co">#&gt; 5 A       AI       2004     -0.482</span></a>
+<a class="sourceLine" id="cb357-20" title="20"><span class="co">#&gt; 6 A       AI       2005      1.74 </span></a>
+<a class="sourceLine" id="cb357-21" title="21"><span class="co">#&gt; # ... with 39 more rows</span></a></code></pre></div>
+<p>假设现在希望对于每个 <code>product</code> 和 <code>country</code> 的组合均创建一列，关键是在 <code>names_from</code> 中传入一个向量：</p>
+<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb358-1" title="1">production <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb358-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> <span class="kw">c</span>(product, country), <span class="dt">values_from =</span> production)</a>
+<a class="sourceLine" id="cb358-3" title="3"><span class="co">#&gt; pivot_wider: reorganized (product, country, production) into (A_AI, B_AI, B_EI) [was 45x4, now 15x4]</span></a>
+<a class="sourceLine" id="cb358-4" title="4"><span class="co">#&gt; # A tibble: 15 x 4</span></a>
+<a class="sourceLine" id="cb358-5" title="5"><span class="co">#&gt;    year   A_AI   B_AI    B_EI</span></a>
+<a class="sourceLine" id="cb358-6" title="6"><span class="co">#&gt;   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb358-7" title="7"><span class="co">#&gt; 1  2000 -0.209  1.02  -1.14  </span></a>
+<a class="sourceLine" id="cb358-8" title="8"><span class="co">#&gt; 2  2001 -0.369  0.598  0.143 </span></a>
+<a class="sourceLine" id="cb358-9" title="9"><span class="co">#&gt; 3  2002  0.330  1.38  -0.0472</span></a>
+<a class="sourceLine" id="cb358-10" title="10"><span class="co">#&gt; 4  2003  1.88  -1.06  -1.26  </span></a>
+<a class="sourceLine" id="cb358-11" title="11"><span class="co">#&gt; 5  2004 -0.482  0.197  3.39  </span></a>
+<a class="sourceLine" id="cb358-12" title="12"><span class="co">#&gt; 6  2005  1.74   1.37   0.120 </span></a>
+<a class="sourceLine" id="cb358-13" title="13"><span class="co">#&gt; # ... with 9 more rows</span></a></code></pre></div>
+<p><code>names_sep</code> 可以指定除了 <code>_</code> 以外的分隔符。<code>names_prefix</code> 为展开后的各列<strong>添加</strong>前缀(as opposed to removing in <code>pivot_longer()</code>)</p>
+</div>
+<div id="multiple-value-columns" class="section level4">
+<h4><span class="header-section-number">6.2.2.3</span> Multiple value columns</h4>
+<p>The <code>us_rent_income</code> dataset contains information about median income and rent for each state in the US for 2017 (from the American Community Survey, retrieved with the <strong>tidycensus</strong> package).</p>
+<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb359-1" title="1">us_rent_income</a>
+<a class="sourceLine" id="cb359-2" title="2"><span class="co">#&gt; # A tibble: 104 x 5</span></a>
+<a class="sourceLine" id="cb359-3" title="3"><span class="co">#&gt;   GEOID NAME    variable estimate   moe</span></a>
+<a class="sourceLine" id="cb359-4" title="4"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb359-5" title="5"><span class="co">#&gt; 1 01    Alabama income      24476   136</span></a>
+<a class="sourceLine" id="cb359-6" title="6"><span class="co">#&gt; 2 01    Alabama rent          747     3</span></a>
+<a class="sourceLine" id="cb359-7" title="7"><span class="co">#&gt; 3 02    Alaska  income      32940   508</span></a>
+<a class="sourceLine" id="cb359-8" title="8"><span class="co">#&gt; 4 02    Alaska  rent         1200    13</span></a>
+<a class="sourceLine" id="cb359-9" title="9"><span class="co">#&gt; 5 04    Arizona income      27517   148</span></a>
+<a class="sourceLine" id="cb359-10" title="10"><span class="co">#&gt; 6 04    Arizona rent          972     4</span></a>
+<a class="sourceLine" id="cb359-11" title="11"><span class="co">#&gt; # ... with 98 more rows</span></a></code></pre></div>
+<p>Here both <code>estimate</code> and <code>moe</code> are values columns, so we can supply them to <code>values_from</code>:</p>
+<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb360-1" title="1">us_rent_income <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> variable, <span class="dt">values_from =</span> <span class="kw">c</span>(estimate, moe))</a>
+<a class="sourceLine" id="cb360-2" title="2"><span class="co">#&gt; pivot_wider: reorganized (variable, estimate, moe) into (estimate_income, estimate_rent, moe_income, moe_rent) [was 104x5, now 52x6]</span></a>
+<a class="sourceLine" id="cb360-3" title="3"><span class="co">#&gt; # A tibble: 52 x 6</span></a>
+<a class="sourceLine" id="cb360-4" title="4"><span class="co">#&gt;   GEOID NAME       estimate_income estimate_rent moe_income moe_rent</span></a>
+<a class="sourceLine" id="cb360-5" title="5"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb360-6" title="6"><span class="co">#&gt; 1 01    Alabama              24476           747        136        3</span></a>
+<a class="sourceLine" id="cb360-7" title="7"><span class="co">#&gt; 2 02    Alaska               32940          1200        508       13</span></a>
+<a class="sourceLine" id="cb360-8" title="8"><span class="co">#&gt; 3 04    Arizona              27517           972        148        4</span></a>
+<a class="sourceLine" id="cb360-9" title="9"><span class="co">#&gt; 4 05    Arkansas             23789           709        165        5</span></a>
+<a class="sourceLine" id="cb360-10" title="10"><span class="co">#&gt; 5 06    California           29454          1358        109        3</span></a>
+<a class="sourceLine" id="cb360-11" title="11"><span class="co">#&gt; 6 08    Colorado             32401          1125        109        5</span></a>
+<a class="sourceLine" id="cb360-12" title="12"><span class="co">#&gt; # ... with 46 more rows</span></a></code></pre></div>
+<p>Note that the name of the variable is automatically appended to the output columns.</p>
+</div>
+<div id="contact" class="section level4">
+<h4><span class="header-section-number">6.2.2.4</span> When there is no identifying variable</h4>
+<p>A final challenge is inspired by <a href="https://github.com/jienagu/tidyverse_examples/blob/master/example_long_wide.R">Jiena Gu</a>. Imagine you have a contact list that you’ve copied and pasted from a website:</p>
+<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb361-1" title="1">contacts &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
+<a class="sourceLine" id="cb361-2" title="2">  <span class="op">~</span>field, <span class="op">~</span>value,</a>
+<a class="sourceLine" id="cb361-3" title="3">  <span class="st">&quot;name&quot;</span>, <span class="st">&quot;Jiena McLellan&quot;</span>,</a>
+<a class="sourceLine" id="cb361-4" title="4">  <span class="st">&quot;company&quot;</span>, <span class="st">&quot;Toyota&quot;</span>, </a>
+<a class="sourceLine" id="cb361-5" title="5">  <span class="st">&quot;name&quot;</span>, <span class="st">&quot;John Smith&quot;</span>, </a>
+<a class="sourceLine" id="cb361-6" title="6">  <span class="st">&quot;company&quot;</span>, <span class="st">&quot;google&quot;</span>, </a>
+<a class="sourceLine" id="cb361-7" title="7">  <span class="st">&quot;email&quot;</span>, <span class="st">&quot;john@google.com&quot;</span>,</a>
+<a class="sourceLine" id="cb361-8" title="8">  <span class="st">&quot;name&quot;</span>, <span class="st">&quot;Huxley Ratcliffe&quot;</span></a>
+<a class="sourceLine" id="cb361-9" title="9">)</a>
+<a class="sourceLine" id="cb361-10" title="10">contacts</a>
+<a class="sourceLine" id="cb361-11" title="11"><span class="co">#&gt; # A tibble: 6 x 2</span></a>
+<a class="sourceLine" id="cb361-12" title="12"><span class="co">#&gt;   field   value           </span></a>
+<a class="sourceLine" id="cb361-13" title="13"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;           </span></a>
+<a class="sourceLine" id="cb361-14" title="14"><span class="co">#&gt; 1 name    Jiena McLellan  </span></a>
+<a class="sourceLine" id="cb361-15" title="15"><span class="co">#&gt; 2 company Toyota          </span></a>
+<a class="sourceLine" id="cb361-16" title="16"><span class="co">#&gt; 3 name    John Smith      </span></a>
+<a class="sourceLine" id="cb361-17" title="17"><span class="co">#&gt; 4 company google          </span></a>
+<a class="sourceLine" id="cb361-18" title="18"><span class="co">#&gt; 5 email   john@google.com </span></a>
+<a class="sourceLine" id="cb361-19" title="19"><span class="co">#&gt; 6 name    Huxley Ratcliffe</span></a></code></pre></div>
+<p>This is challenging because there’s no variable that identifies which observations belong together.</p>
+<p>直接化宽时，出现列表列（没有第三个标识变量）</p>
+<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb362-1" title="1">contacts <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> field, <span class="dt">values_from =</span> value)</a>
+<a class="sourceLine" id="cb362-2" title="2"><span class="co">#&gt; pivot_wider: reorganized (field, value) into (name, company, email) [was 6x2, now 1x3]</span></a>
+<a class="sourceLine" id="cb362-3" title="3"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
+<a class="sourceLine" id="cb362-4" title="4"><span class="co">#&gt;   name      company   email    </span></a>
+<a class="sourceLine" id="cb362-5" title="5"><span class="co">#&gt;   &lt;list&gt;    &lt;list&gt;    &lt;list&gt;   </span></a>
+<a class="sourceLine" id="cb362-6" title="6"><span class="co">#&gt; 1 &lt;chr [3]&gt; &lt;chr [2]&gt; &lt;chr [1]&gt;</span></a></code></pre></div>
+<p>We can fix this by noting that every contact starts with a name, so we can create <strong>a unique id</strong> by counting every time we see “name” as the <code>field</code>:</p>
+<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb363-1" title="1">(contacts &lt;-<span class="st"> </span>contacts <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb363-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb363-3" title="3">    <span class="dt">person_id =</span> <span class="kw">cumsum</span>(field <span class="op">==</span><span class="st"> &quot;name&quot;</span>)</a>
+<a class="sourceLine" id="cb363-4" title="4">  ))</a>
+<a class="sourceLine" id="cb363-5" title="5"><span class="co">#&gt; mutate: new variable &#39;person_id&#39; with 3 unique values and 0% NA</span></a>
+<a class="sourceLine" id="cb363-6" title="6"><span class="co">#&gt; # A tibble: 6 x 3</span></a>
+<a class="sourceLine" id="cb363-7" title="7"><span class="co">#&gt;   field   value            person_id</span></a>
+<a class="sourceLine" id="cb363-8" title="8"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;                &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb363-9" title="9"><span class="co">#&gt; 1 name    Jiena McLellan           1</span></a>
+<a class="sourceLine" id="cb363-10" title="10"><span class="co">#&gt; 2 company Toyota                   1</span></a>
+<a class="sourceLine" id="cb363-11" title="11"><span class="co">#&gt; 3 name    John Smith               2</span></a>
+<a class="sourceLine" id="cb363-12" title="12"><span class="co">#&gt; 4 company google                   2</span></a>
+<a class="sourceLine" id="cb363-13" title="13"><span class="co">#&gt; 5 email   john@google.com          2</span></a>
+<a class="sourceLine" id="cb363-14" title="14"><span class="co">#&gt; 6 name    Huxley Ratcliffe         3</span></a></code></pre></div>
+<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb364-1" title="1">contacts <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb364-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> field, <span class="dt">values_from =</span> value)</a>
+<a class="sourceLine" id="cb364-3" title="3"><span class="co">#&gt; pivot_wider: reorganized (field, value) into (name, company, email) [was 6x3, now 3x4]</span></a>
+<a class="sourceLine" id="cb364-4" title="4"><span class="co">#&gt; # A tibble: 3 x 4</span></a>
+<a class="sourceLine" id="cb364-5" title="5"><span class="co">#&gt;   person_id name             company email          </span></a>
+<a class="sourceLine" id="cb364-6" title="6"><span class="co">#&gt;       &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;          </span></a>
+<a class="sourceLine" id="cb364-7" title="7"><span class="co">#&gt; 1         1 Jiena McLellan   Toyota  &lt;NA&gt;           </span></a>
+<a class="sourceLine" id="cb364-8" title="8"><span class="co">#&gt; 2         2 John Smith       google  john@google.com</span></a>
+<a class="sourceLine" id="cb364-9" title="9"><span class="co">#&gt; 3         3 Huxley Ratcliffe &lt;NA&gt;    &lt;NA&gt;</span></a></code></pre></div>
+</div>
+</div>
+<div id="combining-pivot_longer-and-pivot_wider" class="section level3">
+<h3><span class="header-section-number">6.2.3</span> Combining <code>pivot_longer()</code> and <code>pivot_wider()</code></h3>
+<p>Some problems can’t be solved by pivotting in a single direction. The examples in this section show how you might combine <code>pivot_longer()</code> and <code>pivot_wider()</code> to solve more complex problems.</p>
+<div id="world-bank-data" class="section level4">
+<h4><span class="header-section-number">6.2.3.1</span> world bank data</h4>
+<p><code>world_bank_pop</code> contains data from the World Bank about population per country from 2000 to 2018.</p>
+<div class="sourceCode" id="cb365"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb365-1" title="1">world_bank_pop</a>
+<a class="sourceLine" id="cb365-2" title="2"><span class="co">#&gt; # A tibble: 1,056 x 20</span></a>
+<a class="sourceLine" id="cb365-3" title="3"><span class="co">#&gt;   country indicator `2000` `2001` `2002` `2003`  `2004`  `2005`   `2006`</span></a>
+<a class="sourceLine" id="cb365-4" title="4"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb365-5" title="5"><span class="co">#&gt; 1 ABW     SP.URB.T~ 4.24e4 4.30e4 4.37e4 4.42e4 4.47e+4 4.49e+4  4.49e+4</span></a>
+<a class="sourceLine" id="cb365-6" title="6"><span class="co">#&gt; 2 ABW     SP.URB.G~ 1.18e0 1.41e0 1.43e0 1.31e0 9.51e-1 4.91e-1 -1.78e-2</span></a>
+<a class="sourceLine" id="cb365-7" title="7"><span class="co">#&gt; 3 ABW     SP.POP.T~ 9.09e4 9.29e4 9.50e4 9.70e4 9.87e+4 1.00e+5  1.01e+5</span></a>
+<a class="sourceLine" id="cb365-8" title="8"><span class="co">#&gt; 4 ABW     SP.POP.G~ 2.06e0 2.23e0 2.23e0 2.11e0 1.76e+0 1.30e+0  7.98e-1</span></a>
+<a class="sourceLine" id="cb365-9" title="9"><span class="co">#&gt; 5 AFG     SP.URB.T~ 4.44e6 4.65e6 4.89e6 5.16e6 5.43e+6 5.69e+6  5.93e+6</span></a>
+<a class="sourceLine" id="cb365-10" title="10"><span class="co">#&gt; 6 AFG     SP.URB.G~ 3.91e0 4.66e0 5.13e0 5.23e0 5.12e+0 4.77e+0  4.12e+0</span></a>
+<a class="sourceLine" id="cb365-11" title="11"><span class="co">#&gt; # ... with 1,050 more rows, and 11 more variables: `2007` &lt;dbl&gt;, `2008` &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb365-12" title="12"><span class="co">#&gt; #   `2009` &lt;dbl&gt;, `2010` &lt;dbl&gt;, `2011` &lt;dbl&gt;, `2012` &lt;dbl&gt;, `2013` &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb365-13" title="13"><span class="co">#&gt; #   `2014` &lt;dbl&gt;, `2015` &lt;dbl&gt;, `2016` &lt;dbl&gt;, `2017` &lt;dbl&gt;</span></a></code></pre></div>
+<p>It’s not obvious exactly what steps are needed yet, but I’ll start with the most obvious problem: <code>year</code> is spread across multiple columns.</p>
+<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb366-1" title="1">pop2 &lt;-<span class="st"> </span>world_bank_pop <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb366-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="st">`</span><span class="dt">2000</span><span class="st">`</span><span class="op">:</span><span class="st">`</span><span class="dt">2017</span><span class="st">`</span>, <span class="dt">names_to =</span> <span class="st">&quot;year&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;value&quot;</span>)</a>
+<a class="sourceLine" id="cb366-3" title="3"><span class="co">#&gt; pivot_longer: reorganized (2000, 2001, 2002, 2003, 2004, …) into (year, value) [was 1056x20, now 19008x4]</span></a>
+<a class="sourceLine" id="cb366-4" title="4">pop2</a>
+<a class="sourceLine" id="cb366-5" title="5"><span class="co">#&gt; # A tibble: 19,008 x 4</span></a>
+<a class="sourceLine" id="cb366-6" title="6"><span class="co">#&gt;   country indicator   year  value</span></a>
+<a class="sourceLine" id="cb366-7" title="7"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb366-8" title="8"><span class="co">#&gt; 1 ABW     SP.URB.TOTL 2000  42444</span></a>
+<a class="sourceLine" id="cb366-9" title="9"><span class="co">#&gt; 2 ABW     SP.URB.TOTL 2001  43048</span></a>
+<a class="sourceLine" id="cb366-10" title="10"><span class="co">#&gt; 3 ABW     SP.URB.TOTL 2002  43670</span></a>
+<a class="sourceLine" id="cb366-11" title="11"><span class="co">#&gt; 4 ABW     SP.URB.TOTL 2003  44246</span></a>
+<a class="sourceLine" id="cb366-12" title="12"><span class="co">#&gt; 5 ABW     SP.URB.TOTL 2004  44669</span></a>
+<a class="sourceLine" id="cb366-13" title="13"><span class="co">#&gt; 6 ABW     SP.URB.TOTL 2005  44889</span></a>
+<a class="sourceLine" id="cb366-14" title="14"><span class="co">#&gt; # ... with 19,002 more rows</span></a></code></pre></div>
+<p>Next we need to consider the <code>indicator</code> variable:</p>
+<div class="sourceCode" id="cb367"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb367-1" title="1">world_bank_pop <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">count</span>(indicator)</a>
+<a class="sourceLine" id="cb367-2" title="2"><span class="co">#&gt; count: now 4 rows and 2 columns, ungrouped</span></a>
+<a class="sourceLine" id="cb367-3" title="3"><span class="co">#&gt; # A tibble: 4 x 2</span></a>
+<a class="sourceLine" id="cb367-4" title="4"><span class="co">#&gt;   indicator       n</span></a>
+<a class="sourceLine" id="cb367-5" title="5"><span class="co">#&gt;   &lt;chr&gt;       &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb367-6" title="6"><span class="co">#&gt; 1 SP.POP.GROW   264</span></a>
+<a class="sourceLine" id="cb367-7" title="7"><span class="co">#&gt; 2 SP.POP.TOTL   264</span></a>
+<a class="sourceLine" id="cb367-8" title="8"><span class="co">#&gt; 3 SP.URB.GROW   264</span></a>
+<a class="sourceLine" id="cb367-9" title="9"><span class="co">#&gt; 4 SP.URB.TOTL   264</span></a></code></pre></div>
+<p>Here <code>SP.POP.GROW</code> is population growth, <code>SP.POP.TOTL</code> is total population, and <code>SP.URB.*</code> are the same but only for urban areas. Let’s split this up into two variables: <code>area</code> (total or urban) and the actual variable (population or growth):</p>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb368-1" title="1"><span class="co"># Use NA to omit the variable in the output.</span></a>
+<a class="sourceLine" id="cb368-2" title="2">pop3 &lt;-<span class="st"> </span>pop2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb368-3" title="3"><span class="st">  </span><span class="kw">separate</span>(indicator, <span class="kw">c</span>(<span class="ot">NA</span>, <span class="st">&quot;area&quot;</span>, <span class="st">&quot;variable&quot;</span>), <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">.&quot;</span>)  <span class="co"># sep takes a regex</span></a>
+<a class="sourceLine" id="cb368-4" title="4">pop3</a>
+<a class="sourceLine" id="cb368-5" title="5"><span class="co">#&gt; # A tibble: 19,008 x 5</span></a>
+<a class="sourceLine" id="cb368-6" title="6"><span class="co">#&gt;   country area  variable year  value</span></a>
+<a class="sourceLine" id="cb368-7" title="7"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb368-8" title="8"><span class="co">#&gt; 1 ABW     URB   TOTL     2000  42444</span></a>
+<a class="sourceLine" id="cb368-9" title="9"><span class="co">#&gt; 2 ABW     URB   TOTL     2001  43048</span></a>
+<a class="sourceLine" id="cb368-10" title="10"><span class="co">#&gt; 3 ABW     URB   TOTL     2002  43670</span></a>
+<a class="sourceLine" id="cb368-11" title="11"><span class="co">#&gt; 4 ABW     URB   TOTL     2003  44246</span></a>
+<a class="sourceLine" id="cb368-12" title="12"><span class="co">#&gt; 5 ABW     URB   TOTL     2004  44669</span></a>
+<a class="sourceLine" id="cb368-13" title="13"><span class="co">#&gt; 6 ABW     URB   TOTL     2005  44889</span></a>
+<a class="sourceLine" id="cb368-14" title="14"><span class="co">#&gt; # ... with 19,002 more rows</span></a></code></pre></div>
+<p>Now we can complete the tidying by pivoting <code>variable</code> and <code>value</code> to make <code>TOTL</code> and <code>GROW</code> columns:</p>
+<div class="sourceCode" id="cb369"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb369-1" title="1">pop3 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb369-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> variable, <span class="dt">values_from =</span> value)</a>
+<a class="sourceLine" id="cb369-3" title="3"><span class="co">#&gt; pivot_wider: reorganized (variable, value) into (TOTL, GROW) [was 19008x5, now 9504x5]</span></a>
+<a class="sourceLine" id="cb369-4" title="4"><span class="co">#&gt; # A tibble: 9,504 x 5</span></a>
+<a class="sourceLine" id="cb369-5" title="5"><span class="co">#&gt;   country area  year   TOTL  GROW</span></a>
+<a class="sourceLine" id="cb369-6" title="6"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb369-7" title="7"><span class="co">#&gt; 1 ABW     URB   2000  42444 1.18 </span></a>
+<a class="sourceLine" id="cb369-8" title="8"><span class="co">#&gt; 2 ABW     URB   2001  43048 1.41 </span></a>
+<a class="sourceLine" id="cb369-9" title="9"><span class="co">#&gt; 3 ABW     URB   2002  43670 1.43 </span></a>
+<a class="sourceLine" id="cb369-10" title="10"><span class="co">#&gt; 4 ABW     URB   2003  44246 1.31 </span></a>
+<a class="sourceLine" id="cb369-11" title="11"><span class="co">#&gt; 5 ABW     URB   2004  44669 0.951</span></a>
+<a class="sourceLine" id="cb369-12" title="12"><span class="co">#&gt; 6 ABW     URB   2005  44889 0.491</span></a>
+<a class="sourceLine" id="cb369-13" title="13"><span class="co">#&gt; # ... with 9,498 more rows</span></a></code></pre></div>
+</div>
+<div id="mutli-choice-data" class="section level4">
+<h4><span class="header-section-number">6.2.3.2</span> mutli choice data</h4>
+<p>Based on a suggestion by Maxime Wack, <a href="https://github.com/tidyverse/tidyr/issues/384" class="uri">https://github.com/tidyverse/tidyr/issues/384</a>), the final example shows how to deal with a common way of recording multiple choice data. Often you will get such data as follows:</p>
+<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb370-1" title="1">(multi &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
+<a class="sourceLine" id="cb370-2" title="2">  <span class="op">~</span>id, <span class="op">~</span>choice1, <span class="op">~</span>choice2, <span class="op">~</span>choice3,</a>
+<a class="sourceLine" id="cb370-3" title="3">  <span class="dv">1</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>,</a>
+<a class="sourceLine" id="cb370-4" title="4">  <span class="dv">2</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;B&quot;</span>,  <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb370-5" title="5">  <span class="dv">3</span>, <span class="st">&quot;D&quot;</span>,  <span class="ot">NA</span>,  <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb370-6" title="6">  <span class="dv">4</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;D&quot;</span>,  <span class="ot">NA</span></a>
+<a class="sourceLine" id="cb370-7" title="7">))</a>
+<a class="sourceLine" id="cb370-8" title="8"><span class="co">#&gt; # A tibble: 4 x 4</span></a>
+<a class="sourceLine" id="cb370-9" title="9"><span class="co">#&gt;      id choice1 choice2 choice3</span></a>
+<a class="sourceLine" id="cb370-10" title="10"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  </span></a>
+<a class="sourceLine" id="cb370-11" title="11"><span class="co">#&gt; 1     1 A       B       C      </span></a>
+<a class="sourceLine" id="cb370-12" title="12"><span class="co">#&gt; 2     2 C       B       &lt;NA&gt;   </span></a>
+<a class="sourceLine" id="cb370-13" title="13"><span class="co">#&gt; 3     3 D       &lt;NA&gt;    &lt;NA&gt;   </span></a>
+<a class="sourceLine" id="cb370-14" title="14"><span class="co">#&gt; 4     4 B       D       &lt;NA&gt;</span></a></code></pre></div>
+<p>But the actual order isn’t important, and you’d prefer to have the individual questions in the columns. You can achieve the desired transformation in two steps. First, you make the data longer, eliminating the explcit <code>NA</code>s, and adding a column to indicate that this choice was chosen:</p>
+<div class="sourceCode" id="cb371"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb371-1" title="1">multi2 &lt;-<span class="st"> </span>multi <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb371-2" title="2"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">-</span>id, <span class="dt">values_drop_na =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb371-3" title="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">checked =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb371-4" title="4"><span class="co">#&gt; pivot_longer: reorganized (choice1, choice2, choice3) into (name, value) [was 4x4, now 8x3]</span></a>
+<a class="sourceLine" id="cb371-5" title="5"><span class="co">#&gt; mutate: new variable &#39;checked&#39; with one unique value and 0% NA</span></a>
+<a class="sourceLine" id="cb371-6" title="6">multi2</a>
+<a class="sourceLine" id="cb371-7" title="7"><span class="co">#&gt; # A tibble: 8 x 4</span></a>
+<a class="sourceLine" id="cb371-8" title="8"><span class="co">#&gt;      id name    value checked</span></a>
+<a class="sourceLine" id="cb371-9" title="9"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;lgl&gt;  </span></a>
+<a class="sourceLine" id="cb371-10" title="10"><span class="co">#&gt; 1     1 choice1 A     TRUE   </span></a>
+<a class="sourceLine" id="cb371-11" title="11"><span class="co">#&gt; 2     1 choice2 B     TRUE   </span></a>
+<a class="sourceLine" id="cb371-12" title="12"><span class="co">#&gt; 3     1 choice3 C     TRUE   </span></a>
+<a class="sourceLine" id="cb371-13" title="13"><span class="co">#&gt; 4     2 choice1 C     TRUE   </span></a>
+<a class="sourceLine" id="cb371-14" title="14"><span class="co">#&gt; 5     2 choice2 B     TRUE   </span></a>
+<a class="sourceLine" id="cb371-15" title="15"><span class="co">#&gt; 6     3 choice1 D     TRUE   </span></a>
+<a class="sourceLine" id="cb371-16" title="16"><span class="co">#&gt; # ... with 2 more rows</span></a></code></pre></div>
+<p>Then you make the data wider, filling in the missing observations with <code>FALSE</code>; note the use of <code>id_cols = id</code> here, this eliminated the <code>name</code> column and combines mutilples rows per person into one row, since we don’t need <code>name</code> in identifying an observation:</p>
+<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb372-1" title="1">multi2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb372-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">id_cols =</span> id,</a>
+<a class="sourceLine" id="cb372-3" title="3">              <span class="dt">names_from =</span> value, <span class="dt">values_from =</span> checked, </a>
+<a class="sourceLine" id="cb372-4" title="4">              <span class="dt">values_fill =</span> <span class="kw">list</span>(<span class="dt">checked =</span> <span class="ot">FALSE</span>))</a>
+<a class="sourceLine" id="cb372-5" title="5"><span class="co">#&gt; pivot_wider: reorganized (name, value, checked) into (A, B, C, D) [was 8x4, now 4x5]</span></a>
+<a class="sourceLine" id="cb372-6" title="6"><span class="co">#&gt; # A tibble: 4 x 5</span></a>
+<a class="sourceLine" id="cb372-7" title="7"><span class="co">#&gt;      id A     B     C     D    </span></a>
+<a class="sourceLine" id="cb372-8" title="8"><span class="co">#&gt;   &lt;dbl&gt; &lt;lgl&gt; &lt;lgl&gt; &lt;lgl&gt; &lt;lgl&gt;</span></a>
+<a class="sourceLine" id="cb372-9" title="9"><span class="co">#&gt; 1     1 TRUE  TRUE  TRUE  FALSE</span></a>
+<a class="sourceLine" id="cb372-10" title="10"><span class="co">#&gt; 2     2 FALSE TRUE  TRUE  FALSE</span></a>
+<a class="sourceLine" id="cb372-11" title="11"><span class="co">#&gt; 3     3 FALSE FALSE FALSE TRUE </span></a>
+<a class="sourceLine" id="cb372-12" title="12"><span class="co">#&gt; 4     4 FALSE TRUE  FALSE TRUE</span></a></code></pre></div>
+</div>
+</div>
+<div id="exercises-10" class="section level3">
+<h3><span class="header-section-number">6.2.4</span> Exercises</h3>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-52" class="exercise"><strong>Exercise 6.2  </strong></span>在下面的例子中，研究为什么 <code>pivot_longer()</code> 和 <code>pivot_wider()</code> 不是完美对称的
+</div>
+
+<div class="sourceCode" id="cb373"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb373-1" title="1">(stocks &lt;-<span class="st"> </span><span class="kw">tibble</span>(</a>
+<a class="sourceLine" id="cb373-2" title="2">  <span class="dt">year =</span> <span class="kw">c</span>(<span class="dv">2015</span>, <span class="dv">2015</span>, <span class="dv">2016</span>, <span class="dv">2016</span>),</a>
+<a class="sourceLine" id="cb373-3" title="3">  <span class="dt">half =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>),</a>
+<a class="sourceLine" id="cb373-4" title="4">  <span class="dt">return =</span> <span class="kw">c</span>(<span class="fl">1.88</span>, <span class="fl">0.59</span>, <span class="fl">0.92</span>, <span class="fl">0.17</span>)</a>
+<a class="sourceLine" id="cb373-5" title="5">))</a>
+<a class="sourceLine" id="cb373-6" title="6"><span class="co">#&gt; # A tibble: 4 x 3</span></a>
+<a class="sourceLine" id="cb373-7" title="7"><span class="co">#&gt;    year  half return</span></a>
+<a class="sourceLine" id="cb373-8" title="8"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb373-9" title="9"><span class="co">#&gt; 1  2015     1   1.88</span></a>
+<a class="sourceLine" id="cb373-10" title="10"><span class="co">#&gt; 2  2015     2   0.59</span></a>
+<a class="sourceLine" id="cb373-11" title="11"><span class="co">#&gt; 3  2016     1   0.92</span></a>
+<a class="sourceLine" id="cb373-12" title="12"><span class="co">#&gt; 4  2016     2   0.17</span></a>
+<a class="sourceLine" id="cb373-13" title="13">stocks <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb373-14" title="14"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> year, <span class="dt">values_from =</span> return) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb373-15" title="15"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">-</span>half, <span class="dt">names_to =</span> <span class="st">&quot;year&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;return&quot;</span>)</a>
+<a class="sourceLine" id="cb373-16" title="16"><span class="co">#&gt; pivot_wider: reorganized (year, return) into (2015, 2016) [was 4x3, now 2x3]</span></a>
+<a class="sourceLine" id="cb373-17" title="17"><span class="co">#&gt; pivot_longer: reorganized (2015, 2016) into (year, return) [was 2x3, now 4x3]</span></a>
+<a class="sourceLine" id="cb373-18" title="18"><span class="co">#&gt; # A tibble: 4 x 3</span></a>
+<a class="sourceLine" id="cb373-19" title="19"><span class="co">#&gt;    half year  return</span></a>
+<a class="sourceLine" id="cb373-20" title="20"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb373-21" title="21"><span class="co">#&gt; 1     1 2015    1.88</span></a>
+<a class="sourceLine" id="cb373-22" title="22"><span class="co">#&gt; 2     1 2016    0.92</span></a>
+<a class="sourceLine" id="cb373-23" title="23"><span class="co">#&gt; 3     2 2015    0.59</span></a>
+<a class="sourceLine" id="cb373-24" title="24"><span class="co">#&gt; 4     2 2016    0.17</span></a></code></pre></div>
+<p>先后使用 <code>pivot_wider()</code> 和 <code>pivot_longer()</code>无法得到一个相同的数据集（除了列的顺序）是因为，数据整理有时会丢失列的类型信息。当 <code>pivot_wider()</code> 将变量 <code>year</code> 的值 <code>2015</code> 和 <code>2016</code> 用作列的名字时，它们自然被转化为了字符串<code>"2015"</code>和<code>"2016"</code>；随后 <code>pivot_longer()</code> 把列名用作键列<code>year</code>的值，从而<code>year</code>自然变成了一个字符向量，可以用 <code>names_ptypes</code> 避免这一点<br />
+。</p>
+<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb374-1" title="1">stocks <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb374-2" title="2"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> year, <span class="dt">values_from =</span> return) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb374-3" title="3"><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">-</span>half, <span class="dt">names_to =</span> <span class="st">&quot;year&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;return&quot;</span>,</a>
+<a class="sourceLine" id="cb374-4" title="4">               <span class="dt">names_ptypes =</span> <span class="kw">list</span>(<span class="dt">year =</span> <span class="kw">double</span>()))</a>
+<a class="sourceLine" id="cb374-5" title="5"><span class="co">#&gt; pivot_wider: reorganized (year, return) into (2015, 2016) [was 4x3, now 2x3]</span></a>
+<a class="sourceLine" id="cb374-6" title="6"><span class="co">#&gt; pivot_longer: reorganized (2015, 2016) into (year, return) [was 2x3, now 4x3]</span></a>
+<a class="sourceLine" id="cb374-7" title="7"><span class="co">#&gt; # A tibble: 4 x 3</span></a>
+<a class="sourceLine" id="cb374-8" title="8"><span class="co">#&gt;    half  year return</span></a>
+<a class="sourceLine" id="cb374-9" title="9"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb374-10" title="10"><span class="co">#&gt; 1     1  2015   1.88</span></a>
+<a class="sourceLine" id="cb374-11" title="11"><span class="co">#&gt; 2     1  2016   0.92</span></a>
+<a class="sourceLine" id="cb374-12" title="12"><span class="co">#&gt; 3     2  2015   0.59</span></a>
+<a class="sourceLine" id="cb374-13" title="13"><span class="co">#&gt; 4     2  2016   0.17</span></a></code></pre></div>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-55" class="exercise"><strong>Exercise 6.3  </strong></span>为什么下面的数据框不能应用 <code>pivot_wider()</code>？可以添加一列解决这个问题吗？
+</div>
+
+<div class="sourceCode" id="cb375"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb375-1" title="1">(people &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
+<a class="sourceLine" id="cb375-2" title="2">  <span class="op">~</span>name, <span class="op">~</span>key, <span class="op">~</span>value,</a>
+<a class="sourceLine" id="cb375-3" title="3">  <span class="st">&quot;Phillip Woods&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="dv">45</span>,</a>
+<a class="sourceLine" id="cb375-4" title="4">  <span class="st">&quot;Phillip Woods&quot;</span>, <span class="st">&quot;height&quot;</span>, <span class="dv">186</span>,</a>
+<a class="sourceLine" id="cb375-5" title="5">  <span class="st">&quot;Phillip Woods&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="dv">50</span>,</a>
+<a class="sourceLine" id="cb375-6" title="6">  <span class="st">&quot;Jessica Cordero&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="dv">37</span>,</a>
+<a class="sourceLine" id="cb375-7" title="7">  <span class="st">&quot;Jessica Cordero&quot;</span>, <span class="st">&quot;height&quot;</span>, <span class="dv">156</span></a>
+<a class="sourceLine" id="cb375-8" title="8">))</a>
+<a class="sourceLine" id="cb375-9" title="9"><span class="co">#&gt; # A tibble: 5 x 3</span></a>
+<a class="sourceLine" id="cb375-10" title="10"><span class="co">#&gt;   name            key    value</span></a>
+<a class="sourceLine" id="cb375-11" title="11"><span class="co">#&gt;   &lt;chr&gt;           &lt;chr&gt;  &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb375-12" title="12"><span class="co">#&gt; 1 Phillip Woods   age       45</span></a>
+<a class="sourceLine" id="cb375-13" title="13"><span class="co">#&gt; 2 Phillip Woods   height   186</span></a>
+<a class="sourceLine" id="cb375-14" title="14"><span class="co">#&gt; 3 Phillip Woods   age       50</span></a>
+<a class="sourceLine" id="cb375-15" title="15"><span class="co">#&gt; 4 Jessica Cordero age       37</span></a>
+<a class="sourceLine" id="cb375-16" title="16"><span class="co">#&gt; 5 Jessica Cordero height   156</span></a>
+<a class="sourceLine" id="cb375-17" title="17"></a>
+<a class="sourceLine" id="cb375-18" title="18">people <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb375-19" title="19"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> key, <span class="dt">values_from =</span> value)</a>
+<a class="sourceLine" id="cb375-20" title="20"><span class="co">#&gt; # A tibble: 2 x 3</span></a>
+<a class="sourceLine" id="cb375-21" title="21"><span class="co">#&gt;   name            age       height   </span></a>
+<a class="sourceLine" id="cb375-22" title="22"><span class="co">#&gt;   &lt;chr&gt;           &lt;list&gt;    &lt;list&gt;   </span></a>
+<a class="sourceLine" id="cb375-23" title="23"><span class="co">#&gt; 1 Phillip Woods   &lt;dbl [2]&gt; &lt;dbl [1]&gt;</span></a>
+<a class="sourceLine" id="cb375-24" title="24"><span class="co">#&gt; 2 Jessica Cordero &lt;dbl [1]&gt; &lt;dbl [1]&gt;</span></a></code></pre></div>
+<p>这个例子和 <a href="pivoting.html#contact">6.2.2.4</a> 中的 <code>contact</code> 很类似，虽然这里有第三列 <code>name</code>，但仍不足以唯一标识任意观测</p>
+<p>因为这个数据集里有两个对于 “Phillip Woods” 在 <code>age</code> 上年龄的观测，<code>pivot_wider()</code> 就要把由<code>(Phillips Woods, age)</code>确定的单元格里“塞进两个值”。本质上因为 <code>name</code> 和 <code>key</code> 这两个变量上的值不能唯一确定一行，所以我们只要添加一列，让<code>name</code>、<code>key</code>和新列可以唯一确定一行即可：</p>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb376-1" title="1">people <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb376-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">id =</span> <span class="kw">row_number</span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb376-3" title="3"><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">names_from =</span> key, <span class="dt">values_from =</span> value)</a>
+<a class="sourceLine" id="cb376-4" title="4"><span class="co">#&gt; mutate: new variable &#39;id&#39; with 5 unique values and 0% NA</span></a>
+<a class="sourceLine" id="cb376-5" title="5"><span class="co">#&gt; pivot_wider: reorganized (key, value) into (age, height) [was 5x4, now 5x4]</span></a>
+<a class="sourceLine" id="cb376-6" title="6"><span class="co">#&gt; # A tibble: 5 x 4</span></a>
+<a class="sourceLine" id="cb376-7" title="7"><span class="co">#&gt;   name               id   age height</span></a>
+<a class="sourceLine" id="cb376-8" title="8"><span class="co">#&gt;   &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb376-9" title="9"><span class="co">#&gt; 1 Phillip Woods       1    45     NA</span></a>
+<a class="sourceLine" id="cb376-10" title="10"><span class="co">#&gt; 2 Phillip Woods       2    NA    186</span></a>
+<a class="sourceLine" id="cb376-11" title="11"><span class="co">#&gt; 3 Phillip Woods       3    50     NA</span></a>
+<a class="sourceLine" id="cb376-12" title="12"><span class="co">#&gt; 4 Jessica Cordero     4    37     NA</span></a>
+<a class="sourceLine" id="cb376-13" title="13"><span class="co">#&gt; 5 Jessica Cordero     5    NA    156</span></a></code></pre></div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="tidyr-intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="nesting.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/enixam/rfordatascience/edit/master/tidyr.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

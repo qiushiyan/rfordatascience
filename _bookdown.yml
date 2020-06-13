@@ -3,6 +3,8 @@ book_filename: r4ds
 
 new_session: yes
 
+output_dir: 'docs'
+
 rmd_files: [
   "index.rmd",
   

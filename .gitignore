@@ -3,6 +3,5 @@
 .RData
 _publish.R
 .rds
-_book
 _bookdown_files
 rsconnect

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>11.1 PDF | R for data science: tidyverse and beyond</title>
+  <meta name="description" content="11.1 PDF | R for data science: tidyverse and beyond" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="11.1 PDF | R for data science: tidyverse and beyond" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="enixam/rfordatascience" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="11.1 PDF | R for data science: tidyverse and beyond" />
+  
+  
+  
+
+<meta name="author" content="Maxine" />
+
+
+<meta name="date" content="2020-05-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="reading-in-data-from-other-formats.html"/>
+<link rel="next" href="office-documents.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/jsoneditor-5.25.6/jsoneditor.min.css" rel="stylesheet" />
+<script src="libs/jsoneditor-5.25.6/jsoneditor.min.js"></script>
+<script src="libs/jsonedit-binding-3.0.0/jsonedit.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R4DS: tidyverse and beyond</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a></li>
+<li class="part"><span><b>I R for data science</b></span></li>
+<li class="chapter" data-level="1" data-path="dplyr-data-transformation.html"><a href="dplyr-data-transformation.html"><i class="fa fa-check"></i><b>1</b> dplyr: Data transformation</a><ul>
+<li class="chapter" data-level="1.1" data-path="filter.html"><a href="filter.html"><i class="fa fa-check"></i><b>1.1</b> <code>filter()</code></a><ul>
+<li class="chapter" data-level="1.1.1" data-path="filter.html"><a href="filter.html#operators"><i class="fa fa-check"></i><b>1.1.1</b> Operators</a></li>
+<li class="chapter" data-level="1.1.2" data-path="filter.html"><a href="filter.html#missing-values"><i class="fa fa-check"></i><b>1.1.2</b> Missing values</a></li>
+<li class="chapter" data-level="1.1.3" data-path="filter.html"><a href="filter.html#exercises"><i class="fa fa-check"></i><b>1.1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.1.4" data-path="filter.html"><a href="filter.html#slice"><i class="fa fa-check"></i><b>1.1.4</b> <code>slice()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="arrange.html"><a href="arrange.html"><i class="fa fa-check"></i><b>1.2</b> <code>arrange()</code></a><ul>
+<li class="chapter" data-level="1.2.1" data-path="arrange.html"><a href="arrange.html#exercises-1"><i class="fa fa-check"></i><b>1.2.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="select.html"><a href="select.html"><i class="fa fa-check"></i><b>1.3</b> <code>select()</code></a><ul>
+<li class="chapter" data-level="1.3.1" data-path="select.html"><a href="select.html#练习"><i class="fa fa-check"></i><b>1.3.1</b> 练习</a></li>
+<li class="chapter" data-level="1.3.2" data-path="select.html"><a href="select.html#常用创建函数"><i class="fa fa-check"></i><b>1.3.2</b> 常用创建函数</a></li>
+<li class="chapter" data-level="1.3.3" data-path="select.html"><a href="select.html#exercises-2"><i class="fa fa-check"></i><b>1.3.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="summarize.html"><a href="summarize.html"><i class="fa fa-check"></i><b>1.4</b> <code>summarize()</code></a><ul>
+<li class="chapter" data-level="1.4.1" data-path="summarize.html"><a href="summarize.html#missing-values-in-summarize"><i class="fa fa-check"></i><b>1.4.1</b> Missing values in <code>summarize()</code></a></li>
+<li class="chapter" data-level="1.4.2" data-path="summarize.html"><a href="summarize.html#计数函数"><i class="fa fa-check"></i><b>1.4.2</b> 计数函数</a></li>
+<li class="chapter" data-level="1.4.3" data-path="summarize.html"><a href="summarize.html#逻辑值的计数和比例sumx-10-和-meany-0"><i class="fa fa-check"></i><b>1.4.3</b> 逻辑值的计数和比例:<code>sum(x &gt; 10) 和 mean(y == 0)</code></a></li>
+<li class="chapter" data-level="1.4.4" data-path="summarize.html"><a href="summarize.html#其他常用的摘要函数"><i class="fa fa-check"></i><b>1.4.4</b> 其他常用的摘要函数</a></li>
+<li class="chapter" data-level="1.4.5" data-path="summarize.html"><a href="summarize.html#多个分组变量的消耗"><i class="fa fa-check"></i><b>1.4.5</b> 多个分组变量的消耗</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="group-by-combined-with-other-functions.html"><a href="group-by-combined-with-other-functions.html"><i class="fa fa-check"></i><b>1.5</b> <code>group_by()</code> combined with other functions</a></li>
+<li class="chapter" data-level="1.6" data-path="dplyr-exercise.html"><a href="dplyr-exercise.html"><i class="fa fa-check"></i><b>1.6</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="tibble-modern-data-frames.html"><a href="tibble-modern-data-frames.html"><i class="fa fa-check"></i><b>2</b> tibble: Modern data frames</a><ul>
+<li class="chapter" data-level="2.1" data-path="tibble-intro.html"><a href="tibble-intro.html"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html"><i class="fa fa-check"></i><b>2.2</b> Comparing tibble and data.frame</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#creating"><i class="fa fa-check"></i><b>2.2.1</b> Creating</a></li>
+<li class="chapter" data-level="2.2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#printing"><i class="fa fa-check"></i><b>2.2.2</b> Printing</a></li>
+<li class="chapter" data-level="2.2.3" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#subsetting"><i class="fa fa-check"></i><b>2.2.3</b> Subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html"><i class="fa fa-check"></i><b>2.3</b> Comparing two data frames (tibbles)</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#dplyrall_equal"><i class="fa fa-check"></i><b>2.3.1</b> <code>dplyr::all_equal()</code></a></li>
+<li class="chapter" data-level="2.3.2" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#janitorcompare_df_cols"><i class="fa fa-check"></i><b>2.3.2</b> <code>janitor::compare_df_cols()</code></a></li>
+<li class="chapter" data-level="2.3.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#vetralike"><i class="fa fa-check"></i><b>2.3.3</b> <code>vetr::alike()</code></a></li>
+<li class="chapter" data-level="2.3.4" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#diffdfdiffdf"><i class="fa fa-check"></i><b>2.3.4</b> <code>diffdf::diffdf()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="tibble-exercise.html"><a href="tibble-exercise.html"><i class="fa fa-check"></i><b>2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="readr-data-import.html"><a href="readr-data-import.html"><i class="fa fa-check"></i><b>3</b> readr: Data import</a><ul>
+<li class="chapter" data-level="3.1" data-path="importing-data-in-base-r.html"><a href="importing-data-in-base-r.html"><i class="fa fa-check"></i><b>3.1</b> Importing data in base R</a></li>
+<li class="chapter" data-level="3.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html"><i class="fa fa-check"></i><b>3.2</b> Importing data in <code>readr</code></a><ul>
+<li class="chapter" data-level="3.2.1" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#introduction"><i class="fa fa-check"></i><b>3.2.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#writing-data"><i class="fa fa-check"></i><b>3.2.2</b> Writing data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#exercises-3"><i class="fa fa-check"></i><b>3.2.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html"><i class="fa fa-check"></i><b>3.3</b> Parsing a vector</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#numeric"><i class="fa fa-check"></i><b>3.3.1</b> Numeric</a></li>
+<li class="chapter" data-level="3.3.2" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#character"><i class="fa fa-check"></i><b>3.3.2</b> Character</a></li>
+<li class="chapter" data-level="3.3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#factor"><i class="fa fa-check"></i><b>3.3.3</b> Factor</a></li>
+<li class="chapter" data-level="3.3.4" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#date-and-time"><i class="fa fa-check"></i><b>3.3.4</b> Date and time</a></li>
+<li class="chapter" data-level="3.3.5" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#exercises-4"><i class="fa fa-check"></i><b>3.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html"><i class="fa fa-check"></i><b>3.4</b> Parsing a file</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parsing-a-file.html"><a href="parsing-a-file.html#strategies"><i class="fa fa-check"></i><b>3.4.1</b> Strategies</a></li>
+<li class="chapter" data-level="3.4.2" data-path="parsing-a-file.html"><a href="parsing-a-file.html#possible-challenges"><i class="fa fa-check"></i><b>3.4.2</b> Possible challenges</a></li>
+<li class="chapter" data-level="3.4.3" data-path="parsing-a-file.html"><a href="parsing-a-file.html#other-tips"><i class="fa fa-check"></i><b>3.4.3</b> Other tips</a></li>
+<li class="chapter" data-level="3.4.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-dealing-with-metadata"><i class="fa fa-check"></i><b>3.4.4</b> Example: Dealing with metadata</a></li>
+<li class="chapter" data-level="3.4.5" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-multi-row-headers"><i class="fa fa-check"></i><b>3.4.5</b> Example: multi-row headers</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="readxl.html"><a href="readxl.html"><i class="fa fa-check"></i><b>3.5</b> <code>readxl</code></a><ul>
+<li class="chapter" data-level="3.5.1" data-path="readxl.html"><a href="readxl.html#multi-row-headers-in-excel"><i class="fa fa-check"></i><b>3.5.1</b> Multi-row headers in Excel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="lubridate-dates-and-times.html"><a href="lubridate-dates-and-times.html"><i class="fa fa-check"></i><b>4</b> lubridate: Dates and times</a><ul>
+<li class="chapter" data-level="4.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html"><i class="fa fa-check"></i><b>4.1</b> Creating dates and times</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-strings"><i class="fa fa-check"></i><b>4.1.1</b> From strings</a></li>
+<li class="chapter" data-level="4.1.2" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-individual-components"><i class="fa fa-check"></i><b>4.1.2</b> From individual components</a></li>
+<li class="chapter" data-level="4.1.3" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-other-times"><i class="fa fa-check"></i><b>4.1.3</b> From other times</a></li>
+<li class="chapter" data-level="4.1.4" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#exercises-5"><i class="fa fa-check"></i><b>4.1.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="date-time-components.html"><a href="date-time-components.html"><i class="fa fa-check"></i><b>4.2</b> Date-time components</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="date-time-components.html"><a href="date-time-components.html#accessing-components"><i class="fa fa-check"></i><b>4.2.1</b> Accessing components</a></li>
+<li class="chapter" data-level="4.2.2" data-path="date-time-components.html"><a href="date-time-components.html#rounding"><i class="fa fa-check"></i><b>4.2.2</b> Rounding</a></li>
+<li class="chapter" data-level="4.2.3" data-path="date-time-components.html"><a href="date-time-components.html#setting-components"><i class="fa fa-check"></i><b>4.2.3</b> Setting components</a></li>
+<li class="chapter" data-level="4.2.4" data-path="date-time-components.html"><a href="date-time-components.html#exercises-6"><i class="fa fa-check"></i><b>4.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="time-span.html"><a href="time-span.html"><i class="fa fa-check"></i><b>4.3</b> Time span</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="time-span.html"><a href="time-span.html#时期-durations"><i class="fa fa-check"></i><b>4.3.1</b> 时期 Durations</a></li>
+<li class="chapter" data-level="4.3.2" data-path="time-span.html"><a href="time-span.html#阶段-periods"><i class="fa fa-check"></i><b>4.3.2</b> 阶段 Periods</a></li>
+<li class="chapter" data-level="4.3.3" data-path="time-span.html"><a href="time-span.html#区间-intervals"><i class="fa fa-check"></i><b>4.3.3</b> 区间 Intervals</a></li>
+<li class="chapter" data-level="4.3.4" data-path="time-span.html"><a href="time-span.html#conclusion"><i class="fa fa-check"></i><b>4.3.4</b> Conclusion</a></li>
+<li class="chapter" data-level="4.3.5" data-path="time-span.html"><a href="time-span.html#exercises-7"><i class="fa fa-check"></i><b>4.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="hms.html"><a href="hms.html"><i class="fa fa-check"></i><b>4.4</b> hms</a></li>
+<li class="chapter" data-level="4.5" data-path="dint.html"><a href="dint.html"><i class="fa fa-check"></i><b>4.5</b> dint</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="dint.html"><a href="dint.html#creation"><i class="fa fa-check"></i><b>4.5.1</b> Creation</a></li>
+<li class="chapter" data-level="4.5.2" data-path="dint.html"><a href="dint.html#arithmetic-and-sequences"><i class="fa fa-check"></i><b>4.5.2</b> Arithmetic and Sequences</a></li>
+<li class="chapter" data-level="4.5.3" data-path="dint.html"><a href="dint.html#accessors"><i class="fa fa-check"></i><b>4.5.3</b> Accessors</a></li>
+<li class="chapter" data-level="4.5.4" data-path="dint.html"><a href="dint.html#formatting"><i class="fa fa-check"></i><b>4.5.4</b> Formatting</a></li>
+<li class="chapter" data-level="4.5.5" data-path="dint.html"><a href="dint.html#labelling-functions-in-ggplot2"><i class="fa fa-check"></i><b>4.5.5</b> Labelling functions in ggplot2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="forcats-factor.html"><a href="forcats-factor.html"><i class="fa fa-check"></i><b>5</b> forcats: factor</a><ul>
+<li class="chapter" data-level="5.1" data-path="factor-basics.html"><a href="factor-basics.html"><i class="fa fa-check"></i><b>5.1</b> Factor basics</a></li>
+<li class="chapter" data-level="5.2" data-path="sorting.html"><a href="sorting.html"><i class="fa fa-check"></i><b>5.2</b> Sorting</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="sorting.html"><a href="sorting.html#sorting-by-frequency-appearance-or-numeric-order"><i class="fa fa-check"></i><b>5.2.1</b> Sorting by frequency, appearance, or numeric order</a></li>
+<li class="chapter" data-level="5.2.2" data-path="sorting.html"><a href="sorting.html#sorting-by-another-variable"><i class="fa fa-check"></i><b>5.2.2</b> Sorting by another variable</a></li>
+<li class="chapter" data-level="5.2.3" data-path="sorting.html"><a href="sorting.html#sorting-manually"><i class="fa fa-check"></i><b>5.2.3</b> Sorting manually</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html"><i class="fa fa-check"></i><b>5.3</b> Chaninge number of levels</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#lumping-levels"><i class="fa fa-check"></i><b>5.3.1</b> Lumping levels</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#expanding-levels"><i class="fa fa-check"></i><b>5.3.2</b> Expanding levels</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#dropping-levels"><i class="fa fa-check"></i><b>5.3.3</b> Dropping levels</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#transforming-na-levels"><i class="fa fa-check"></i><b>5.3.4</b> Transforming NA levels</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="recoding.html"><a href="recoding.html"><i class="fa fa-check"></i><b>5.4</b> Recoding</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="recoding.html"><a href="recoding.html#exercises-8"><i class="fa fa-check"></i><b>5.4.1</b> Exercises</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="tidyr-tidy-data.html"><a href="tidyr-tidy-data.html"><i class="fa fa-check"></i><b>6</b> tidyr: Tidy data</a><ul>
+<li class="chapter" data-level="6.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html"><i class="fa fa-check"></i><b>6.1</b> Tidy data</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html#exercises-9"><i class="fa fa-check"></i><b>6.1.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pivoting.html"><a href="pivoting.html"><i class="fa fa-check"></i><b>6.2</b> Pivoting</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="pivoting.html"><a href="pivoting.html#pivot_longer"><i class="fa fa-check"></i><b>6.2.1</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="pivoting.html"><a href="pivoting.html#pivot_wider"><i class="fa fa-check"></i><b>6.2.2</b> <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.3" data-path="pivoting.html"><a href="pivoting.html#combining-pivot_longer-and-pivot_wider"><i class="fa fa-check"></i><b>6.2.3</b> Combining <code>pivot_longer()</code> and <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.4" data-path="pivoting.html"><a href="pivoting.html#exercises-10"><i class="fa fa-check"></i><b>6.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="nesting.html"><a href="nesting.html"><i class="fa fa-check"></i><b>6.3</b> Nesting</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="nesting.html"><a href="nesting.html#example-managing-multiple-models"><i class="fa fa-check"></i><b>6.3.1</b> Example: Managing multiple models</a></li>
+<li class="chapter" data-level="6.3.2" data-path="nesting.html"><a href="nesting.html#multi-choice"><i class="fa fa-check"></i><b>6.3.2</b> Example: Multicple hoice data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="rectangling.html"><a href="rectangling.html"><i class="fa fa-check"></i><b>6.4</b> Rectangling</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="rectangling.html"><a href="rectangling.html#github-users"><i class="fa fa-check"></i><b>6.4.1</b> Github users</a></li>
+<li class="chapter" data-level="6.4.2" data-path="rectangling.html"><a href="rectangling.html#github-repos"><i class="fa fa-check"></i><b>6.4.2</b> Github repos</a></li>
+<li class="chapter" data-level="6.4.3" data-path="rectangling.html"><a href="rectangling.html#game-of-throne-characters"><i class="fa fa-check"></i><b>6.4.3</b> Game of Throne characters</a></li>
+<li class="chapter" data-level="6.4.4" data-path="rectangling.html"><a href="rectangling.html#sharla-gelfands-discography"><i class="fa fa-check"></i><b>6.4.4</b> Sharla Gelfand’s discography</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="separate-and-untie.html"><a href="separate-and-untie.html"><i class="fa fa-check"></i><b>6.5</b> <code>separate()</code> and <code>untie()</code></a><ul>
+<li class="chapter" data-level="6.5.1" data-path="separate-and-untie.html"><a href="separate-and-untie.html#separate"><i class="fa fa-check"></i><b>6.5.1</b> <code>separate()</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="separate-and-untie.html"><a href="separate-and-untie.html#unite"><i class="fa fa-check"></i><b>6.5.2</b> <code>unite()</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="separate-and-untie.html"><a href="separate-and-untie.html#exercises-11"><i class="fa fa-check"></i><b>6.5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="tidyr-missing.html"><a href="tidyr-missing.html"><i class="fa fa-check"></i><b>6.6</b> Handling missing values</a></li>
+<li class="chapter" data-level="6.7" data-path="tidyr-case.html"><a href="tidyr-case.html"><i class="fa fa-check"></i><b>6.7</b> Case Study</a></li>
+<li class="chapter" data-level="6.8" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html"><i class="fa fa-check"></i><b>6.8</b> Miscellaneous Functions</a><ul>
+<li class="chapter" data-level="6.8.1" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#chop-and-unchop"><i class="fa fa-check"></i><b>6.8.1</b> <code>chop()</code> and <code>unchop()</code></a></li>
+<li class="chapter" data-level="6.8.2" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#uncount"><i class="fa fa-check"></i><b>6.8.2</b> <code>uncount()</code></a></li>
+<li class="chapter" data-level="6.8.3" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#exercises-12"><i class="fa fa-check"></i><b>6.8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="non-tidy.html"><a href="non-tidy.html"><i class="fa fa-check"></i><b>6.9</b> None-tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="purrr-functional-programming.html"><a href="purrr-functional-programming.html"><i class="fa fa-check"></i><b>7</b> purrr: Functional programming</a><ul>
+<li class="chapter" data-level="7.1" data-path="map-family.html"><a href="map-family.html"><i class="fa fa-check"></i><b>7.1</b> <code>map()</code> family</a></li>
+<li class="chapter" data-level="7.2" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html"><i class="fa fa-check"></i><b>7.2</b> Producing atomic vectors</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html#purrr-style-anonymous-functions"><i class="fa fa-check"></i><b>7.2.1</b> purrr-style anonymous functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="predicate-functions.html"><a href="predicate-functions.html"><i class="fa fa-check"></i><b>7.3</b> Predicate functions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="predicate-functions.html"><a href="predicate-functions.html#basics"><i class="fa fa-check"></i><b>7.3.1</b> Basics</a></li>
+<li class="chapter" data-level="7.3.2" data-path="predicate-functions.html"><a href="predicate-functions.html#map-variants"><i class="fa fa-check"></i><b>7.3.2</b> Map variants</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="group-functions.html"><a href="group-functions.html"><i class="fa fa-check"></i><b>7.4</b> group functions</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="group-functions.html"><a href="group-functions.html#group_mapgroup_modify"><i class="fa fa-check"></i><b>7.4.1</b> group_map、group_modify</a></li>
+<li class="chapter" data-level="7.4.2" data-path="group-functions.html"><a href="group-functions.html#group_nestgroup_splitgroup_keysgroup_data"><i class="fa fa-check"></i><b>7.4.2</b> group_nest、group_split、group_keys、group_data</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="other-useful-tools.html"><a href="other-useful-tools.html"><i class="fa fa-check"></i><b>7.5</b> Other useful tools</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="other-useful-tools.html"><a href="other-useful-tools.html#imap"><i class="fa fa-check"></i><b>7.5.1</b> <code>imap()</code></a></li>
+<li class="chapter" data-level="7.5.2" data-path="other-useful-tools.html"><a href="other-useful-tools.html#adverbs"><i class="fa fa-check"></i><b>7.5.2</b> adverbs</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="relational-data.html"><a href="relational-data.html"><i class="fa fa-check"></i><b>8</b> Relational data</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="mutating-joins.html"><a href="mutating-joins.html"><i class="fa fa-check"></i><b>8.2</b> Mutating joins</a></li>
+<li class="chapter" data-level="8.3" data-path="filtering-join.html"><a href="filtering-join.html"><i class="fa fa-check"></i><b>8.3</b> Filtering join</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="broom-tidy-representation-of-models.html"><a href="broom-tidy-representation-of-models.html"><i class="fa fa-check"></i><b>9</b> broom: Tidy representation of models</a><ul>
+<li class="chapter" data-level="9.1" data-path="viz-many-models.html"><a href="viz-many-models.html"><i class="fa fa-check"></i><b>9.1</b> Visualizing many models</a></li>
+<li class="chapter" data-level="9.2" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9.2</b> Examples</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="examples.html"><a href="examples.html#pca"><i class="fa fa-check"></i><b>9.2.1</b> PCA</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="broomextra.html"><a href="broomextra.html"><i class="fa fa-check"></i><b>9.3</b> broomExtra</a></li>
+<li class="chapter" data-level="9.4" data-path="ggfortify.html"><a href="ggfortify.html"><i class="fa fa-check"></i><b>9.4</b> ggfortify</a></li>
+</ul></li>
+<li class="part"><span><b>II Importing</b></span></li>
+<li class="chapter" data-level="10" data-path="vroom-fast-reading-of-delimited-files.html"><a href="vroom-fast-reading-of-delimited-files.html"><i class="fa fa-check"></i><b>10</b> vroom: Fast reading of delimited files</a></li>
+<li class="chapter" data-level="11" data-path="reading-in-data-from-other-formats.html"><a href="reading-in-data-from-other-formats.html"><i class="fa fa-check"></i><b>11</b> Reading in data from other formats</a><ul>
+<li class="chapter" data-level="11.1" data-path="pdf.html"><a href="pdf.html"><i class="fa fa-check"></i><b>11.1</b> PDF</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="pdf.html"><a href="pdf.html#scraping-pdf-data"><i class="fa fa-check"></i><b>11.1.1</b> Scraping pdf data</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="office-documents.html"><a href="office-documents.html"><i class="fa fa-check"></i><b>11.2</b> Office documents</a></li>
+<li class="chapter" data-level="11.3" data-path="google-sheet.html"><a href="google-sheet.html"><i class="fa fa-check"></i><b>11.3</b> Google sheet</a></li>
+<li class="chapter" data-level="11.4" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i><b>11.4</b> Images</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="useful-apis.html"><a href="useful-apis.html"><i class="fa fa-check"></i><b>12</b> Useful APIs</a><ul>
+<li class="chapter" data-level="12.1" data-path="wdi.html"><a href="wdi.html"><i class="fa fa-check"></i><b>12.1</b> WDI</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="wdi.html"><a href="wdi.html#wdisearch"><i class="fa fa-check"></i><b>12.1.1</b> <code>WDIsearch()</code></a></li>
+<li class="chapter" data-level="12.1.2" data-path="wdi.html"><a href="wdi.html#wdi-1"><i class="fa fa-check"></i><b>12.1.2</b> <code>WDI</code></a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="ipumsr.html"><a href="ipumsr.html"><i class="fa fa-check"></i><b>12.2</b> ipumsr</a></li>
+</ul></li>
+<li class="part"><span><b>III Exploring and Wrangling</b></span></li>
+<li class="chapter" data-level="13" data-path="data-summary.html"><a href="data-summary.html"><i class="fa fa-check"></i><b>13</b> Data summary</a><ul>
+<li class="chapter" data-level="13.1" data-path="skimr.html"><a href="skimr.html"><i class="fa fa-check"></i><b>13.1</b> skimr</a></li>
+<li class="chapter" data-level="13.2" data-path="visdat.html"><a href="visdat.html"><i class="fa fa-check"></i><b>13.2</b> visdat</a></li>
+<li class="chapter" data-level="13.3" data-path="summarytools.html"><a href="summarytools.html"><i class="fa fa-check"></i><b>13.3</b> summarytools</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="summarytools.html"><a href="summarytools.html#freq"><i class="fa fa-check"></i><b>13.3.1</b> <code>freq</code></a></li>
+<li class="chapter" data-level="13.3.2" data-path="summarytools.html"><a href="summarytools.html#descr"><i class="fa fa-check"></i><b>13.3.2</b> <code>descr()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="gt-and-gtsummary.html"><a href="gt-and-gtsummary.html"><i class="fa fa-check"></i><b>13.4</b> gt and gtsummary</a></li>
+<li class="chapter" data-level="13.5" data-path="naniar.html"><a href="naniar.html"><i class="fa fa-check"></i><b>13.5</b> naniar</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="janitor.html"><a href="janitor.html"><i class="fa fa-check"></i><b>14</b> Janitor</a><ul>
+<li class="chapter" data-level="14.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html"><i class="fa fa-check"></i><b>14.1</b> cleaning</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html#clean_names"><i class="fa fa-check"></i><b>14.1.1</b> <code>clean_names</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="janitor-explore.html"><a href="janitor-explore.html"><i class="fa fa-check"></i><b>14.2</b> Exploring</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="janitor-explore.html"><a href="janitor-explore.html#tabyl"><i class="fa fa-check"></i><b>14.2.1</b> <code>tabyl</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="janitor-explore.html"><a href="janitor-explore.html#get_dupes"><i class="fa fa-check"></i><b>14.2.2</b> <code>get_dupes</code></a></li>
+<li class="chapter" data-level="14.2.3" data-path="janitor-explore.html"><a href="janitor-explore.html#remove_"><i class="fa fa-check"></i><b>14.2.3</b> <code>remove_</code></a></li>
+<li class="chapter" data-level="14.2.4" data-path="janitor-explore.html"><a href="janitor-explore.html#round_half_up"><i class="fa fa-check"></i><b>14.2.4</b> <code>round_half_up</code></a></li>
+<li class="chapter" data-level="14.2.5" data-path="janitor-explore.html"><a href="janitor-explore.html#excel_numeric_to_date"><i class="fa fa-check"></i><b>14.2.5</b> <code>excel_numeric_to_date</code></a></li>
+<li class="chapter" data-level="14.2.6" data-path="janitor-explore.html"><a href="janitor-explore.html#top_levels"><i class="fa fa-check"></i><b>14.2.6</b> <code>top_levels</code></a></li>
+<li class="chapter" data-level="14.2.7" data-path="janitor-explore.html"><a href="janitor-explore.html#row_to_names"><i class="fa fa-check"></i><b>14.2.7</b> <code>row_to_names</code></a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Miscellaneous tools</b></span></li>
+<li class="chapter" data-level="15" data-path="advanced-relational-data.html"><a href="advanced-relational-data.html"><i class="fa fa-check"></i><b>15</b> Advanced relational data</a><ul>
+<li class="chapter" data-level="15.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html"><i class="fa fa-check"></i><b>15.1</b> fuzzyjoin</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#inexact-matching"><i class="fa fa-check"></i><b>15.1.1</b> inexact matching</a></li>
+<li class="chapter" data-level="15.1.2" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#stringdist"><i class="fa fa-check"></i><b>15.1.2</b> stringdist</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="funneljoin.html"><a href="funneljoin.html"><i class="fa fa-check"></i><b>15.2</b> funneljoin</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="funneljoin.html"><a href="funneljoin.html#after_join"><i class="fa fa-check"></i><b>15.2.1</b> <code>after_join()</code></a></li>
+<li class="chapter" data-level="15.2.2" data-path="funneljoin.html"><a href="funneljoin.html#funnel-in-one-table"><i class="fa fa-check"></i><b>15.2.2</b> funnel in one table</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="dm.html"><a href="dm.html"><i class="fa fa-check"></i><b>15.3</b> dm</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="categorical-data-facotr.html"><a href="categorical-data-facotr.html"><i class="fa fa-check"></i><b>16</b> Categorical data (facotr)</a><ul>
+<li class="chapter" data-level="16.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html"><i class="fa fa-check"></i><b>16.1</b> Frequency and contingency table</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html#frq-and-flat_table"><i class="fa fa-check"></i><b>16.1.1</b> <code>frq()</code> and <code>flat_table()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="coding.html"><a href="coding.html"><i class="fa fa-check"></i><b>16.2</b> Coding</a><ul>
+<li class="chapter" data-level="16.2.1" data-path="coding.html"><a href="coding.html#rec"><i class="fa fa-check"></i><b>16.2.1</b> <code>rec()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="cutting.html"><a href="cutting.html"><i class="fa fa-check"></i><b>16.3</b> Cutting</a><ul>
+<li class="chapter" data-level="16.3.1" data-path="cutting.html"><a href="cutting.html#chop"><i class="fa fa-check"></i><b>16.3.1</b> <code>chop()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dealing-with-missing-values.html"><a href="dealing-with-missing-values.html"><i class="fa fa-check"></i><b>17</b> Dealing with missing values</a><ul>
+<li class="chapter" data-level="17.1" data-path="explore-missing.html"><a href="explore-missing.html"><i class="fa fa-check"></i><b>17.1</b> Exploring</a><ul>
+<li class="chapter" data-level="17.1.1" data-path="explore-missing.html"><a href="explore-missing.html#naniar-1"><i class="fa fa-check"></i><b>17.1.1</b> naniar</a></li>
+<li class="chapter" data-level="17.1.2" data-path="explore-missing.html"><a href="explore-missing.html#replace-a-value-with-na"><i class="fa fa-check"></i><b>17.1.2</b> Replace a value with NA</a></li>
+<li class="chapter" data-level="17.1.3" data-path="explore-missing.html"><a href="explore-missing.html#janitor-1"><i class="fa fa-check"></i><b>17.1.3</b> janitor</a></li>
+<li class="chapter" data-level="17.1.4" data-path="explore-missing.html"><a href="explore-missing.html#sjmisc"><i class="fa fa-check"></i><b>17.1.4</b> sjmisc</a></li>
+</ul></li>
+<li class="chapter" data-level="17.2" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>17.2</b> Wrangling</a><ul>
+<li class="chapter" data-level="17.2.1" data-path="wrangling.html"><a href="wrangling.html#tidyr"><i class="fa fa-check"></i><b>17.2.1</b> tidyr</a></li>
+<li class="chapter" data-level="17.2.2" data-path="wrangling.html"><a href="wrangling.html#janitor-2"><i class="fa fa-check"></i><b>17.2.2</b> janitor</a></li>
+<li class="chapter" data-level="17.2.3" data-path="wrangling.html"><a href="wrangling.html#visdat-1"><i class="fa fa-check"></i><b>17.2.3</b> visdat</a></li>
+</ul></li>
+<li class="chapter" data-level="17.3" data-path="imputation.html"><a href="imputation.html"><i class="fa fa-check"></i><b>17.3</b> Imputation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R for data science: tidyverse and beyond</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="pdf" class="section level2">
+<h2><span class="header-section-number">11.1</span> PDF</h2>
+<p>It is often the case that data is trapped inside pdfs, but thankfully there are ways to extract it from the pdfs. A very nice package for this task is <a href="https://github.com/ropensci/pdftools"><code>pdftools</code></a>.</p>
+<div class="sourceCode" id="cb501"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb501-1" title="1"><span class="kw">library</span>(pdftools)</a></code></pre></div>
+<div class="sourceCode" id="cb502"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb502-1" title="1"><span class="kw">download.file</span>(<span class="st">&quot;http://arxiv.org/pdf/1403.2805.pdf&quot;</span>, <span class="st">&quot;data/1403.2805.pdf&quot;</span>, <span class="dt">mode =</span> <span class="st">&quot;wb&quot;</span>)</a></code></pre></div>
+<p>Each string in the vector contains a plain text version of the text on that page.</p>
+<div class="sourceCode" id="cb503"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb503-1" title="1">txt &lt;-<span class="st"> </span><span class="kw">pdf_text</span>(<span class="st">&quot;data/1403.2805.pdf&quot;</span>)</a>
+<a class="sourceLine" id="cb503-2" title="2"></a>
+<a class="sourceLine" id="cb503-3" title="3"><span class="co"># first page text</span></a>
+<a class="sourceLine" id="cb503-4" title="4"><span class="kw">cat</span>(txt[<span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb503-5" title="5"><span class="co">#&gt;                                               The jsonlite Package: A Practical and Consistent Mapping</span></a>
+<a class="sourceLine" id="cb503-6" title="6"><span class="co">#&gt;                                                                    Between JSON Data and R Objects</span></a>
+<a class="sourceLine" id="cb503-7" title="7"><span class="co">#&gt;                                                                                     Jeroen Ooms</span></a>
+<a class="sourceLine" id="cb503-8" title="8"><span class="co">#&gt; arXiv:1403.2805v1 [stat.CO] 12 Mar 2014</span></a>
+<a class="sourceLine" id="cb503-9" title="9"><span class="co">#&gt;                                                                               UCLA Department of Statistics</span></a>
+<a class="sourceLine" id="cb503-10" title="10"><span class="co">#&gt;                                                                                              Abstract</span></a>
+<a class="sourceLine" id="cb503-11" title="11"><span class="co">#&gt;                                                   A naive realization of JSON data in R maps JSON arrays to an unnamed list, and JSON objects to a</span></a>
+<a class="sourceLine" id="cb503-12" title="12"><span class="co">#&gt;                                                named list. However, in practice a list is an awkward, inefficient type to store and manipulate data.</span></a>
+<a class="sourceLine" id="cb503-13" title="13"><span class="co">#&gt;                                                Most statistical applications work with (homogeneous) vectors, matrices or data frames. Therefore JSON</span></a>
+<a class="sourceLine" id="cb503-14" title="14"><span class="co">#&gt;                                                packages in R typically define certain special cases of JSON structures which map to simpler R types.</span></a>
+<a class="sourceLine" id="cb503-15" title="15"><span class="co">#&gt;                                                Currently there exist no formal guidelines, or even consensus between implementations on how R data</span></a>
+<a class="sourceLine" id="cb503-16" title="16"><span class="co">#&gt;                                                should be represented in JSON. Furthermore, upon closer inspection, even the most basic data structures</span></a>
+<a class="sourceLine" id="cb503-17" title="17"><span class="co">#&gt;                                                in R actually do not perfectly map to their JSON counterparts and leave some ambiguity for edge cases.</span></a>
+<a class="sourceLine" id="cb503-18" title="18"><span class="co">#&gt;                                                These problems have resulted in different behavior between implementations and can lead to unexpected</span></a>
+<a class="sourceLine" id="cb503-19" title="19"><span class="co">#&gt;                                                output. This paper explicitly describes a mapping between R classes and JSON data, highlights potential</span></a>
+<a class="sourceLine" id="cb503-20" title="20"><span class="co">#&gt;                                                problems, and proposes conventions that generalize the mapping to cover all common structures. We</span></a>
+<a class="sourceLine" id="cb503-21" title="21"><span class="co">#&gt;                                                emphasize the importance of type consistency when using JSON to exchange dynamic data, and illustrate</span></a>
+<a class="sourceLine" id="cb503-22" title="22"><span class="co">#&gt;                                                using examples and anecdotes. The jsonlite R package is used throughout the paper as a reference</span></a>
+<a class="sourceLine" id="cb503-23" title="23"><span class="co">#&gt;                                                implementation.</span></a>
+<a class="sourceLine" id="cb503-24" title="24"><span class="co">#&gt;                                           1    Introduction</span></a>
+<a class="sourceLine" id="cb503-25" title="25"><span class="co">#&gt;                                           JavaScript Object Notation (JSON) is a text format for the serialization of structured data (Crockford, 2006a).</span></a>
+<a class="sourceLine" id="cb503-26" title="26"><span class="co">#&gt;                                           It is derived from the object literals of JavaScript, as defined in the ECMAScript Programming Language</span></a>
+<a class="sourceLine" id="cb503-27" title="27"><span class="co">#&gt;                                           Standard, Third Edition (ECMA, 1999). Design of JSON is simple and concise in comparison with other</span></a>
+<a class="sourceLine" id="cb503-28" title="28"><span class="co">#&gt;                                           text based formats, and it was originally proposed by Douglas Crockford as a “fat-free alternative to XML”</span></a>
+<a class="sourceLine" id="cb503-29" title="29"><span class="co">#&gt;                                           (Crockford, 2006b). The syntax is easy for humans to read and write, easy for machines to parse and generate</span></a>
+<a class="sourceLine" id="cb503-30" title="30"><span class="co">#&gt;                                           and completely described in a single page at http://www.json.org. The character encoding of JSON text</span></a>
+<a class="sourceLine" id="cb503-31" title="31"><span class="co">#&gt;                                           is always Unicode, using UTF-8 by default (Crockford, 2006a), making it naturally compatible with non-</span></a>
+<a class="sourceLine" id="cb503-32" title="32"><span class="co">#&gt;                                           latin alphabets. Over the past years, JSON has become hugely popular on the internet as a general purpose</span></a>
+<a class="sourceLine" id="cb503-33" title="33"><span class="co">#&gt;                                           data interchange format. High quality parsing libraries are available for almost any programming language,</span></a>
+<a class="sourceLine" id="cb503-34" title="34"><span class="co">#&gt;                                           making it easy to implement systems and applications that exchange data over the network using JSON. For</span></a>
+<a class="sourceLine" id="cb503-35" title="35"><span class="co">#&gt;                                           R (R Core Team, 2013), several packages that assist the user in generating, parsing and validating JSON</span></a>
+<a class="sourceLine" id="cb503-36" title="36"><span class="co">#&gt;                                           are available through CRAN, including rjson (Couture-Beil, 2013), RJSONIO (Lang, 2013), and jsonlite</span></a>
+<a class="sourceLine" id="cb503-37" title="37"><span class="co">#&gt;                                           (Ooms et al., 2014).</span></a>
+<a class="sourceLine" id="cb503-38" title="38"><span class="co">#&gt;                                           The emphasis of this paper is not on discussing the JSON format or any particular implementation for using</span></a>
+<a class="sourceLine" id="cb503-39" title="39"><span class="co">#&gt;                                                                                                  1</span></a>
+<a class="sourceLine" id="cb503-40" title="40"></a>
+<a class="sourceLine" id="cb503-41" title="41"><span class="co"># second page text</span></a>
+<a class="sourceLine" id="cb503-42" title="42"><span class="kw">cat</span>(txt[<span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb503-43" title="43"><span class="co">#&gt; JSON with R. We refer to Nolan and Temple Lang (2014) for a comprehensive introduction, or one of the</span></a>
+<a class="sourceLine" id="cb503-44" title="44"><span class="co">#&gt; many tutorials available on the web. Instead we take a high level view and discuss how R data structures are</span></a>
+<a class="sourceLine" id="cb503-45" title="45"><span class="co">#&gt; most naturally represented in JSON. This is not a trivial problem, particulary for complex or relational data</span></a>
+<a class="sourceLine" id="cb503-46" title="46"><span class="co">#&gt; as they frequently appear in statistical applications. Several R packages implement toJSON and fromJSON</span></a>
+<a class="sourceLine" id="cb503-47" title="47"><span class="co">#&gt; functions which directly convert R objects into JSON and vice versa. However, the exact mapping between</span></a>
+<a class="sourceLine" id="cb503-48" title="48"><span class="co">#&gt; the various R data classes JSON structures is not self evident. Currently, there are no formal guidelines,</span></a>
+<a class="sourceLine" id="cb503-49" title="49"><span class="co">#&gt; or even consensus between implementations on how R data should be represented in JSON. Furthermore,</span></a>
+<a class="sourceLine" id="cb503-50" title="50"><span class="co">#&gt; upon closer inspection, even the most basic data structures in R actually do not perfectly map to their</span></a>
+<a class="sourceLine" id="cb503-51" title="51"><span class="co">#&gt; JSON counterparts, and leave some ambiguity for edge cases. These problems have resulted in different</span></a>
+<a class="sourceLine" id="cb503-52" title="52"><span class="co">#&gt; behavior between implementations, and can lead to unexpected output for certain special cases. To further</span></a>
+<a class="sourceLine" id="cb503-53" title="53"><span class="co">#&gt; complicate things, best practices of representing data in JSON have been established outside the R community.</span></a>
+<a class="sourceLine" id="cb503-54" title="54"><span class="co">#&gt; Incorporating these conventions where possible is important to maximize interoperability.</span></a>
+<a class="sourceLine" id="cb503-55" title="55"><span class="co">#&gt; 1.1     Parsing and type safety</span></a>
+<a class="sourceLine" id="cb503-56" title="56"><span class="co">#&gt; The JSON format specifies 4 primitive types (string, number, boolean, null) and two universal structures:</span></a>
+<a class="sourceLine" id="cb503-57" title="57"><span class="co">#&gt;     • A JSON object : an unordered collection of zero or more name/value pairs, where a name is a string and</span></a>
+<a class="sourceLine" id="cb503-58" title="58"><span class="co">#&gt;        a value is a string, number, boolean, null, object, or array.</span></a>
+<a class="sourceLine" id="cb503-59" title="59"><span class="co">#&gt;     • A JSON array: an ordered sequence of zero or more values.</span></a>
+<a class="sourceLine" id="cb503-60" title="60"><span class="co">#&gt; Both these structures are heterogeneous; i.e. they are allowed to contain elements of different types. There-</span></a>
+<a class="sourceLine" id="cb503-61" title="61"><span class="co">#&gt; fore, the native R realization of these structures is a named list for JSON objects, and unnamed list for</span></a>
+<a class="sourceLine" id="cb503-62" title="62"><span class="co">#&gt; JSON arrays. However, in practice a list is an awkward, inefficient type to store and manipulate data in R.</span></a>
+<a class="sourceLine" id="cb503-63" title="63"><span class="co">#&gt; Most statistical applications work with (homogeneous) vectors, matrices or data frames. In order to give</span></a>
+<a class="sourceLine" id="cb503-64" title="64"><span class="co">#&gt; these data structures a JSON representation, we can define certain special cases of JSON structures which get</span></a>
+<a class="sourceLine" id="cb503-65" title="65"><span class="co">#&gt; parsed into other, more specific R types. For example, one convention which all current implementations</span></a>
+<a class="sourceLine" id="cb503-66" title="66"><span class="co">#&gt; have in common is that a homogeneous array of primitives gets parsed into an atomic vector instead of a</span></a>
+<a class="sourceLine" id="cb503-67" title="67"><span class="co">#&gt; list. The RJSONIO documentation uses the term “simplify” for this, and we adopt this jargon.</span></a>
+<a class="sourceLine" id="cb503-68" title="68"><span class="co">#&gt; txt &lt;- &quot;[12, 3, 7]&quot;</span></a>
+<a class="sourceLine" id="cb503-69" title="69"><span class="co">#&gt; x &lt;- fromJSON(txt)</span></a>
+<a class="sourceLine" id="cb503-70" title="70"><span class="co">#&gt; is(x)</span></a>
+<a class="sourceLine" id="cb503-71" title="71"><span class="co">#&gt; [1] &quot;numeric&quot; &quot;vector&quot;</span></a>
+<a class="sourceLine" id="cb503-72" title="72"><span class="co">#&gt; print(x)</span></a>
+<a class="sourceLine" id="cb503-73" title="73"><span class="co">#&gt; [1] 12     3   7</span></a>
+<a class="sourceLine" id="cb503-74" title="74"><span class="co">#&gt; This seems very reasonable and it is the only practical solution to represent vectors in JSON. However the</span></a>
+<a class="sourceLine" id="cb503-75" title="75"><span class="co">#&gt; price we pay is that automatic simplification can compromise type-safety in the context of dynamic data.</span></a>
+<a class="sourceLine" id="cb503-76" title="76"><span class="co">#&gt; For example, suppose an R package uses fromJSON to pull data from a JSON API on the web, similar to</span></a>
+<a class="sourceLine" id="cb503-77" title="77"><span class="co">#&gt; the example above. However, for some particular combination of parameters, the result includes a null</span></a>
+<a class="sourceLine" id="cb503-78" title="78"><span class="co">#&gt; value, e.g: [12, null, 7]. This is actually quite common, many APIs use null for missing values or unset</span></a>
+<a class="sourceLine" id="cb503-79" title="79"><span class="co">#&gt; fields. This case makes the behavior of parsers ambiguous, because the JSON array is technically no longer</span></a>
+<a class="sourceLine" id="cb503-80" title="80"><span class="co">#&gt;                                                         2</span></a></code></pre></div>
+<p>The package has some utilities to extract other data from the PDF file.</p>
+<div class="sourceCode" id="cb504"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb504-1" title="1"><span class="kw">pdf_toc</span>(<span class="st">&quot;data/1403.2805.pdf&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str</span>(<span class="dt">max.level =</span> <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb504-2" title="2"><span class="co">#&gt; List of 2</span></a>
+<a class="sourceLine" id="cb504-3" title="3"><span class="co">#&gt;  $ title   : chr &quot;&quot;</span></a>
+<a class="sourceLine" id="cb504-4" title="4"><span class="co">#&gt;  $ children:List of 6</span></a>
+<a class="sourceLine" id="cb504-5" title="5"><span class="co">#&gt;   ..$ :List of 2</span></a>
+<a class="sourceLine" id="cb504-6" title="6"><span class="co">#&gt;   .. ..$ title   : chr &quot;1 Introduction&quot;</span></a>
+<a class="sourceLine" id="cb504-7" title="7"><span class="co">#&gt;   .. ..$ children:List of 4</span></a>
+<a class="sourceLine" id="cb504-8" title="8"><span class="co">#&gt;   ..$ :List of 2</span></a>
+<a class="sourceLine" id="cb504-9" title="9"><span class="co">#&gt;   .. ..$ title   : chr &quot;2 Converting between JSON and R classes&quot;</span></a>
+<a class="sourceLine" id="cb504-10" title="10"><span class="co">#&gt;   .. ..$ children:List of 4</span></a>
+<a class="sourceLine" id="cb504-11" title="11"><span class="co">#&gt;   ..$ :List of 2</span></a>
+<a class="sourceLine" id="cb504-12" title="12"><span class="co">#&gt;   .. ..$ title   : chr &quot;3 Structural consistency and type safety in dynamic data&quot;</span></a>
+<a class="sourceLine" id="cb504-13" title="13"><span class="co">#&gt;   .. ..$ children:List of 3</span></a>
+<a class="sourceLine" id="cb504-14" title="14"><span class="co">#&gt;   ..$ :List of 2</span></a>
+<a class="sourceLine" id="cb504-15" title="15"><span class="co">#&gt;   .. ..$ title   : chr &quot;Appendices&quot;</span></a>
+<a class="sourceLine" id="cb504-16" title="16"><span class="co">#&gt;   .. ..$ children: list()</span></a>
+<a class="sourceLine" id="cb504-17" title="17"><span class="co">#&gt;   ..$ :List of 2</span></a>
+<a class="sourceLine" id="cb504-18" title="18"><span class="co">#&gt;   .. ..$ title   : chr &quot;A Public JSON APIs&quot;</span></a>
+<a class="sourceLine" id="cb504-19" title="19"><span class="co">#&gt;   .. ..$ children:List of 3</span></a>
+<a class="sourceLine" id="cb504-20" title="20"><span class="co">#&gt;   ..$ :List of 2</span></a>
+<a class="sourceLine" id="cb504-21" title="21"><span class="co">#&gt;   .. ..$ title   : chr &quot;B Simple JSON RPC with OpenCPU&quot;</span></a>
+<a class="sourceLine" id="cb504-22" title="22"><span class="co">#&gt;   .. ..$ children: list()</span></a>
+<a class="sourceLine" id="cb504-23" title="23"><span class="kw">pdf_info</span>(<span class="st">&quot;data/1403.2805.pdf&quot;</span>)</a>
+<a class="sourceLine" id="cb504-24" title="24"><span class="co">#&gt; $version</span></a>
+<a class="sourceLine" id="cb504-25" title="25"><span class="co">#&gt; [1] &quot;1.4&quot;</span></a>
+<a class="sourceLine" id="cb504-26" title="26"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-27" title="27"><span class="co">#&gt; $pages</span></a>
+<a class="sourceLine" id="cb504-28" title="28"><span class="co">#&gt; [1] 29</span></a>
+<a class="sourceLine" id="cb504-29" title="29"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-30" title="30"><span class="co">#&gt; $encrypted</span></a>
+<a class="sourceLine" id="cb504-31" title="31"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb504-32" title="32"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-33" title="33"><span class="co">#&gt; $linearized</span></a>
+<a class="sourceLine" id="cb504-34" title="34"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb504-35" title="35"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-36" title="36"><span class="co">#&gt; $keys</span></a>
+<a class="sourceLine" id="cb504-37" title="37"><span class="co">#&gt; $keys$Producer</span></a>
+<a class="sourceLine" id="cb504-38" title="38"><span class="co">#&gt; [1] &quot;dvips + GPL Ghostscript GIT PRERELEASE 9.08&quot;</span></a>
+<a class="sourceLine" id="cb504-39" title="39"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-40" title="40"><span class="co">#&gt; $keys$Creator</span></a>
+<a class="sourceLine" id="cb504-41" title="41"><span class="co">#&gt; [1] &quot;LaTeX with hyperref package&quot;</span></a>
+<a class="sourceLine" id="cb504-42" title="42"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-43" title="43"><span class="co">#&gt; $keys$Title</span></a>
+<a class="sourceLine" id="cb504-44" title="44"><span class="co">#&gt; [1] &quot;&quot;</span></a>
+<a class="sourceLine" id="cb504-45" title="45"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-46" title="46"><span class="co">#&gt; $keys$Subject</span></a>
+<a class="sourceLine" id="cb504-47" title="47"><span class="co">#&gt; [1] &quot;&quot;</span></a>
+<a class="sourceLine" id="cb504-48" title="48"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-49" title="49"><span class="co">#&gt; $keys$Author</span></a>
+<a class="sourceLine" id="cb504-50" title="50"><span class="co">#&gt; [1] &quot;&quot;</span></a>
+<a class="sourceLine" id="cb504-51" title="51"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-52" title="52"><span class="co">#&gt; $keys$Keywords</span></a>
+<a class="sourceLine" id="cb504-53" title="53"><span class="co">#&gt; [1] &quot;&quot;</span></a>
+<a class="sourceLine" id="cb504-54" title="54"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-55" title="55"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-56" title="56"><span class="co">#&gt; $created</span></a>
+<a class="sourceLine" id="cb504-57" title="57"><span class="co">#&gt; [1] &quot;2014-03-13 09:00:25 CST&quot;</span></a>
+<a class="sourceLine" id="cb504-58" title="58"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-59" title="59"><span class="co">#&gt; $modified</span></a>
+<a class="sourceLine" id="cb504-60" title="60"><span class="co">#&gt; [1] &quot;2014-03-13 09:00:25 CST&quot;</span></a>
+<a class="sourceLine" id="cb504-61" title="61"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-62" title="62"><span class="co">#&gt; $metadata</span></a>
+<a class="sourceLine" id="cb504-63" title="63"><span class="co">#&gt; [1] &quot;&lt;?xpacket begin=&#39;ï»¿&#39; id=&#39;W5M0MpCehiHzreSzNTczkc9d&#39;?&gt;\n&lt;?adobe-xap-filters esc=\&quot;CRLF\&quot;?&gt;\n&lt;x:xmpmeta xmlns:x=&#39;adobe:ns:meta/&#39; x:xmptk=&#39;XMP toolkit 2.9.1-13, framework 1.6&#39;&gt;\n&lt;rdf:RDF xmlns:rdf=&#39;http://www.w3.org/1999/02/22-rdf-syntax-ns#&#39; xmlns:iX=&#39;http://ns.adobe.com/iX/1.0/&#39;&gt;\n&lt;rdf:Description rdf:about=&#39;uuid:68dde9e4-e267-11ee-0000-a5c788a95450&#39; xmlns:pdf=&#39;http://ns.adobe.com/pdf/1.3/&#39;&gt;&lt;pdf:Producer&gt;dvips + GPL Ghostscript GIT PRERELEASE 9.08&lt;/pdf:Producer&gt;\n&lt;pdf:Keywords&gt;()&lt;/pdf:Keywords&gt;\n&lt;/rdf:Description&gt;\n&lt;rdf:Description rdf:about=&#39;uuid:68dde9e4-e267-11ee-0000-a5c788a95450&#39; xmlns:xmp=&#39;http://ns.adobe.com/xap/1.0/&#39;&gt;&lt;xmp:ModifyDate&gt;2014-03-12T21:00:25-04:00&lt;/xmp:ModifyDate&gt;\n&lt;xmp:CreateDate&gt;2014-03-12T21:00:25-04:00&lt;/xmp:CreateDate&gt;\n&lt;xmp:CreatorTool&gt;LaTeX with hyperref package&lt;/xmp:CreatorTool&gt;&lt;/rdf:Description&gt;\n&lt;rdf:Description rdf:about=&#39;uuid:68dde9e4-e267-11ee-0000-a5c788a95450&#39; xmlns:xapMM=&#39;http://ns.adobe.com/xap/1.0/mm/&#39; xapMM:DocumentID=&#39;uuid:68dde9e4-e267-11ee-0000-a5c788a95450&#39;/&gt;\n&lt;rdf:Description rdf:about=&#39;uuid:68dde9e4-e267-11ee-0000-a5c788a95450&#39; xmlns:dc=&#39;http://purl.org/dc/elements/1.1/&#39; dc:format=&#39;application/pdf&#39;&gt;&lt;dc:title&gt;&lt;rdf:Alt&gt;&lt;rdf:li xml:lang=&#39;x-default&#39;&gt;()&lt;/rdf:li&gt;&lt;/rdf:Alt&gt;&lt;/dc:title&gt;&lt;dc:creator&gt;&lt;rdf:Seq&gt;&lt;rdf:li&gt;()&lt;/rdf:li&gt;&lt;/rdf:Seq&gt;&lt;/dc:creator&gt;&lt;dc:description&gt;&lt;rdf:Seq&gt;&lt;rdf:li&gt;()&lt;/rdf:li&gt;&lt;/rdf:Seq&gt;&lt;/dc:description&gt;&lt;/rdf:Description&gt;\n&lt;/rdf:RDF&gt;\n&lt;/x:xmpmeta&gt;\n                                                                        \n                                                                        \n&lt;?xpacket end=&#39;w&#39;?&gt;&quot;</span></a>
+<a class="sourceLine" id="cb504-64" title="64"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-65" title="65"><span class="co">#&gt; $locked</span></a>
+<a class="sourceLine" id="cb504-66" title="66"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb504-67" title="67"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-68" title="68"><span class="co">#&gt; $attachments</span></a>
+<a class="sourceLine" id="cb504-69" title="69"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb504-70" title="70"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb504-71" title="71"><span class="co">#&gt; $layout</span></a>
+<a class="sourceLine" id="cb504-72" title="72"><span class="co">#&gt; [1] &quot;no_layout&quot;</span></a>
+<a class="sourceLine" id="cb504-73" title="73"><span class="kw">pdf_fonts</span>(<span class="st">&quot;data/1403.2805.pdf&quot;</span>)</a>
+<a class="sourceLine" id="cb504-74" title="74"><span class="co">#&gt; # A tibble: 18 x 4</span></a>
+<a class="sourceLine" id="cb504-75" title="75"><span class="co">#&gt;   name          type   embedded file                           </span></a>
+<a class="sourceLine" id="cb504-76" title="76"><span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt;  &lt;lgl&gt;    &lt;chr&gt;                          </span></a>
+<a class="sourceLine" id="cb504-77" title="77"><span class="co">#&gt; 1 Times-Roman   type1  FALSE    &quot;C:\\windows\\Fonts\\arial.ttf&quot;</span></a>
+<a class="sourceLine" id="cb504-78" title="78"><span class="co">#&gt; 2 UWJIZQ+CMTT10 type1c TRUE     &quot;&quot;                             </span></a>
+<a class="sourceLine" id="cb504-79" title="79"><span class="co">#&gt; 3 OYDUEZ+CMR10  type1c TRUE     &quot;&quot;                             </span></a>
+<a class="sourceLine" id="cb504-80" title="80"><span class="co">#&gt; 4 EBLJKS+CMTI10 type1c TRUE     &quot;&quot;                             </span></a>
+<a class="sourceLine" id="cb504-81" title="81"><span class="co">#&gt; 5 APBPVY+CMBX12 type1c TRUE     &quot;&quot;                             </span></a>
+<a class="sourceLine" id="cb504-82" title="82"><span class="co">#&gt; 6 FBFBNT+CMTI9  type1c TRUE     &quot;&quot;                             </span></a>
+<a class="sourceLine" id="cb504-83" title="83"><span class="co">#&gt; # ... with 12 more rows</span></a></code></pre></div>
+<div id="scraping-pdf-data" class="section level3">
+<h3><span class="header-section-number">11.1.1</span> Scraping pdf data</h3>
+<p><a href="https://www.brodrigues.co/blog/2018-06-10-scraping_pdfs/" class="uri">https://www.brodrigues.co/blog/2018-06-10-scraping_pdfs/</a></p>
+<p>As one can imagine, scraping pdf data is just a matter of text process after loading in pdf documents with <code>pdf_text()</code>. We start by downloading multiple pdf documents, then extracting and cleaning data stored in a table</p>
+<p><img src="images/scrape_pdf.png" width="120%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb505"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb505-1" title="1"><span class="kw">library</span>(glue)</a>
+<a class="sourceLine" id="cb505-2" title="2">country &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chn&quot;</span>, <span class="st">&quot;usa&quot;</span>, <span class="st">&quot;gbr&quot;</span>, <span class="st">&quot;jpn&quot;</span>)</a>
+<a class="sourceLine" id="cb505-3" title="3">url &lt;-<span class="st"> &quot;http://www.who.int/diabetes/country-profiles/{country}_en.pdf?ua=1&quot;</span></a>
+<a class="sourceLine" id="cb505-4" title="4"></a>
+<a class="sourceLine" id="cb505-5" title="5">urls &lt;-<span class="st"> </span><span class="kw">glue</span>(url)</a>
+<a class="sourceLine" id="cb505-6" title="6">pdf_names &lt;-<span class="st"> </span><span class="kw">glue</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;data/report_{country}.pdf&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb506"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb506-1" title="1"><span class="co"># download pdfs</span></a>
+<a class="sourceLine" id="cb506-2" title="2"><span class="kw">walk2</span>(urls, pdf_names, download.file, <span class="dt">mode =</span> <span class="st">&quot;wb&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb507"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb507-1" title="1">raw_text &lt;-<span class="st"> </span><span class="kw">map</span>(pdf_names, pdf_text)</a></code></pre></div>
+<p>Because each pdf document only contain one page, <code>raw_data</code> has a simple 2-level structure, with each element being one report of a country:</p>
+<div class="sourceCode" id="cb508"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb508-1" title="1"><span class="kw">str</span>(raw_text)</a>
+<a class="sourceLine" id="cb508-2" title="2"><span class="co">#&gt; List of 4</span></a>
+<a class="sourceLine" id="cb508-3" title="3"><span class="co">#&gt;  $ : chr &quot;China                                                                                                          &quot;| __truncated__</span></a>
+<a class="sourceLine" id="cb508-4" title="4"><span class="co">#&gt;  $ : chr &quot;United States Of America                                                                                       &quot;| __truncated__</span></a>
+<a class="sourceLine" id="cb508-5" title="5"><span class="co">#&gt;  $ : chr &quot;United Kingdom                                                                                                 &quot;| __truncated__</span></a>
+<a class="sourceLine" id="cb508-6" title="6"><span class="co">#&gt;  $ : chr &quot;Japan                                                                                                          &quot;| __truncated__</span></a>
+<a class="sourceLine" id="cb508-7" title="7">raw_text[[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb508-8" title="8"><span class="co">#&gt; [1] &quot;China                                                                                                                                                   Total population: 1 376 000 000\r\n                                                                                                                                                          Income group: Upper middle\r\nMortality*\r\nNumber of diabetes deaths                                                                                Number of deaths attributable to high blood glucose\r\n                                                                         males             females                                                               males       females\r\nages 30–69                                                              37 000              56 000       ages 30–69                                              139 100     130 900\r\nages 70+                                                                49 300              82 400       ages 70+                                                198 800     268 400\r\nProportional mortality (% of total deaths, all ages)*                                                    Trends in age-standardized prevalence of diabetes\r\n                        Communicable,\r\n                       maternal, perinatal\r\n                                                    Injuries                                                               35%\r\n                                                      8%\r\n                        and nutritional\r\n                          conditions\r\n                              5%\r\n                                                                                                                           30%\r\n                   Other NCDs\r\n                       6%                                                               Cardiovascular                     25%\r\n                                                                                          diseases\r\n                                                                                                         % of population\r\n              Diabetes                                                                       45%\r\n                                                                                                                           20%\r\n                 2%\r\n                                     No data available                                                                     15%           No data available\r\n                Respiratory\r\n                 diseases                                                                                                  10%\r\n                   11%\r\n                                                                                                                           5%\r\n                                                                                                                           0%\r\n                                      Cancers\r\n                                       23%                                                                                                   males     females\r\nPrevalence of diabetes and related risk factors\r\n                                                                                                                                 males               females               total\r\nDiabetes                                                                                                                         10.5%                8.3%                 9.4%\r\nOverweight                                                                                                                       37.2%               33.6%                 35.4%\r\nObesity                                                                                                                          6.2%                 8.5%                 7.3%\r\nPhysical inactivity                                                                                                              22.2%               25.4%                 23.8%\r\nNational response to diabetes\r\nPolicies, guidelines and monitoring\r\nOperational policy/strategy/action plan for diabetes                                                                                                           Yes\r\nOperational policy/strategy/action plan to reduce overweight and obesity                                                                                       No\r\nOperational policy/strategy/action plan to reduce physical inactivity                                                                                          Yes\r\nEvidence-based national diabetes guidelines/protocols/standards                                                                              Available and fully implemented\r\nStandard criteria for referral of patients from primary care to higher level of care                                                       Available and partially implemented\r\nDiabetes registry                                                                                                                                              Yes\r\nRecent national risk factor survey in which blood glucose was measured                                                                                         Yes\r\nAvailability of medicines, basic technologies and procedures in the public health sector\r\nMedicines in primary care facilities                                                                     Basic technologies in primary care facilities\r\nInsulin                                                                                        &lt;U+25CF&gt;         Blood glucose measurement                                             &lt;U+25CF&gt;\r\nMetformin                                                                                      &lt;U+25CF&gt;         Oral glucose tolerance test                                           &lt;U+25CF&gt;\r\nSulphonylurea                                                                                  &lt;U+25CF&gt;         HbA1c test                                                            &lt;U+25CF&gt;\r\nProcedures                                                                                               Dilated fundus examination                                            &lt;U+25CF&gt;\r\nRetinal photocoagulation                                                                       &lt;U+25CB&gt;         Foot vibration perception by tuning fork                              &lt;U+25CF&gt;\r\nRenal replacement therapy by dialysis                                                          &lt;U+25CB&gt;         Foot vascular status by Doppler                                       &lt;U+25CF&gt;\r\nRenal replacement therapy by transplantation                                                   &lt;U+25CB&gt;         Urine strips for glucose and ketone measurement                       &lt;U+25CF&gt;\r\n* The mortality estimates for this country have a high degree of uncertainty because they are not\r\n based on any national NCD mortality data (see Explanatory Notes).\r\n&lt;U+3007&gt; = not generally available   &lt;U+25CF&gt; = generally available\r\nWorld Health Organization – Diabetes country profiles, 2016.\r\n&quot;</span></a></code></pre></div>
+<p>Note that the table we want starts with “Prevalence of diabetes and related risk factors”, and ends with “National response to diabetes”. We define a function for extracting the table when looping over all 4 pdf documents.</p>
+<div class="sourceCode" id="cb509"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb509-1" title="1">get_table &lt;-<span class="st"> </span><span class="cf">function</span>(text) {</a>
+<a class="sourceLine" id="cb509-2" title="2">  <span class="co"># split the text into a one raw text matrix</span></a>
+<a class="sourceLine" id="cb509-3" title="3">  text_matrix &lt;-<span class="st"> </span>text <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_split</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>, <span class="dt">simplify =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb509-4" title="4">  </a>
+<a class="sourceLine" id="cb509-5" title="5">  <span class="co"># extract country name</span></a>
+<a class="sourceLine" id="cb509-6" title="6">  country_name &lt;-<span class="st"> </span>text_matrix[<span class="dv">1</span>, <span class="dv">1</span>] <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb509-7" title="7"><span class="st">    </span><span class="kw">str_squish</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb509-8" title="8"><span class="st">    </span><span class="kw">str_extract</span>(<span class="st">&quot;.+(?= Total population)&quot;</span>)</a>
+<a class="sourceLine" id="cb509-9" title="9">  </a>
+<a class="sourceLine" id="cb509-10" title="10">  <span class="co"># locate the start and end of the table</span></a>
+<a class="sourceLine" id="cb509-11" title="11">  table_start &lt;-<span class="st"> </span>text_matrix <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb509-12" title="12"><span class="st">    </span><span class="kw">str_which</span>(<span class="st">&quot;Prevalence of diabetes and related risk factors&quot;</span>)</a>
+<a class="sourceLine" id="cb509-13" title="13">  table_end &lt;-<span class="st"> </span>text_matrix <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb509-14" title="14"><span class="st">    </span><span class="kw">str_which</span>(<span class="st">&quot;National response to diabetes&quot;</span>)</a>
+<a class="sourceLine" id="cb509-15" title="15">  </a>
+<a class="sourceLine" id="cb509-16" title="16">  <span class="co"># extract table text, replace space with &quot;|&quot;</span></a>
+<a class="sourceLine" id="cb509-17" title="17">  table_raw &lt;-<span class="st"> </span>text_matrix[<span class="dv">1</span>, (table_start <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>(table_end <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb509-18" title="18"><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">s{2,}&quot;</span>, <span class="st">&quot;|&quot;</span>)</a>
+<a class="sourceLine" id="cb509-19" title="19">  </a>
+<a class="sourceLine" id="cb509-20" title="20">  <span class="co"># creat text connection so that the text can be read back with read.csv()</span></a>
+<a class="sourceLine" id="cb509-21" title="21">  table &lt;-<span class="st"> </span>table_raw <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb509-22" title="22"><span class="st">    </span><span class="kw">textConnection</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb509-23" title="23"><span class="st">    </span><span class="kw">read.csv</span>(<span class="dt">sep =</span> <span class="st">&quot;|&quot;</span>, </a>
+<a class="sourceLine" id="cb509-24" title="24">             <span class="dt">col.names =</span> <span class="kw">c</span>(<span class="st">&quot;condition&quot;</span>, <span class="st">&quot;males&quot;</span>, <span class="st">&quot;females&quot;</span>, <span class="st">&quot;total&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb509-25" title="25"><span class="st">    </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb509-26" title="26"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">country =</span> country_name)</a>
+<a class="sourceLine" id="cb509-27" title="27">  </a>
+<a class="sourceLine" id="cb509-28" title="28">  table</a>
+<a class="sourceLine" id="cb509-29" title="29">}</a>
+<a class="sourceLine" id="cb509-30" title="30"></a>
+<a class="sourceLine" id="cb509-31" title="31">df &lt;-<span class="st"> </span><span class="kw">map_dfr</span>(raw_text, get_table)</a>
+<a class="sourceLine" id="cb509-32" title="32"></a>
+<a class="sourceLine" id="cb509-33" title="33">df</a>
+<a class="sourceLine" id="cb509-34" title="34"><span class="co">#&gt; # A tibble: 16 x 5</span></a>
+<a class="sourceLine" id="cb509-35" title="35"><span class="co">#&gt;   condition           males females total country                 </span></a>
+<a class="sourceLine" id="cb509-36" title="36"><span class="co">#&gt;   &lt;fct&gt;               &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;                   </span></a>
+<a class="sourceLine" id="cb509-37" title="37"><span class="co">#&gt; 1 Diabetes            10.5% 8.3%    9.4%  China                   </span></a>
+<a class="sourceLine" id="cb509-38" title="38"><span class="co">#&gt; 2 Overweight          37.2% 33.6%   35.4% China                   </span></a>
+<a class="sourceLine" id="cb509-39" title="39"><span class="co">#&gt; 3 Obesity             6.2%  8.5%    7.3%  China                   </span></a>
+<a class="sourceLine" id="cb509-40" title="40"><span class="co">#&gt; 4 Physical inactivity 22.2% 25.4%   23.8% China                   </span></a>
+<a class="sourceLine" id="cb509-41" title="41"><span class="co">#&gt; 5 Diabetes            9.8%  8.3%    9.1%  United States Of America</span></a>
+<a class="sourceLine" id="cb509-42" title="42"><span class="co">#&gt; 6 Overweight          74.1% 65.3%   69.6% United States Of America</span></a>
+<a class="sourceLine" id="cb509-43" title="43"><span class="co">#&gt; # ... with 10 more rows</span></a></code></pre></div>
+<p>There is one problem left, we need to convert percentage (recoginized as character) back to numeric:</p>
+<div class="sourceCode" id="cb510"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb510-1" title="1">df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb510-2" title="2"><span class="st">  </span><span class="kw">mutate_at</span>(<span class="kw">vars</span>(males, females, total), <span class="op">~</span><span class="st"> </span><span class="kw">parse_number</span>(.x) <span class="op">/</span><span class="st"> </span><span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb510-3" title="3"><span class="co">#&gt; # A tibble: 16 x 5</span></a>
+<a class="sourceLine" id="cb510-4" title="4"><span class="co">#&gt;   condition           males females total country                 </span></a>
+<a class="sourceLine" id="cb510-5" title="5"><span class="co">#&gt;   &lt;fct&gt;               &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                   </span></a>
+<a class="sourceLine" id="cb510-6" title="6"><span class="co">#&gt; 1 Diabetes            0.105   0.083 0.094 China                   </span></a>
+<a class="sourceLine" id="cb510-7" title="7"><span class="co">#&gt; 2 Overweight          0.372   0.336 0.354 China                   </span></a>
+<a class="sourceLine" id="cb510-8" title="8"><span class="co">#&gt; 3 Obesity             0.062   0.085 0.073 China                   </span></a>
+<a class="sourceLine" id="cb510-9" title="9"><span class="co">#&gt; 4 Physical inactivity 0.222   0.254 0.238 China                   </span></a>
+<a class="sourceLine" id="cb510-10" title="10"><span class="co">#&gt; 5 Diabetes            0.098   0.083 0.091 United States Of America</span></a>
+<a class="sourceLine" id="cb510-11" title="11"><span class="co">#&gt; 6 Overweight          0.741   0.653 0.696 United States Of America</span></a>
+<a class="sourceLine" id="cb510-12" title="12"><span class="co">#&gt; # ... with 10 more rows</span></a></code></pre></div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="reading-in-data-from-other-formats.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="office-documents.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/enixam/rfordatascience/edit/master/import-data-pdf.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

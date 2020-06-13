@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>3.3 Parsing a vector | R for data science: tidyverse and beyond</title>
+  <meta name="description" content="3.3 Parsing a vector | R for data science: tidyverse and beyond" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="3.3 Parsing a vector | R for data science: tidyverse and beyond" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="enixam/rfordatascience" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="3.3 Parsing a vector | R for data science: tidyverse and beyond" />
+  
+  
+  
+
+<meta name="author" content="Maxine" />
+
+
+<meta name="date" content="2020-05-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="importing-data-in-readr.html"/>
+<link rel="next" href="parsing-a-file.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/jsoneditor-5.25.6/jsoneditor.min.css" rel="stylesheet" />
+<script src="libs/jsoneditor-5.25.6/jsoneditor.min.js"></script>
+<script src="libs/jsonedit-binding-3.0.0/jsonedit.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R4DS: tidyverse and beyond</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a></li>
+<li class="part"><span><b>I R for data science</b></span></li>
+<li class="chapter" data-level="1" data-path="dplyr-data-transformation.html"><a href="dplyr-data-transformation.html"><i class="fa fa-check"></i><b>1</b> dplyr: Data transformation</a><ul>
+<li class="chapter" data-level="1.1" data-path="filter.html"><a href="filter.html"><i class="fa fa-check"></i><b>1.1</b> <code>filter()</code></a><ul>
+<li class="chapter" data-level="1.1.1" data-path="filter.html"><a href="filter.html#operators"><i class="fa fa-check"></i><b>1.1.1</b> Operators</a></li>
+<li class="chapter" data-level="1.1.2" data-path="filter.html"><a href="filter.html#missing-values"><i class="fa fa-check"></i><b>1.1.2</b> Missing values</a></li>
+<li class="chapter" data-level="1.1.3" data-path="filter.html"><a href="filter.html#exercises"><i class="fa fa-check"></i><b>1.1.3</b> Exercises</a></li>
+<li class="chapter" data-level="1.1.4" data-path="filter.html"><a href="filter.html#slice"><i class="fa fa-check"></i><b>1.1.4</b> <code>slice()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="arrange.html"><a href="arrange.html"><i class="fa fa-check"></i><b>1.2</b> <code>arrange()</code></a><ul>
+<li class="chapter" data-level="1.2.1" data-path="arrange.html"><a href="arrange.html#exercises-1"><i class="fa fa-check"></i><b>1.2.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="select.html"><a href="select.html"><i class="fa fa-check"></i><b>1.3</b> <code>select()</code></a><ul>
+<li class="chapter" data-level="1.3.1" data-path="select.html"><a href="select.html#练习"><i class="fa fa-check"></i><b>1.3.1</b> 练习</a></li>
+<li class="chapter" data-level="1.3.2" data-path="select.html"><a href="select.html#常用创建函数"><i class="fa fa-check"></i><b>1.3.2</b> 常用创建函数</a></li>
+<li class="chapter" data-level="1.3.3" data-path="select.html"><a href="select.html#exercises-2"><i class="fa fa-check"></i><b>1.3.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="summarize.html"><a href="summarize.html"><i class="fa fa-check"></i><b>1.4</b> <code>summarize()</code></a><ul>
+<li class="chapter" data-level="1.4.1" data-path="summarize.html"><a href="summarize.html#missing-values-in-summarize"><i class="fa fa-check"></i><b>1.4.1</b> Missing values in <code>summarize()</code></a></li>
+<li class="chapter" data-level="1.4.2" data-path="summarize.html"><a href="summarize.html#计数函数"><i class="fa fa-check"></i><b>1.4.2</b> 计数函数</a></li>
+<li class="chapter" data-level="1.4.3" data-path="summarize.html"><a href="summarize.html#逻辑值的计数和比例sumx-10-和-meany-0"><i class="fa fa-check"></i><b>1.4.3</b> 逻辑值的计数和比例:<code>sum(x &gt; 10) 和 mean(y == 0)</code></a></li>
+<li class="chapter" data-level="1.4.4" data-path="summarize.html"><a href="summarize.html#其他常用的摘要函数"><i class="fa fa-check"></i><b>1.4.4</b> 其他常用的摘要函数</a></li>
+<li class="chapter" data-level="1.4.5" data-path="summarize.html"><a href="summarize.html#多个分组变量的消耗"><i class="fa fa-check"></i><b>1.4.5</b> 多个分组变量的消耗</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="group-by-combined-with-other-functions.html"><a href="group-by-combined-with-other-functions.html"><i class="fa fa-check"></i><b>1.5</b> <code>group_by()</code> combined with other functions</a></li>
+<li class="chapter" data-level="1.6" data-path="dplyr-exercise.html"><a href="dplyr-exercise.html"><i class="fa fa-check"></i><b>1.6</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="tibble-modern-data-frames.html"><a href="tibble-modern-data-frames.html"><i class="fa fa-check"></i><b>2</b> tibble: Modern data frames</a><ul>
+<li class="chapter" data-level="2.1" data-path="tibble-intro.html"><a href="tibble-intro.html"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html"><i class="fa fa-check"></i><b>2.2</b> Comparing tibble and data.frame</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#creating"><i class="fa fa-check"></i><b>2.2.1</b> Creating</a></li>
+<li class="chapter" data-level="2.2.2" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#printing"><i class="fa fa-check"></i><b>2.2.2</b> Printing</a></li>
+<li class="chapter" data-level="2.2.3" data-path="tibble-data-frame.html"><a href="tibble-data-frame.html#subsetting"><i class="fa fa-check"></i><b>2.2.3</b> Subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html"><i class="fa fa-check"></i><b>2.3</b> Comparing two data frames (tibbles)</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#dplyrall_equal"><i class="fa fa-check"></i><b>2.3.1</b> <code>dplyr::all_equal()</code></a></li>
+<li class="chapter" data-level="2.3.2" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#janitorcompare_df_cols"><i class="fa fa-check"></i><b>2.3.2</b> <code>janitor::compare_df_cols()</code></a></li>
+<li class="chapter" data-level="2.3.3" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#vetralike"><i class="fa fa-check"></i><b>2.3.3</b> <code>vetr::alike()</code></a></li>
+<li class="chapter" data-level="2.3.4" data-path="comparing-two-data-frames-tibbles.html"><a href="comparing-two-data-frames-tibbles.html#diffdfdiffdf"><i class="fa fa-check"></i><b>2.3.4</b> <code>diffdf::diffdf()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="tibble-exercise.html"><a href="tibble-exercise.html"><i class="fa fa-check"></i><b>2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="readr-data-import.html"><a href="readr-data-import.html"><i class="fa fa-check"></i><b>3</b> readr: Data import</a><ul>
+<li class="chapter" data-level="3.1" data-path="importing-data-in-base-r.html"><a href="importing-data-in-base-r.html"><i class="fa fa-check"></i><b>3.1</b> Importing data in base R</a></li>
+<li class="chapter" data-level="3.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html"><i class="fa fa-check"></i><b>3.2</b> Importing data in <code>readr</code></a><ul>
+<li class="chapter" data-level="3.2.1" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#introduction"><i class="fa fa-check"></i><b>3.2.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2.2" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#writing-data"><i class="fa fa-check"></i><b>3.2.2</b> Writing data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="importing-data-in-readr.html"><a href="importing-data-in-readr.html#exercises-3"><i class="fa fa-check"></i><b>3.2.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html"><i class="fa fa-check"></i><b>3.3</b> Parsing a vector</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#numeric"><i class="fa fa-check"></i><b>3.3.1</b> Numeric</a></li>
+<li class="chapter" data-level="3.3.2" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#character"><i class="fa fa-check"></i><b>3.3.2</b> Character</a></li>
+<li class="chapter" data-level="3.3.3" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#factor"><i class="fa fa-check"></i><b>3.3.3</b> Factor</a></li>
+<li class="chapter" data-level="3.3.4" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#date-and-time"><i class="fa fa-check"></i><b>3.3.4</b> Date and time</a></li>
+<li class="chapter" data-level="3.3.5" data-path="parsing-a-vector.html"><a href="parsing-a-vector.html#exercises-4"><i class="fa fa-check"></i><b>3.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html"><i class="fa fa-check"></i><b>3.4</b> Parsing a file</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parsing-a-file.html"><a href="parsing-a-file.html#strategies"><i class="fa fa-check"></i><b>3.4.1</b> Strategies</a></li>
+<li class="chapter" data-level="3.4.2" data-path="parsing-a-file.html"><a href="parsing-a-file.html#possible-challenges"><i class="fa fa-check"></i><b>3.4.2</b> Possible challenges</a></li>
+<li class="chapter" data-level="3.4.3" data-path="parsing-a-file.html"><a href="parsing-a-file.html#other-tips"><i class="fa fa-check"></i><b>3.4.3</b> Other tips</a></li>
+<li class="chapter" data-level="3.4.4" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-dealing-with-metadata"><i class="fa fa-check"></i><b>3.4.4</b> Example: Dealing with metadata</a></li>
+<li class="chapter" data-level="3.4.5" data-path="parsing-a-file.html"><a href="parsing-a-file.html#example-multi-row-headers"><i class="fa fa-check"></i><b>3.4.5</b> Example: multi-row headers</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="readxl.html"><a href="readxl.html"><i class="fa fa-check"></i><b>3.5</b> <code>readxl</code></a><ul>
+<li class="chapter" data-level="3.5.1" data-path="readxl.html"><a href="readxl.html#multi-row-headers-in-excel"><i class="fa fa-check"></i><b>3.5.1</b> Multi-row headers in Excel</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="lubridate-dates-and-times.html"><a href="lubridate-dates-and-times.html"><i class="fa fa-check"></i><b>4</b> lubridate: Dates and times</a><ul>
+<li class="chapter" data-level="4.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html"><i class="fa fa-check"></i><b>4.1</b> Creating dates and times</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-strings"><i class="fa fa-check"></i><b>4.1.1</b> From strings</a></li>
+<li class="chapter" data-level="4.1.2" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-individual-components"><i class="fa fa-check"></i><b>4.1.2</b> From individual components</a></li>
+<li class="chapter" data-level="4.1.3" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#from-other-times"><i class="fa fa-check"></i><b>4.1.3</b> From other times</a></li>
+<li class="chapter" data-level="4.1.4" data-path="creating-dates-and-times.html"><a href="creating-dates-and-times.html#exercises-5"><i class="fa fa-check"></i><b>4.1.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="date-time-components.html"><a href="date-time-components.html"><i class="fa fa-check"></i><b>4.2</b> Date-time components</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="date-time-components.html"><a href="date-time-components.html#accessing-components"><i class="fa fa-check"></i><b>4.2.1</b> Accessing components</a></li>
+<li class="chapter" data-level="4.2.2" data-path="date-time-components.html"><a href="date-time-components.html#rounding"><i class="fa fa-check"></i><b>4.2.2</b> Rounding</a></li>
+<li class="chapter" data-level="4.2.3" data-path="date-time-components.html"><a href="date-time-components.html#setting-components"><i class="fa fa-check"></i><b>4.2.3</b> Setting components</a></li>
+<li class="chapter" data-level="4.2.4" data-path="date-time-components.html"><a href="date-time-components.html#exercises-6"><i class="fa fa-check"></i><b>4.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="time-span.html"><a href="time-span.html"><i class="fa fa-check"></i><b>4.3</b> Time span</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="time-span.html"><a href="time-span.html#时期-durations"><i class="fa fa-check"></i><b>4.3.1</b> 时期 Durations</a></li>
+<li class="chapter" data-level="4.3.2" data-path="time-span.html"><a href="time-span.html#阶段-periods"><i class="fa fa-check"></i><b>4.3.2</b> 阶段 Periods</a></li>
+<li class="chapter" data-level="4.3.3" data-path="time-span.html"><a href="time-span.html#区间-intervals"><i class="fa fa-check"></i><b>4.3.3</b> 区间 Intervals</a></li>
+<li class="chapter" data-level="4.3.4" data-path="time-span.html"><a href="time-span.html#conclusion"><i class="fa fa-check"></i><b>4.3.4</b> Conclusion</a></li>
+<li class="chapter" data-level="4.3.5" data-path="time-span.html"><a href="time-span.html#exercises-7"><i class="fa fa-check"></i><b>4.3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="hms.html"><a href="hms.html"><i class="fa fa-check"></i><b>4.4</b> hms</a></li>
+<li class="chapter" data-level="4.5" data-path="dint.html"><a href="dint.html"><i class="fa fa-check"></i><b>4.5</b> dint</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="dint.html"><a href="dint.html#creation"><i class="fa fa-check"></i><b>4.5.1</b> Creation</a></li>
+<li class="chapter" data-level="4.5.2" data-path="dint.html"><a href="dint.html#arithmetic-and-sequences"><i class="fa fa-check"></i><b>4.5.2</b> Arithmetic and Sequences</a></li>
+<li class="chapter" data-level="4.5.3" data-path="dint.html"><a href="dint.html#accessors"><i class="fa fa-check"></i><b>4.5.3</b> Accessors</a></li>
+<li class="chapter" data-level="4.5.4" data-path="dint.html"><a href="dint.html#formatting"><i class="fa fa-check"></i><b>4.5.4</b> Formatting</a></li>
+<li class="chapter" data-level="4.5.5" data-path="dint.html"><a href="dint.html#labelling-functions-in-ggplot2"><i class="fa fa-check"></i><b>4.5.5</b> Labelling functions in ggplot2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="forcats-factor.html"><a href="forcats-factor.html"><i class="fa fa-check"></i><b>5</b> forcats: factor</a><ul>
+<li class="chapter" data-level="5.1" data-path="factor-basics.html"><a href="factor-basics.html"><i class="fa fa-check"></i><b>5.1</b> Factor basics</a></li>
+<li class="chapter" data-level="5.2" data-path="sorting.html"><a href="sorting.html"><i class="fa fa-check"></i><b>5.2</b> Sorting</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="sorting.html"><a href="sorting.html#sorting-by-frequency-appearance-or-numeric-order"><i class="fa fa-check"></i><b>5.2.1</b> Sorting by frequency, appearance, or numeric order</a></li>
+<li class="chapter" data-level="5.2.2" data-path="sorting.html"><a href="sorting.html#sorting-by-another-variable"><i class="fa fa-check"></i><b>5.2.2</b> Sorting by another variable</a></li>
+<li class="chapter" data-level="5.2.3" data-path="sorting.html"><a href="sorting.html#sorting-manually"><i class="fa fa-check"></i><b>5.2.3</b> Sorting manually</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html"><i class="fa fa-check"></i><b>5.3</b> Chaninge number of levels</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#lumping-levels"><i class="fa fa-check"></i><b>5.3.1</b> Lumping levels</a></li>
+<li class="chapter" data-level="5.3.2" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#expanding-levels"><i class="fa fa-check"></i><b>5.3.2</b> Expanding levels</a></li>
+<li class="chapter" data-level="5.3.3" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#dropping-levels"><i class="fa fa-check"></i><b>5.3.3</b> Dropping levels</a></li>
+<li class="chapter" data-level="5.3.4" data-path="chaninge-number-of-levels.html"><a href="chaninge-number-of-levels.html#transforming-na-levels"><i class="fa fa-check"></i><b>5.3.4</b> Transforming NA levels</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="recoding.html"><a href="recoding.html"><i class="fa fa-check"></i><b>5.4</b> Recoding</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="recoding.html"><a href="recoding.html#exercises-8"><i class="fa fa-check"></i><b>5.4.1</b> Exercises</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="tidyr-tidy-data.html"><a href="tidyr-tidy-data.html"><i class="fa fa-check"></i><b>6</b> tidyr: Tidy data</a><ul>
+<li class="chapter" data-level="6.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html"><i class="fa fa-check"></i><b>6.1</b> Tidy data</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="tidyr-intro.html"><a href="tidyr-intro.html#exercises-9"><i class="fa fa-check"></i><b>6.1.1</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pivoting.html"><a href="pivoting.html"><i class="fa fa-check"></i><b>6.2</b> Pivoting</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="pivoting.html"><a href="pivoting.html#pivot_longer"><i class="fa fa-check"></i><b>6.2.1</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="pivoting.html"><a href="pivoting.html#pivot_wider"><i class="fa fa-check"></i><b>6.2.2</b> <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.3" data-path="pivoting.html"><a href="pivoting.html#combining-pivot_longer-and-pivot_wider"><i class="fa fa-check"></i><b>6.2.3</b> Combining <code>pivot_longer()</code> and <code>pivot_wider()</code></a></li>
+<li class="chapter" data-level="6.2.4" data-path="pivoting.html"><a href="pivoting.html#exercises-10"><i class="fa fa-check"></i><b>6.2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="nesting.html"><a href="nesting.html"><i class="fa fa-check"></i><b>6.3</b> Nesting</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="nesting.html"><a href="nesting.html#example-managing-multiple-models"><i class="fa fa-check"></i><b>6.3.1</b> Example: Managing multiple models</a></li>
+<li class="chapter" data-level="6.3.2" data-path="nesting.html"><a href="nesting.html#multi-choice"><i class="fa fa-check"></i><b>6.3.2</b> Example: Multicple hoice data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="rectangling.html"><a href="rectangling.html"><i class="fa fa-check"></i><b>6.4</b> Rectangling</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="rectangling.html"><a href="rectangling.html#github-users"><i class="fa fa-check"></i><b>6.4.1</b> Github users</a></li>
+<li class="chapter" data-level="6.4.2" data-path="rectangling.html"><a href="rectangling.html#github-repos"><i class="fa fa-check"></i><b>6.4.2</b> Github repos</a></li>
+<li class="chapter" data-level="6.4.3" data-path="rectangling.html"><a href="rectangling.html#game-of-throne-characters"><i class="fa fa-check"></i><b>6.4.3</b> Game of Throne characters</a></li>
+<li class="chapter" data-level="6.4.4" data-path="rectangling.html"><a href="rectangling.html#sharla-gelfands-discography"><i class="fa fa-check"></i><b>6.4.4</b> Sharla Gelfand’s discography</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="separate-and-untie.html"><a href="separate-and-untie.html"><i class="fa fa-check"></i><b>6.5</b> <code>separate()</code> and <code>untie()</code></a><ul>
+<li class="chapter" data-level="6.5.1" data-path="separate-and-untie.html"><a href="separate-and-untie.html#separate"><i class="fa fa-check"></i><b>6.5.1</b> <code>separate()</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="separate-and-untie.html"><a href="separate-and-untie.html#unite"><i class="fa fa-check"></i><b>6.5.2</b> <code>unite()</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="separate-and-untie.html"><a href="separate-and-untie.html#exercises-11"><i class="fa fa-check"></i><b>6.5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="tidyr-missing.html"><a href="tidyr-missing.html"><i class="fa fa-check"></i><b>6.6</b> Handling missing values</a></li>
+<li class="chapter" data-level="6.7" data-path="tidyr-case.html"><a href="tidyr-case.html"><i class="fa fa-check"></i><b>6.7</b> Case Study</a></li>
+<li class="chapter" data-level="6.8" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html"><i class="fa fa-check"></i><b>6.8</b> Miscellaneous Functions</a><ul>
+<li class="chapter" data-level="6.8.1" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#chop-and-unchop"><i class="fa fa-check"></i><b>6.8.1</b> <code>chop()</code> and <code>unchop()</code></a></li>
+<li class="chapter" data-level="6.8.2" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#uncount"><i class="fa fa-check"></i><b>6.8.2</b> <code>uncount()</code></a></li>
+<li class="chapter" data-level="6.8.3" data-path="miscellaneous-functions.html"><a href="miscellaneous-functions.html#exercises-12"><i class="fa fa-check"></i><b>6.8.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6.9" data-path="non-tidy.html"><a href="non-tidy.html"><i class="fa fa-check"></i><b>6.9</b> None-tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="purrr-functional-programming.html"><a href="purrr-functional-programming.html"><i class="fa fa-check"></i><b>7</b> purrr: Functional programming</a><ul>
+<li class="chapter" data-level="7.1" data-path="map-family.html"><a href="map-family.html"><i class="fa fa-check"></i><b>7.1</b> <code>map()</code> family</a></li>
+<li class="chapter" data-level="7.2" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html"><i class="fa fa-check"></i><b>7.2</b> Producing atomic vectors</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="producing-atomic-vectors.html"><a href="producing-atomic-vectors.html#purrr-style-anonymous-functions"><i class="fa fa-check"></i><b>7.2.1</b> purrr-style anonymous functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="predicate-functions.html"><a href="predicate-functions.html"><i class="fa fa-check"></i><b>7.3</b> Predicate functions</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="predicate-functions.html"><a href="predicate-functions.html#basics"><i class="fa fa-check"></i><b>7.3.1</b> Basics</a></li>
+<li class="chapter" data-level="7.3.2" data-path="predicate-functions.html"><a href="predicate-functions.html#map-variants"><i class="fa fa-check"></i><b>7.3.2</b> Map variants</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="group-functions.html"><a href="group-functions.html"><i class="fa fa-check"></i><b>7.4</b> group functions</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="group-functions.html"><a href="group-functions.html#group_mapgroup_modify"><i class="fa fa-check"></i><b>7.4.1</b> group_map、group_modify</a></li>
+<li class="chapter" data-level="7.4.2" data-path="group-functions.html"><a href="group-functions.html#group_nestgroup_splitgroup_keysgroup_data"><i class="fa fa-check"></i><b>7.4.2</b> group_nest、group_split、group_keys、group_data</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="other-useful-tools.html"><a href="other-useful-tools.html"><i class="fa fa-check"></i><b>7.5</b> Other useful tools</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="other-useful-tools.html"><a href="other-useful-tools.html#imap"><i class="fa fa-check"></i><b>7.5.1</b> <code>imap()</code></a></li>
+<li class="chapter" data-level="7.5.2" data-path="other-useful-tools.html"><a href="other-useful-tools.html#adverbs"><i class="fa fa-check"></i><b>7.5.2</b> adverbs</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="relational-data.html"><a href="relational-data.html"><i class="fa fa-check"></i><b>8</b> Relational data</a><ul>
+<li class="chapter" data-level="8.1" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="mutating-joins.html"><a href="mutating-joins.html"><i class="fa fa-check"></i><b>8.2</b> Mutating joins</a></li>
+<li class="chapter" data-level="8.3" data-path="filtering-join.html"><a href="filtering-join.html"><i class="fa fa-check"></i><b>8.3</b> Filtering join</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="broom-tidy-representation-of-models.html"><a href="broom-tidy-representation-of-models.html"><i class="fa fa-check"></i><b>9</b> broom: Tidy representation of models</a><ul>
+<li class="chapter" data-level="9.1" data-path="viz-many-models.html"><a href="viz-many-models.html"><i class="fa fa-check"></i><b>9.1</b> Visualizing many models</a></li>
+<li class="chapter" data-level="9.2" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>9.2</b> Examples</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="examples.html"><a href="examples.html#pca"><i class="fa fa-check"></i><b>9.2.1</b> PCA</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="broomextra.html"><a href="broomextra.html"><i class="fa fa-check"></i><b>9.3</b> broomExtra</a></li>
+<li class="chapter" data-level="9.4" data-path="ggfortify.html"><a href="ggfortify.html"><i class="fa fa-check"></i><b>9.4</b> ggfortify</a></li>
+</ul></li>
+<li class="part"><span><b>II Importing</b></span></li>
+<li class="chapter" data-level="10" data-path="vroom-fast-reading-of-delimited-files.html"><a href="vroom-fast-reading-of-delimited-files.html"><i class="fa fa-check"></i><b>10</b> vroom: Fast reading of delimited files</a></li>
+<li class="chapter" data-level="11" data-path="reading-in-data-from-other-formats.html"><a href="reading-in-data-from-other-formats.html"><i class="fa fa-check"></i><b>11</b> Reading in data from other formats</a><ul>
+<li class="chapter" data-level="11.1" data-path="pdf.html"><a href="pdf.html"><i class="fa fa-check"></i><b>11.1</b> PDF</a><ul>
+<li class="chapter" data-level="11.1.1" data-path="pdf.html"><a href="pdf.html#scraping-pdf-data"><i class="fa fa-check"></i><b>11.1.1</b> Scraping pdf data</a></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="office-documents.html"><a href="office-documents.html"><i class="fa fa-check"></i><b>11.2</b> Office documents</a></li>
+<li class="chapter" data-level="11.3" data-path="google-sheet.html"><a href="google-sheet.html"><i class="fa fa-check"></i><b>11.3</b> Google sheet</a></li>
+<li class="chapter" data-level="11.4" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i><b>11.4</b> Images</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="useful-apis.html"><a href="useful-apis.html"><i class="fa fa-check"></i><b>12</b> Useful APIs</a><ul>
+<li class="chapter" data-level="12.1" data-path="wdi.html"><a href="wdi.html"><i class="fa fa-check"></i><b>12.1</b> WDI</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="wdi.html"><a href="wdi.html#wdisearch"><i class="fa fa-check"></i><b>12.1.1</b> <code>WDIsearch()</code></a></li>
+<li class="chapter" data-level="12.1.2" data-path="wdi.html"><a href="wdi.html#wdi-1"><i class="fa fa-check"></i><b>12.1.2</b> <code>WDI</code></a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="ipumsr.html"><a href="ipumsr.html"><i class="fa fa-check"></i><b>12.2</b> ipumsr</a></li>
+</ul></li>
+<li class="part"><span><b>III Exploring and Wrangling</b></span></li>
+<li class="chapter" data-level="13" data-path="data-summary.html"><a href="data-summary.html"><i class="fa fa-check"></i><b>13</b> Data summary</a><ul>
+<li class="chapter" data-level="13.1" data-path="skimr.html"><a href="skimr.html"><i class="fa fa-check"></i><b>13.1</b> skimr</a></li>
+<li class="chapter" data-level="13.2" data-path="visdat.html"><a href="visdat.html"><i class="fa fa-check"></i><b>13.2</b> visdat</a></li>
+<li class="chapter" data-level="13.3" data-path="summarytools.html"><a href="summarytools.html"><i class="fa fa-check"></i><b>13.3</b> summarytools</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="summarytools.html"><a href="summarytools.html#freq"><i class="fa fa-check"></i><b>13.3.1</b> <code>freq</code></a></li>
+<li class="chapter" data-level="13.3.2" data-path="summarytools.html"><a href="summarytools.html#descr"><i class="fa fa-check"></i><b>13.3.2</b> <code>descr()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="13.4" data-path="gt-and-gtsummary.html"><a href="gt-and-gtsummary.html"><i class="fa fa-check"></i><b>13.4</b> gt and gtsummary</a></li>
+<li class="chapter" data-level="13.5" data-path="naniar.html"><a href="naniar.html"><i class="fa fa-check"></i><b>13.5</b> naniar</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="janitor.html"><a href="janitor.html"><i class="fa fa-check"></i><b>14</b> Janitor</a><ul>
+<li class="chapter" data-level="14.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html"><i class="fa fa-check"></i><b>14.1</b> cleaning</a><ul>
+<li class="chapter" data-level="14.1.1" data-path="janitor-cleaning.html"><a href="janitor-cleaning.html#clean_names"><i class="fa fa-check"></i><b>14.1.1</b> <code>clean_names</code></a></li>
+</ul></li>
+<li class="chapter" data-level="14.2" data-path="janitor-explore.html"><a href="janitor-explore.html"><i class="fa fa-check"></i><b>14.2</b> Exploring</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="janitor-explore.html"><a href="janitor-explore.html#tabyl"><i class="fa fa-check"></i><b>14.2.1</b> <code>tabyl</code></a></li>
+<li class="chapter" data-level="14.2.2" data-path="janitor-explore.html"><a href="janitor-explore.html#get_dupes"><i class="fa fa-check"></i><b>14.2.2</b> <code>get_dupes</code></a></li>
+<li class="chapter" data-level="14.2.3" data-path="janitor-explore.html"><a href="janitor-explore.html#remove_"><i class="fa fa-check"></i><b>14.2.3</b> <code>remove_</code></a></li>
+<li class="chapter" data-level="14.2.4" data-path="janitor-explore.html"><a href="janitor-explore.html#round_half_up"><i class="fa fa-check"></i><b>14.2.4</b> <code>round_half_up</code></a></li>
+<li class="chapter" data-level="14.2.5" data-path="janitor-explore.html"><a href="janitor-explore.html#excel_numeric_to_date"><i class="fa fa-check"></i><b>14.2.5</b> <code>excel_numeric_to_date</code></a></li>
+<li class="chapter" data-level="14.2.6" data-path="janitor-explore.html"><a href="janitor-explore.html#top_levels"><i class="fa fa-check"></i><b>14.2.6</b> <code>top_levels</code></a></li>
+<li class="chapter" data-level="14.2.7" data-path="janitor-explore.html"><a href="janitor-explore.html#row_to_names"><i class="fa fa-check"></i><b>14.2.7</b> <code>row_to_names</code></a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Miscellaneous tools</b></span></li>
+<li class="chapter" data-level="15" data-path="advanced-relational-data.html"><a href="advanced-relational-data.html"><i class="fa fa-check"></i><b>15</b> Advanced relational data</a><ul>
+<li class="chapter" data-level="15.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html"><i class="fa fa-check"></i><b>15.1</b> fuzzyjoin</a><ul>
+<li class="chapter" data-level="15.1.1" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#inexact-matching"><i class="fa fa-check"></i><b>15.1.1</b> inexact matching</a></li>
+<li class="chapter" data-level="15.1.2" data-path="fuzzyjoin.html"><a href="fuzzyjoin.html#stringdist"><i class="fa fa-check"></i><b>15.1.2</b> stringdist</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="funneljoin.html"><a href="funneljoin.html"><i class="fa fa-check"></i><b>15.2</b> funneljoin</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="funneljoin.html"><a href="funneljoin.html#after_join"><i class="fa fa-check"></i><b>15.2.1</b> <code>after_join()</code></a></li>
+<li class="chapter" data-level="15.2.2" data-path="funneljoin.html"><a href="funneljoin.html#funnel-in-one-table"><i class="fa fa-check"></i><b>15.2.2</b> funnel in one table</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="dm.html"><a href="dm.html"><i class="fa fa-check"></i><b>15.3</b> dm</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="categorical-data-facotr.html"><a href="categorical-data-facotr.html"><i class="fa fa-check"></i><b>16</b> Categorical data (facotr)</a><ul>
+<li class="chapter" data-level="16.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html"><i class="fa fa-check"></i><b>16.1</b> Frequency and contingency table</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="frequency-and-contingency-table.html"><a href="frequency-and-contingency-table.html#frq-and-flat_table"><i class="fa fa-check"></i><b>16.1.1</b> <code>frq()</code> and <code>flat_table()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="coding.html"><a href="coding.html"><i class="fa fa-check"></i><b>16.2</b> Coding</a><ul>
+<li class="chapter" data-level="16.2.1" data-path="coding.html"><a href="coding.html#rec"><i class="fa fa-check"></i><b>16.2.1</b> <code>rec()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="cutting.html"><a href="cutting.html"><i class="fa fa-check"></i><b>16.3</b> Cutting</a><ul>
+<li class="chapter" data-level="16.3.1" data-path="cutting.html"><a href="cutting.html#chop"><i class="fa fa-check"></i><b>16.3.1</b> <code>chop()</code></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dealing-with-missing-values.html"><a href="dealing-with-missing-values.html"><i class="fa fa-check"></i><b>17</b> Dealing with missing values</a><ul>
+<li class="chapter" data-level="17.1" data-path="explore-missing.html"><a href="explore-missing.html"><i class="fa fa-check"></i><b>17.1</b> Exploring</a><ul>
+<li class="chapter" data-level="17.1.1" data-path="explore-missing.html"><a href="explore-missing.html#naniar-1"><i class="fa fa-check"></i><b>17.1.1</b> naniar</a></li>
+<li class="chapter" data-level="17.1.2" data-path="explore-missing.html"><a href="explore-missing.html#replace-a-value-with-na"><i class="fa fa-check"></i><b>17.1.2</b> Replace a value with NA</a></li>
+<li class="chapter" data-level="17.1.3" data-path="explore-missing.html"><a href="explore-missing.html#janitor-1"><i class="fa fa-check"></i><b>17.1.3</b> janitor</a></li>
+<li class="chapter" data-level="17.1.4" data-path="explore-missing.html"><a href="explore-missing.html#sjmisc"><i class="fa fa-check"></i><b>17.1.4</b> sjmisc</a></li>
+</ul></li>
+<li class="chapter" data-level="17.2" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>17.2</b> Wrangling</a><ul>
+<li class="chapter" data-level="17.2.1" data-path="wrangling.html"><a href="wrangling.html#tidyr"><i class="fa fa-check"></i><b>17.2.1</b> tidyr</a></li>
+<li class="chapter" data-level="17.2.2" data-path="wrangling.html"><a href="wrangling.html#janitor-2"><i class="fa fa-check"></i><b>17.2.2</b> janitor</a></li>
+<li class="chapter" data-level="17.2.3" data-path="wrangling.html"><a href="wrangling.html#visdat-1"><i class="fa fa-check"></i><b>17.2.3</b> visdat</a></li>
+</ul></li>
+<li class="chapter" data-level="17.3" data-path="imputation.html"><a href="imputation.html"><i class="fa fa-check"></i><b>17.3</b> Imputation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R for data science: tidyverse and beyond</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="parsing-a-vector" class="section level2">
+<h2><span class="header-section-number">3.3</span> Parsing a vector</h2>
+<p>在详细介绍 <code>readr</code> 如何从磁盘读取文件之前，我们需要先讨论一下 <code>parse_*()</code>函数族。这些函数接受一个字符向量（因为文件中的数据全部是以字符串的形式进入 R 的），并返回一个特定向量，如逻辑、整数或日期向量：</p>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" title="1"><span class="co">## 用str()函数返回类别</span></a>
+<a class="sourceLine" id="cb176-2" title="2"><span class="kw">str</span>(<span class="kw">parse_logical</span>(<span class="kw">c</span>(<span class="st">&quot;True&quot;</span>, <span class="st">&quot;False&quot;</span>, <span class="st">&quot;True&quot;</span>)))</a>
+<a class="sourceLine" id="cb176-3" title="3"><span class="co">#&gt;  logi [1:3] TRUE FALSE TRUE</span></a>
+<a class="sourceLine" id="cb176-4" title="4"><span class="kw">str</span>(<span class="kw">parse_integer</span>(<span class="kw">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>)))</a>
+<a class="sourceLine" id="cb176-5" title="5"><span class="co">#&gt;  int [1:3] 1 2 3</span></a>
+<a class="sourceLine" id="cb176-6" title="6"><span class="kw">str</span>(<span class="kw">parse_date</span>(<span class="kw">c</span>(<span class="st">&quot;2010-01-01&quot;</span>, <span class="st">&quot;2019-08-15&quot;</span>)))</a>
+<a class="sourceLine" id="cb176-7" title="7"><span class="co">#&gt;  Date[1:2], format: &quot;2010-01-01&quot; &quot;2019-08-15&quot;</span></a></code></pre></div>
+<p>这些函数各司其职，且都是 <code>readr</code> 的重要组成部分。一旦掌握了本节中这些单个解析函数的用法，我们就可以继续讨论如何综合使用它们来解析整个文件了。</p>
+<p>和 <code>tidyverse</code> 中出现的函数族一样，<code>parse_*()</code> 函数族有着相同的参数结构。第一个参数是需要解析的字符向量，<code>na</code>参数设定了哪些字符串应该当做缺失值处理：</p>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb177-1" title="1"><span class="kw">parse_integer</span>(<span class="kw">c</span>(<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;.&quot;</span>,<span class="st">&quot;456&quot;</span>),<span class="dt">na =</span> <span class="st">&quot;.&quot;</span>)</a>
+<a class="sourceLine" id="cb177-2" title="2"><span class="co">#&gt; [1]   1   2  NA 456</span></a></code></pre></div>
+<p>如果解析失败，你会收到一条警告：</p>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb178-1" title="1">x &lt;-<span class="st"> </span><span class="kw">parse_integer</span>(<span class="kw">c</span>(<span class="st">&quot;123&quot;</span>, <span class="st">&quot;345&quot;</span>, <span class="st">&quot;abc&quot;</span>, <span class="st">&quot;123.45&quot;</span>))</a></code></pre></div>
+<p>解析失败的值在输出中以缺失值的形式存在:</p>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" title="1">x</a>
+<a class="sourceLine" id="cb179-2" title="2"><span class="co">#&gt; [1] 123 345  NA  NA</span></a>
+<a class="sourceLine" id="cb179-3" title="3"><span class="co">#&gt; attr(,&quot;problems&quot;)</span></a>
+<a class="sourceLine" id="cb179-4" title="4"><span class="co">#&gt; # A tibble: 2 x 4</span></a>
+<a class="sourceLine" id="cb179-5" title="5"><span class="co">#&gt;     row   col expected               actual</span></a>
+<a class="sourceLine" id="cb179-6" title="6"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  &lt;chr&gt; </span></a>
+<a class="sourceLine" id="cb179-7" title="7"><span class="co">#&gt; 1     3    NA an integer             abc   </span></a>
+<a class="sourceLine" id="cb179-8" title="8"><span class="co">#&gt; 2     4    NA no trailing characters .45</span></a></code></pre></div>
+<p>如果解析失败的值很多，那么就应该使用 <code>problems()</code> 函数来获取完整的失败信息集合。这个函数会返回一个 tibble，可以使用 <code>dplyr</code> 来处理它：</p>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb180-1" title="1"><span class="kw">problems</span>(x)</a>
+<a class="sourceLine" id="cb180-2" title="2"><span class="co">#&gt; # A tibble: 2 x 4</span></a>
+<a class="sourceLine" id="cb180-3" title="3"><span class="co">#&gt;     row   col expected               actual</span></a>
+<a class="sourceLine" id="cb180-4" title="4"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  &lt;chr&gt; </span></a>
+<a class="sourceLine" id="cb180-5" title="5"><span class="co">#&gt; 1     3    NA an integer             abc   </span></a>
+<a class="sourceLine" id="cb180-6" title="6"><span class="co">#&gt; 2     4    NA no trailing characters .45</span></a></code></pre></div>
+<p>在解析函数的使用方面，最重要的是知道有哪些解析函数，以及每种解析函数用来处理哪种类型的输入。具体来说，重要的解析函数有8中：</p>
+<ul>
+<li><code>parse_logical()</code>和<code>parse_integer()</code>函数分别解析逻辑值和整数，因为这两个解析函数基本不会出现问题，所以我们不再进行更多介绍<br />
+</li>
+<li><code>parse_double()</code>是严格的数值型解析函数，而<code>parse_number()</code>则是灵活的数值型解析函数，这两个函数背后很复杂，因为世界各地书写数值的方式不尽相同<br />
+</li>
+<li><code>parse_character()</code>函数似乎太过简单，甚至没必要存在，因为R读取的文件本身就是字符串形式。但一个棘手的问题使得这个函数非常重要：字符编码<br />
+</li>
+<li><code>parse_factor()</code>函数可以创建因子，R使用这种数据结构表示分类变量，该变量具有固定数目的已知值<br />
+</li>
+<li><code>parse_datetime()</code>、<code>parse_date()</code>和<code>parse_time()</code>函数可以解析不同类型的日期和时间，它们是最复杂的，因为有太多不同的日期书写形式</li>
+</ul>
+<div id="numeric" class="section level3">
+<h3><span class="header-section-number">3.3.1</span> Numeric</h3>
+<p>解析数值似乎是直截了当的，但以下 3 个问题增加了数値解析的复杂性：</p>
+<ul>
+<li>世界各地的人们书写数值的方式不尽相同。例如有些国家使用<code>.</code>当做小数点，而有些国家使用<code>,</code><br />
+</li>
+<li>数值周围可能会有其他字符，例如 <code>$1000</code>、<code>15℃</code> 和<code>10%</code><br />
+</li>
+<li>数值经常包含某种形式的分组(grouping)，以便更易读，如<code>1 000 000</code>，而且世界各地用来分组的字符也不统一</li>
+</ul>
+<p>为了解决第一个问题，<code>readr</code>使用了地区的概念(locale)，使得可以按照不同地区设置解析选项。在解析数值时，最重要的选项就是用来表示小数点的字符，通过设置一个新的地区对象并设定<code>decimal_mark</code>参数，可以覆盖<code>.</code>的默认值：</p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb181-1" title="1"><span class="kw">parse_double</span>(<span class="st">&quot;1.23&quot;</span>)</a>
+<a class="sourceLine" id="cb181-2" title="2"><span class="co">#&gt; [1] 1.23</span></a>
+<a class="sourceLine" id="cb181-3" title="3"><span class="kw">parse_double</span>(<span class="st">&quot;1,23&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">decimal_mark =</span> <span class="st">&quot;,&quot;</span>))</a>
+<a class="sourceLine" id="cb181-4" title="4"><span class="co">#&gt; [1] 1.23</span></a></code></pre></div>
+<p><code>locale()</code>函数可以通过<code>decimal_mark,grouping_mark,date_format,time_format,tz,encoding</code>等参数创建一个地区对象，设定该地区内的一些表示习惯，这里我们告诉R哪个符号被用来当做小数点。</p>
+<p><code>readr</code>的默认地区是US-centric。获取默认地区的另一种方法是利用操作系统，但这可能让你的代码只能在你的电脑上运行，通过电子邮件共享给另一个国家的同事时，就可能失效。</p>
+<p><code>parse_number()</code>解决了第二个问题：<strong>它可以忽略数值前后的非数值型字符</strong>。这个函数特别适合处理货币和百分比，你可以提取嵌在文本中的数值：</p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb182-1" title="1"><span class="kw">parse_number</span>(<span class="st">&quot;$100&quot;</span>)</a>
+<a class="sourceLine" id="cb182-2" title="2"><span class="co">#&gt; [1] 100</span></a>
+<a class="sourceLine" id="cb182-3" title="3"><span class="kw">parse_number</span>(<span class="st">&quot;20%&quot;</span>)</a>
+<a class="sourceLine" id="cb182-4" title="4"><span class="co">#&gt; [1] 20</span></a>
+<a class="sourceLine" id="cb182-5" title="5"><span class="kw">parse_number</span>(<span class="st">&quot;37℃&quot;</span>)</a>
+<a class="sourceLine" id="cb182-6" title="6"><span class="co">#&gt; [1] 37</span></a>
+<a class="sourceLine" id="cb182-7" title="7"><span class="kw">parse_number</span>(<span class="st">&quot;It cost $123.45&quot;</span>)</a>
+<a class="sourceLine" id="cb182-8" title="8"><span class="co">#&gt; [1] 123</span></a></code></pre></div>
+<p>组合使用 <code>parse_number()</code> 和 <code>locale()</code> 可以解决最后一个问题，因为 <code>parse_number()</code> 可以忽略“分组符号” ：</p>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb183-1" title="1"><span class="co">## 适用于美国，忽略分组符号</span></a>
+<a class="sourceLine" id="cb183-2" title="2"><span class="kw">parse_number</span>(<span class="st">&quot;123,456,789&quot;</span>)</a>
+<a class="sourceLine" id="cb183-3" title="3"><span class="co">#&gt; [1] 123456789</span></a>
+<a class="sourceLine" id="cb183-4" title="4"><span class="co">## 适用于多数欧洲国家，需要用locale设置分组符号，因为.被默认为小数点</span></a>
+<a class="sourceLine" id="cb183-5" title="5"><span class="kw">parse_number</span>(<span class="st">&quot;123.456.789&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">grouping_mark =</span> <span class="st">&quot;.&quot;</span>))</a>
+<a class="sourceLine" id="cb183-6" title="6"><span class="co">#&gt; [1] 123456789</span></a>
+<a class="sourceLine" id="cb183-7" title="7"><span class="co">## 适用于瑞士</span></a>
+<a class="sourceLine" id="cb183-8" title="8"><span class="kw">parse_number</span>(<span class="st">&quot;123&#39;456&#39;789&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">grouping_mark =</span> <span class="st">&quot;&#39;&quot;</span>))</a>
+<a class="sourceLine" id="cb183-9" title="9"><span class="co">#&gt; [1] 123456789</span></a></code></pre></div>
+</div>
+<div id="character" class="section level3">
+<h3><span class="header-section-number">3.3.2</span> Character</h3>
+<p>To better illustrate the challenges of parsing a character vector, we need to have a reasonable understanding of the following questions.</p>
+<ol style="list-style-type: decimal">
+<li>什么是字符？</li>
+</ol>
+<blockquote>
+<p>字符是各种文字和符号的总称，包括各个国家文字、标点符号、图形符号、数字等，甚至还包括表情符号。</p>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>什么是字符集？</li>
+</ol>
+<blockquote>
+<p>字符集是多个字符的集合，字符集种类较多，每个字符集包含的字符个数不同，常见字符集有：ASCII 字符集、ISO 8859字符集、GB2312 字符集、BIG5字符集、GB18030 字符集、Unicode 字符集等。ASCII 可以非常好地表示英文字符，因为它就是美国信息交换标准代码(American Standard Code for Information Interchange)的缩写。Unicode是国际组织制定的可以容纳世界上所有文字和符号的字符编码方案。</p>
+</blockquote>
+<ol start="3" style="list-style-type: decimal">
+<li>什么是字符编码？</li>
+</ol>
+<blockquote>
+<p>计算机要准确的处理各种字符集文字，需要进行字符编码，以便计算机能够识别和存储各种文字。 字符编码(encoding)和字符集不同。字符集只是字符的集合，不一定适合作网络传送、处理，有时须经编码(encode)后才能应用。如Unicode可依不同需要以UTF-8、UTF-16、UTF-32等方式编码。 字符编码就是以二进制的数字来对应字符集的字符。因此，对字符进行编码，是信息交流的技术基础。</p>
+</blockquote>
+<ol start="4" style="list-style-type: decimal">
+<li>概括</li>
+</ol>
+<blockquote>
+<p>使用哪些字符。也就是说哪些汉字，字母和符号会被收入标准中。所包含“字符”的集合就叫做“字符集”。
+规定每个“字符”分别用一个字节还是多个字节存储，用哪些字节来存储，这个规定就叫做“编码”。 各个国家和地区在制定编码标准的时候，“字符的集合”和“编码”一般都是同时制定的。因此，平常我们所说的“字符集”，比如：GB2312, GBK, JIS等，除了有“字符的集合”这层含义外，同时也包含了“编码”的含义。
+注意：Unicode字符集有多种编码方式，如UTF-8、UTF-16等；ASCII只有一种；大多数MBCS（包括GB2312，GBK）也只有一种。</p>
+</blockquote>
+<p>在 R 中，我们可以使用<code>charToRaw()</code>函数获得一个字符串的底层表示（underlying representation）：</p>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb184-1" title="1">char_raw &lt;-<span class="st"> </span><span class="kw">charToRaw</span>(<span class="st">&quot;Maxine&quot;</span>)</a>
+<a class="sourceLine" id="cb184-2" title="2">char_raw</a>
+<a class="sourceLine" id="cb184-3" title="3"><span class="co">#&gt; [1] 4d 61 78 69 6e 65</span></a></code></pre></div>
+<p><code>charToRaw()</code>返回的尚不是编码结果（二进制），而是十六进制的表示。每个十六进制数表示字符串的一个字节：<code>4d</code>是M，<code>61</code>是a等。<code>charToRaw()</code>返回的对象在R中被称为<code>raw type</code>，想要得到真正的二进制编码，要对<code>raw type</code>再使用<code>rawToBits()</code>函数：</p>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb185-1" title="1"><span class="kw">rawToBits</span>(char_raw)</a>
+<a class="sourceLine" id="cb185-2" title="2"><span class="co">#&gt;  [1] 01 00 01 01 00 00 01 00 01 00 00 00 00 01 01 00 00 00 00 01 01 01 01 00 01</span></a>
+<a class="sourceLine" id="cb185-3" title="3"><span class="co">#&gt; [26] 00 00 01 00 01 01 00 00 01 01 01 00 01 01 00 01 00 01 00 00 01 01 00</span></a></code></pre></div>
+<p><code>readr</code>默认使用UTF-8编码。其中的含义在于，每当接受到一个字符串，R收到的不是字符串本身，而是它背后的二进制表示，于是R便尝试按照UTF-8的规则解读这些二进制码，把它们还原为人类所能理解的字符。问题是，如果你的文件不是用UTF-8编码，这就像用英文字典来解释汉语拼音，可能小张计算机存储字母”A”是1100001，而小王存储字母”A”是11000010，这样双方交换信息时就会误解。比如小张把1100001发送给小王，小王并不认为1100001是字母”A”，可能认为这是字母”X”，于是小王在用记事本访问存储在硬盘上的1100001时，在屏幕上显示的就是字母”X”。</p>
+<p>要解决这个问题，需要在<code>parse_character()</code>函数中通过<code>locale(encoding = )</code>参数设定编码方式：</p>
+<p>如何才能找到正确的编码方式呢？有可能数据来源会注明，但如果没有到话，<code>readr</code>包提供了<code>guess_encoding()</code>函数来帮助你找出编码方式。这个函数并非万无一失，如果有大量文本效果就会更好，它的第一个参数可以是直接的文件路径，也可以是一个<code>raw type</code>:</p>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb186-1" title="1"></a>
+<a class="sourceLine" id="cb186-2" title="2"><span class="kw">guess_encoding</span>(<span class="kw">charToRaw</span>(<span class="st">&quot;中国&quot;</span>))</a>
+<a class="sourceLine" id="cb186-3" title="3"><span class="co">#&gt; # A tibble: 1 x 2</span></a>
+<a class="sourceLine" id="cb186-4" title="4"><span class="co">#&gt;   encoding confidence</span></a>
+<a class="sourceLine" id="cb186-5" title="5"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb186-6" title="6"><span class="co">#&gt; 1 ASCII             1</span></a>
+<a class="sourceLine" id="cb186-7" title="7"><span class="kw">parse_character</span>(<span class="st">&quot;中国&quot;</span>,<span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>))</a>
+<a class="sourceLine" id="cb186-8" title="8"><span class="co">#&gt; [1] &quot;&lt;U+4E2D&gt;&lt;U+56FD&gt;&quot;</span></a>
+<a class="sourceLine" id="cb186-9" title="9"><span class="kw">parse_character</span>(<span class="st">&quot;中国&quot;</span>,<span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;windows-1252&quot;</span>))</a>
+<a class="sourceLine" id="cb186-10" title="10"><span class="co">#&gt; [1] &quot;&lt;U+4E2D&gt;&lt;U+56FD&gt;&quot;</span></a>
+<a class="sourceLine" id="cb186-11" title="11"></a>
+<a class="sourceLine" id="cb186-12" title="12"><span class="kw">guess_encoding</span>(<span class="st">&quot;data</span><span class="ch">\\</span><span class="st">hotdogs.txt&quot;</span>)</a>
+<a class="sourceLine" id="cb186-13" title="13"><span class="co">#&gt; # A tibble: 1 x 2</span></a>
+<a class="sourceLine" id="cb186-14" title="14"><span class="co">#&gt;   encoding confidence</span></a>
+<a class="sourceLine" id="cb186-15" title="15"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb186-16" title="16"><span class="co">#&gt; 1 ASCII             1</span></a></code></pre></div>
+<p>编码问题博大精深，这里只是蜻蜓点水式地介绍一下。如果想要学习更多相关知识，可以阅读<a href="http://kunststube.net/encoding/">http://kunststube.net/encoding/</a></p>
+</div>
+<div id="factor" class="section level3">
+<h3><span class="header-section-number">3.3.3</span> Factor</h3>
+<p>因子对应的解析函数是 <code>parse_factor()</code> ，其中 <code>levels</code> 参数被赋予一个包含所有因子可能水平的向量，如果要解析的列存在 <code>levels</code> 中没有的值，就会生成一条警告。</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb187-1" title="1">fruit &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;apple&quot;</span>, <span class="st">&quot;banana&quot;</span>)</a>
+<a class="sourceLine" id="cb187-2" title="2">f &lt;-<span class="st"> </span><span class="kw">parse_factor</span>(<span class="kw">c</span>(<span class="st">&quot;apple&quot;</span>, <span class="st">&quot;banana&quot;</span>, <span class="st">&quot;bananana&quot;</span>), <span class="dt">levels =</span> fruit)</a>
+<a class="sourceLine" id="cb187-3" title="3"><span class="kw">problems</span>(f)</a>
+<a class="sourceLine" id="cb187-4" title="4"><span class="co">#&gt; # A tibble: 1 x 4</span></a>
+<a class="sourceLine" id="cb187-5" title="5"><span class="co">#&gt;     row   col expected           actual  </span></a>
+<a class="sourceLine" id="cb187-6" title="6"><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;              &lt;chr&gt;   </span></a>
+<a class="sourceLine" id="cb187-7" title="7"><span class="co">#&gt; 1     3    NA value in level set bananana</span></a></code></pre></div>
+<p>如果有很多问题条目的话，最简单的是它们当做字符串来解析，然后用<code>forcats</code>包进行后续处理。</p>
+</div>
+<div id="date-and-time" class="section level3">
+<h3><span class="header-section-number">3.3.4</span> Date and time</h3>
+<p>根据需要的是日期型数据（从 1970-01-01 开始的天数）、日期时间型数据（从 1970-01-01 开始的秒数）还是时间型数据（从午夜开始的描述），我们可以在3中解析函数之间进行选择。在没有使用任何附加参数时调用，具体情况如下：</p>
+<ul>
+<li><code>parse_datetime()</code>期待的是符合 ISO 8601 标准的日期时间。ISO 8601是一种国际标准，其中日期的各个部分按从大到小的顺序排列，即年、月、日、小时、分钟、秒：</li>
+</ul>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb188-1" title="1"><span class="kw">parse_datetime</span>(<span class="st">&quot;2010-10-01 201002&quot;</span>)</a>
+<a class="sourceLine" id="cb188-2" title="2"><span class="co">#&gt; [1] &quot;2010-10-01 20:10:02 UTC&quot;</span></a>
+<a class="sourceLine" id="cb188-3" title="3"></a>
+<a class="sourceLine" id="cb188-4" title="4"><span class="co">## 如果时间被忽略了，就会被设置为午夜</span></a>
+<a class="sourceLine" id="cb188-5" title="5"><span class="kw">parse_datetime</span>(<span class="st">&quot;20101001&quot;</span>)</a>
+<a class="sourceLine" id="cb188-6" title="6"><span class="co">#&gt; [1] &quot;2010-10-01 UTC&quot;</span></a></code></pre></div>
+<p>这是最重要的日期/时间标准，如果经常使用日期和时间，可以阅读以下维基百科上的<a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601标准</a></p>
+<ul>
+<li><code>parse_date()</code>期待的是四位数的年份、一个<code>-</code>或者<code>/</code>作为分隔符，月，一个<code>-</code>或者<code>/</code>作为分隔符，然后是日：</li>
+</ul>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb189-1" title="1"><span class="kw">parse_date</span>(<span class="st">&quot;2010-10-01&quot;</span>)</a>
+<a class="sourceLine" id="cb189-2" title="2"><span class="co">#&gt; [1] &quot;2010-10-01&quot;</span></a>
+<a class="sourceLine" id="cb189-3" title="3"><span class="kw">parse_date</span>(<span class="st">&quot;2010/10/01&quot;</span>)</a>
+<a class="sourceLine" id="cb189-4" title="4"><span class="co">#&gt; [1] &quot;2010-10-01&quot;</span></a></code></pre></div>
+<ul>
+<li><code>parse_time()</code>期待的是小时，<code>:</code>作为分隔符，分钟，可选的<code>:</code>和后面的秒，以及一个可选的 am/pm 标识符：</li>
+</ul>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb190-1" title="1"><span class="kw">parse_time</span>(<span class="st">&quot;8:20 pm&quot;</span>)</a>
+<a class="sourceLine" id="cb190-2" title="2"><span class="co">#&gt; 20:20:00</span></a>
+<a class="sourceLine" id="cb190-3" title="3"><span class="kw">parse_time</span>(<span class="st">&quot;8:20:05&quot;</span>)</a>
+<a class="sourceLine" id="cb190-4" title="4"><span class="co">#&gt; 08:20:05</span></a></code></pre></div>
+<p>如果默认数据不适合实际数据，那么可以为 <code>parse_date()</code> 的第二个参数 <code>format</code> 传入一个字符串指定自己的日期时间格式(这个参数是解析日期时间的函数在<code>parse_*()</code>函数族中特有的)，格式由以下各部分组成：</p>
+<table>
+<colgroup>
+<col width="57%" />
+<col width="42%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>成分</th>
+<th>符号</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>年</td>
+<td><code>%Y</code>(四位数)<br><code>%y</code>(两位数；00-69被解释为2000-2069、70-99被解释为1970-1999)</td>
+</tr>
+<tr class="even">
+<td>月</td>
+<td><code>%m</code>(两位数)<br> <code>%b</code>（简写名称，如“Jan”）<br> <code>%B</code>（完整名称，如January）</td>
+</tr>
+<tr class="odd">
+<td>日</td>
+<td><code>%d</code>(一位数或两位数) <br> %e(两位数)</td>
+</tr>
+<tr class="even">
+<td>时间</td>
+<td><code>%H</code>(0-23小时)<br><code>%I</code>(0-12小时，必须和<code>%p</code>一起使用) <br> <code>%p</code>(表示am/pm) <br> <code>%M</code>(分钟) <br> <code>S</code>(整数秒) <br> <code>%OS</code>(实数秒) <br> <code>%Z</code>(时区)</td>
+</tr>
+<tr class="odd">
+<td>非数值字符</td>
+<td><code>%.</code>(跳过一个非数值字符) <br> <code>%*</code>跳过所有非数值字符</td>
+</tr>
+</tbody>
+</table>
+<p>找出正确格式的最好方法是创建几个解析字符向量的示例，并使用某种解析函数进行测试（如果数据中有分隔符，则）：</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" title="1"><span class="kw">parse_date</span>(<span class="st">&quot;100101&quot;</span>,<span class="dt">format =</span> <span class="st">&quot;%m%d%y&quot;</span>)</a>
+<a class="sourceLine" id="cb191-2" title="2"><span class="co">#&gt; [1] &quot;2001-10-01&quot;</span></a>
+<a class="sourceLine" id="cb191-3" title="3"><span class="kw">parse_date</span>(<span class="st">&quot;01/02/15&quot;</span>,<span class="st">&quot;%y/%m/%d&quot;</span>)</a>
+<a class="sourceLine" id="cb191-4" title="4"><span class="co">#&gt; [1] &quot;2001-02-15&quot;</span></a>
+<a class="sourceLine" id="cb191-5" title="5"><span class="kw">parse_date</span>(<span class="st">&quot;Nov/12/1998&quot;</span>,<span class="st">&quot;%b/%d/%Y&quot;</span>)</a>
+<a class="sourceLine" id="cb191-6" title="6"><span class="co">#&gt; [1] &quot;1998-11-12&quot;</span></a></code></pre></div>
+</div>
+<div id="exercises-4" class="section level3">
+<h3><span class="header-section-number">3.3.5</span> Exercises</h3>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-32" class="exercise"><strong>Exercise 1.3  </strong></span>如果在<code>locale()</code>函数中把<code>decimal_mark</code>和<code>grouping_mark</code>设为同一个字符，会发生什么情况？如果将<code>decimal_mark</code>设为逗号，<code>grouping_mark</code>的默认值会发生什么变化？如果将<code>grouping_mark</code>设置为句点，<code>decimal_mark</code>的默认值会发生什么变化？
+</div>
+
+<p>不能将<code>decimal_mark</code> 和 <code>group_mark</code> 设为同一个字符：</p>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb192-1" title="1"><span class="kw">locale</span>(<span class="dt">decimal_mark =</span> <span class="st">&quot;.&quot;</span>,<span class="dt">grouping_mark =</span> <span class="st">&quot;.&quot;</span>)</a>
+<a class="sourceLine" id="cb192-2" title="2"><span class="co">#&gt; Error: `decimal_mark` and `grouping_mark` must be different</span></a></code></pre></div>
+<p>将<code>decimal_mark</code>设为逗号时，<code>grouping_mark</code>的默认值将变为<code>.</code>(见第一行):</p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1"><span class="kw">locale</span>(<span class="dt">decimal_mark =</span> <span class="st">&quot;,&quot;</span>)</a>
+<a class="sourceLine" id="cb193-2" title="2"><span class="co">#&gt; &lt;locale&gt;</span></a>
+<a class="sourceLine" id="cb193-3" title="3"><span class="co">#&gt; Numbers:  123.456,78</span></a>
+<a class="sourceLine" id="cb193-4" title="4"><span class="co">#&gt; Formats:  %AD / %AT</span></a>
+<a class="sourceLine" id="cb193-5" title="5"><span class="co">#&gt; Timezone: UTC</span></a>
+<a class="sourceLine" id="cb193-6" title="6"><span class="co">#&gt; Encoding: UTF-8</span></a>
+<a class="sourceLine" id="cb193-7" title="7"><span class="co">#&gt; &lt;date_names&gt;</span></a>
+<a class="sourceLine" id="cb193-8" title="8"><span class="co">#&gt; Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed), Thursday</span></a>
+<a class="sourceLine" id="cb193-9" title="9"><span class="co">#&gt;         (Thu), Friday (Fri), Saturday (Sat)</span></a>
+<a class="sourceLine" id="cb193-10" title="10"><span class="co">#&gt; Months: January (Jan), February (Feb), March (Mar), April (Apr), May (May),</span></a>
+<a class="sourceLine" id="cb193-11" title="11"><span class="co">#&gt;         June (Jun), July (Jul), August (Aug), September (Sep), October</span></a>
+<a class="sourceLine" id="cb193-12" title="12"><span class="co">#&gt;         (Oct), November (Nov), December (Dec)</span></a>
+<a class="sourceLine" id="cb193-13" title="13"><span class="co">#&gt; AM/PM:  AM/PM</span></a></code></pre></div>
+<p>将<code>grouping_mark</code>设为句点时，<code>decimal_mark</code>的默认值将变为<code>,</code>:</p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb194-1" title="1"><span class="kw">locale</span>(<span class="dt">grouping_mark =</span> <span class="st">&quot;.&quot;</span>)</a>
+<a class="sourceLine" id="cb194-2" title="2"><span class="co">#&gt; &lt;locale&gt;</span></a>
+<a class="sourceLine" id="cb194-3" title="3"><span class="co">#&gt; Numbers:  123.456,78</span></a>
+<a class="sourceLine" id="cb194-4" title="4"><span class="co">#&gt; Formats:  %AD / %AT</span></a>
+<a class="sourceLine" id="cb194-5" title="5"><span class="co">#&gt; Timezone: UTC</span></a>
+<a class="sourceLine" id="cb194-6" title="6"><span class="co">#&gt; Encoding: UTF-8</span></a>
+<a class="sourceLine" id="cb194-7" title="7"><span class="co">#&gt; &lt;date_names&gt;</span></a>
+<a class="sourceLine" id="cb194-8" title="8"><span class="co">#&gt; Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed), Thursday</span></a>
+<a class="sourceLine" id="cb194-9" title="9"><span class="co">#&gt;         (Thu), Friday (Fri), Saturday (Sat)</span></a>
+<a class="sourceLine" id="cb194-10" title="10"><span class="co">#&gt; Months: January (Jan), February (Feb), March (Mar), April (Apr), May (May),</span></a>
+<a class="sourceLine" id="cb194-11" title="11"><span class="co">#&gt;         June (Jun), July (Jul), August (Aug), September (Sep), October</span></a>
+<a class="sourceLine" id="cb194-12" title="12"><span class="co">#&gt;         (Oct), November (Nov), December (Dec)</span></a>
+<a class="sourceLine" id="cb194-13" title="13"><span class="co">#&gt; AM/PM:  AM/PM</span></a></code></pre></div>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-36" class="exercise"><strong>Exercise 3.3  </strong></span><code>locale()</code>函数中的<code>date_format()</code>和<code>time_format()</code>参数有什么用？
+</div>
+
+<p><code>date_format()</code> 和 <code>time_format()</code> 和 <code>format</code> 参数的功能一样，用以指定日期时间数据的格式，如果在 <code>locale()</code> 中设定了以上两个参数，就不需要再设定 <code>format</code>；反之亦然：</p>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb195-1" title="1"><span class="kw">parse_date</span>(<span class="st">&quot;170625&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">date_format =</span> <span class="st">&quot;%y%m%d&quot;</span>))</a>
+<a class="sourceLine" id="cb195-2" title="2"><span class="co">#&gt; [1] &quot;2017-06-25&quot;</span></a></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li>生成正确行使的字符串来解析以下日期和时间。</li>
+</ol>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb196-1" title="1">d1 &lt;-<span class="st"> &quot;January 1,2010&quot;</span></a>
+<a class="sourceLine" id="cb196-2" title="2"><span class="kw">parse_date</span>(d1,<span class="st">&quot;%B %d,%Y&quot;</span>)</a>
+<a class="sourceLine" id="cb196-3" title="3"><span class="co">#&gt; [1] &quot;2010-01-01&quot;</span></a>
+<a class="sourceLine" id="cb196-4" title="4"></a>
+<a class="sourceLine" id="cb196-5" title="5">d2 &lt;-<span class="st"> &quot;2015-Mar-07&quot;</span></a>
+<a class="sourceLine" id="cb196-6" title="6"><span class="kw">parse_date</span>(d2,<span class="st">&quot;%Y-%b-%e&quot;</span>)</a>
+<a class="sourceLine" id="cb196-7" title="7"><span class="co">#&gt; [1] &quot;2015-03-07&quot;</span></a>
+<a class="sourceLine" id="cb196-8" title="8"></a>
+<a class="sourceLine" id="cb196-9" title="9">d3 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;August 19 (2015)&quot;</span>,<span class="st">&quot;July 1 (2015)&quot;</span>)</a>
+<a class="sourceLine" id="cb196-10" title="10"><span class="kw">parse_date</span>(d3,<span class="st">&quot;%B %d (%Y)&quot;</span>)</a>
+<a class="sourceLine" id="cb196-11" title="11"><span class="co">#&gt; [1] &quot;2015-08-19&quot; &quot;2015-07-01&quot;</span></a>
+<a class="sourceLine" id="cb196-12" title="12"></a>
+<a class="sourceLine" id="cb196-13" title="13">t1 &lt;-<span class="st"> &quot;1705&quot;</span></a>
+<a class="sourceLine" id="cb196-14" title="14"><span class="kw">parse_time</span>(<span class="st">&quot;1705&quot;</span>,<span class="st">&quot;%H%M&quot;</span>)</a>
+<a class="sourceLine" id="cb196-15" title="15"><span class="co">#&gt; 17:05:00</span></a>
+<a class="sourceLine" id="cb196-16" title="16"></a>
+<a class="sourceLine" id="cb196-17" title="17">t2 &lt;-<span class="st"> &quot;11:15:10.12 PM&quot;</span></a>
+<a class="sourceLine" id="cb196-18" title="18"><span class="kw">parse_time</span>(t2,<span class="st">&quot;%I:%M:%OS %p&quot;</span>)</a>
+<a class="sourceLine" id="cb196-19" title="19"><span class="co">#&gt; 23:15:10.12</span></a></code></pre></div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="importing-data-in-readr.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="parsing-a-file.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/enixam/rfordatascience/edit/master/readr.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
