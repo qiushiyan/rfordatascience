@@ -10,7 +10,7 @@ bookdown::gitbook:
       after: |
         <li><a href="https://bookdown.org" target="blank">written with bookdown</a></li>
     edit:
-      link: https://github.com/enixam/rfordatascience/edit/master/%s
+      link: https://github.com/enixam/rfordatascience/edit/master/%s/
       text: "Edit"
 
 
